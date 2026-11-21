@@ -419,7 +419,7 @@ const RULES=[
   return['يتحول اللون من الأصفر إلى البرتقالي (ثاني كرومات)','Yellow → orange (dichromate forms)','2CrO₄²⁻ + 2H⁺ → Cr₂O₇²⁻ + H₂O']}}];
 
 function react(t,id,vol){
-  const R=SB[id],res=[];let rc=false,ra=false;
+  const R=SB[id],res=[];let rc=false,ra=false,handledHNO3C=false;
   if(t.solid)dissolve(t);
   const hadSubs=t.subs.length>0,old=[...t.ppts];
   t.level+=vol;
@@ -428,6 +428,21 @@ function react(t,id,vol){
     t.tint='#9e3b12';addPpt(t,'Hg','NH2I','#9e3b12','بني محمر','reddish-brown','Hg2NI');
     pushLog(t,`إضافة ${name(id)}: يتكون لون/راسب بني محمر مميز مع أيونات الأمونيوم (كشف نسيلر)`,`Adding ${name(id)}: characteristic reddish-brown color/precipitate with NH₄⁺ (Nessler test)`,'NH₄⁺ + 2[HgI₄]²⁻ + 4OH⁻ → HgO·Hg(NH₂)I↓ + 7I⁻ + 3H₂O');
     t.subs.push(id);return}
+  if(id==='HNO3C'){
+    if(t.ions.has('S')||t.subs.includes('H2S')){
+      t.ions.delete('S');t.gasUntil=Date.now()+5000;handledHNO3C=true;
+      addPpt(t,'S','S','#efe46d','أصفر (كبريت متأكسد)','yellow (oxidised sulfur)','S');
+      res.push(['يؤكسد حمض النيتريك المركز كبريتيد الهيدروجين مكوناً راسب كبريت أصفر مع تصاعد أبخرة بنية حمراء من NO₂','Conc. HNO₃ oxidises H₂S giving yellow sulfur precipitate and reddish-brown NO₂ fumes','2HNO₃(conc) + 3H₂S → 3S↓ + 2NO↑ + 4H₂O · 2NO + O₂ → 2NO₂↑']);
+    }
+    const g4S=t.ppts.filter(p=>['Ni','Co','Fe2'].includes(p.c)&&p.a==='S');
+    if(g4S.length){
+      t.ppts=t.ppts.filter(p=>!g4S.includes(p));
+      g4S.forEach(p=>t.ions.add(p.c));
+      t.gasUntil=Date.now()+5000;handledHNO3C=true;
+      const lead=g4S[0].c;
+      res.push(['يذوب الراسب الأسود في حمض النيتريك المركز الساخن مع تصاعد أبخرة NO₂ وتكوّن كبريت','Black sulfide dissolves in conc. HNO₃ with NO₂ fumes and sulfur formation',`3${lead}S + 8HNO₃ → 3${lead}(NO₃)₂ + 3S↓ + 2NO↑ + 4H₂O`]);
+    }
+  }
   if(R.a==='HPO4'&&(t.ions.has('Fe3')||old.some(p=>p.c==='Fe3'))){
     t.ppts=t.ppts.filter(p=>!(p.c==='Fe3'&&p.a==='OH'));
     if(!t.ppts.some(p=>p.c==='Fe3'&&p.a==='HPO4')){
@@ -448,7 +463,7 @@ function react(t,id,vol){
     if(t.ions.has('I')){t.gasUntil=Date.now()+5000;t.tint='#6e237a';res.push(['المجموعة الثانية الحامضية (I⁻): تتصاعد أبخرة بنفسجية من اليود I₂ تزرّق ورقة مبللة بمحلول النشا','Acid Gr.II (I⁻): violet I₂ vapors evolve (turn starch paper blue)','2HI + H₂SO₄ → I₂↑ + SO₂↑ + 2H₂O'])}
     if(t.ions.has('NO3')&&!t.ions.has('Fe2')){t.gasUntil=Date.now()+5000;res.push(['المجموعة الثانية الحامضية (NO₃⁻): تتصاعد أبخرة بنية حمراء كثيفة من NO₂ تزداد بإضافة خراطة نحاس','Acid Gr.II (NO₃⁻): dense reddish-brown NO₂ fumes evolve (intensify with Cu turnings)','4HNO₃ → 4NO₂↑ + O₂↑ + 2H₂O'])}
   }
-  if(R.c==='H'&&id!=='H2S')for(const p of old){
+  if(R.c==='H'&&id!=='H2S'&&!handledHNO3C)for(const p of old){
     const ok=p.a==='OH'||p.a==='CO3'||p.a==='PO4'||p.a==='HPO4'||(p.a==='S'&&(p.c==='Zn'||p.c==='Fe2'||p.c==='Mn'))||(p.a==='OX'&&id!=='AcOH');if(!ok)continue;
     t.ppts=t.ppts.filter(x=>x!==p);t.ions.add(p.c);rc=true;
     const g=p.a==='CO3'||p.a==='S',[x,y]=cnt(p.c,p.a==='HPO4'?'PO4':p.a),ci=(x>1?x:'')+iS(p.c),yy=y>1?y:'';if(g)t.gasUntil=Date.now()+5000;
@@ -495,7 +510,7 @@ function react(t,id,vol){
     const use=(k,sub)=>{if(sub===R){if(k===R.c)rc=true;else ra=true}else t.ions.delete(k)};
     const acid=(S.c==='H'&&S.id!=='H2S')?S:(R.c==='H'&&R.id!=='H2S')?R:null,other=acid===S?R:S;
     const gz=acid&&GS[other.a];
-    if(gz&&acid.a!==other.a){t.gasUntil=Date.now()+5000;
+    if(gz&&acid.a!==other.a&&!handledHNO3C){t.gasUntil=Date.now()+5000;
       if(other.a==='S2O3')addPpt(t,'S','S','#efe46d','أصفر (كبريت)','yellow (sulfur)','S');
       res.push([gz[0],gz[1],eqStr([aq(S.f),aq(R.f)],[aq(cmp(other.c,acid.a)),...gz[2]])]);
       use(other.a,other);use('H',acid);continue}
