@@ -179,7 +179,7 @@ const CAT=new Set(['Mg','Al','Zn','Ni','Co','Cu','Fe3','Fe2','K','Na','Ca','Sr',
 const gcd=(a,b)=>b?gcd(b,a%b):a;
 const cnt=(c,a)=>{const g=gcd(ION[c][1],ION[a][1]);return[ION[a][1]/g,ION[c][1]/g]};
 const part=(f,n,p)=>n===1?f:(p?`(${f})${n}`:f+n);
-const cmp=(c,a)=>{if(c==='H'&&a==='AC')return'CH3COOH';if(c==='H'&&a==='OX')return'H2C2O4';const[x,y]=cnt(c,a);return part(ION[c][0],x,ION[c][2])+part(ION[a][0],y,ION[a][2])};
+const cmp=(c,a)=>{if(c==='H'&&a==='AC')return'CH3COOH';if(c==='H'&&a==='OX')return'H2C2O4';if(c==='Hg'&&a==='OH')return'HgO';const[x,y]=cnt(c,a);return part(ION[c][0],x,ION[c][2])+part(ION[a][0],y,ION[a][2])};
 const SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
 const iS=i=>SUBU(ION[i][0])+(ION[i][1]>1?SUP[ION[i][1]]:'')+(CAT.has(i)?'⁺':'⁻');
 const ICOL=[['MnO4','#7d1599',.84],['Cr2O7','#eb7d09',.8],['CrO4','#f0cf11',.8],['Cu','#1e88e5',.7],['Fe3','#d4921e',.72],['Fe2','#9fd082',.62],['Ni','#3bb263',.65],['Co','#df568b',.64],['Cr','#48a96c',.64],['Mn','#f3b6d0',.56]];
@@ -325,7 +325,7 @@ const PPT={'Cu|OH':['#2d82e5','أزرق','blue','جيلاتيني','gelatinous']
 'Pb|I':['#f2c500','أصفر ذهبي','golden yellow','متبلور','crystalline'],'Pb|Cl':['#f4f4f4','أبيض','white','متبلور (يذوب بالتسخين)','crystalline (dissolves on heating)'],
 'Pb|SO4':['#f8f8f8','أبيض','white','كثيف','dense'],'Pb|CO3':['#f4f4f4','أبيض','white','ناعم','fine'],'Pb|CrO4':['#f0c000','أصفر','yellow','كثيف','dense'],'Pb|Cr2O7':['#f0c000','أصفر (كرومات الرصاص)','yellow (lead chromate)','كثيف','dense'],'Pb|OH':['#f6f6f6','أبيض','white','جيلاتيني (مذبذب)','gelatinous (amphoteric)'],
 'Mn|OH':['#f4dce6','أبيض وردي (يتحول لبني في الهواء)','pink-white (browns in air)','جيلاتيني','gelatinous'],'Mn|S':['#e9c7d5','وردي سلموني','salmon-pink','ناعم','fine'],'Mn|CO3':['#f4e6ec','أبيض وردي','pinkish-white','ناعم','fine'],
-'Cr|OH':['#48a96c','أخضر جيلاتيني','green','جيلاتيني','gelatinous'],'Cd|S':['#f2d21e','أصفر ليموني','lemon-yellow','ناعم','fine'],'Bi|OH':['#f5f5f5','أبيض','white','جيلاتيني','gelatinous'],'Bi|S':['#141414','أسود','black','ناعم','fine'],'Hg|S':['#141414','أسود','black','ناعم','fine'],'Hg|OH':['#e4b818','أصفر','yellow','ناعم','fine']};
+'Cr|OH':['#48a96c','أخضر جيلاتيني','green','جيلاتيني','gelatinous'],'Cd|S':['#f2d21e','أصفر ليموني','lemon-yellow','ناعم','fine'],'Bi|OH':['#f5f5f5','أبيض','white','جيلاتيني','gelatinous'],'Bi|S':['#141414','أسود','black','ناعم','fine'],'Hg|S':['#141414','أسود','black','ناعم','fine'],'Hg|OH':['#e4b818','أصفر (أكسيد الزئبق HgO)','yellow (mercury(II) oxide HgO)','ناعم','fine']};
 const w=['#f5f5f5','أبيض','white'],k=['#141414','أسود','black'];
 Object.assign(PPT,{'Mg|OH':[...w,'جيلاتيني','gelatinous'],'Al|OH':['#f1f4f6','أبيض','white','جيلاتيني (مذبذب)','gelatinous (amphoteric)'],'Zn|OH':['#f4f6f6','أبيض','white','جيلاتيني (مذبذب)','gelatinous (amphoteric)'],
 'Ni|OH':['#6cc17a','أخضر تفاحي','apple-green','جيلاتيني','gelatinous'],'Co|OH':['#6b8fd8','أزرق (يتحول إلى وردي)','blue (turns pink)','جيلاتيني','gelatinous'],
@@ -421,7 +421,7 @@ const RULES=[
 function react(t,id,vol){
   const R=SB[id],res=[];let rc=false,ra=false,handledHNO3C=false;
   if(t.solid)dissolve(t);
-  const hadSubs=t.subs.length>0,old=[...t.ppts];
+  const hadSubs=t.subs.length>0,prevSubs=[...new Set(t.subs)],old=[...t.ppts];
   t.level+=vol;
   if(id==='H2S')t.gasUntil=Date.now()+4500;
   if(id==='NESSLER'&&t.ions.has('NH4')){
@@ -434,13 +434,13 @@ function react(t,id,vol){
       addPpt(t,'S','S','#efe46d','أصفر (كبريت متأكسد)','yellow (oxidised sulfur)','S');
       res.push(['يؤكسد حمض النيتريك المركز كبريتيد الهيدروجين مكوناً راسب كبريت أصفر مع تصاعد أبخرة بنية حمراء من NO₂','Conc. HNO₃ oxidises H₂S giving yellow sulfur precipitate and reddish-brown NO₂ fumes','2HNO₃(conc) + 3H₂S → 3S↓ + 2NO↑ + 4H₂O · 2NO + O₂ → 2NO₂↑']);
     }
-    const g4S=t.ppts.filter(p=>['Ni','Co','Fe2'].includes(p.c)&&p.a==='S');
-    if(g4S.length){
-      t.ppts=t.ppts.filter(p=>!g4S.includes(p));
-      g4S.forEach(p=>t.ions.add(p.c));
+    const gS=t.ppts.filter(p=>['Ni','Co','Fe2','Cu','Cd','Bi'].includes(p.c)&&p.a==='S');
+    if(gS.length){
+      t.ppts=t.ppts.filter(p=>!gS.includes(p));
+      gS.forEach(p=>t.ions.add(p.c));
       t.gasUntil=Date.now()+5000;handledHNO3C=true;
-      const lead=g4S[0].c;
-      res.push(['يذوب الراسب الأسود في حمض النيتريك المركز الساخن مع تصاعد أبخرة NO₂ وتكوّن كبريت','Black sulfide dissolves in conc. HNO₃ with NO₂ fumes and sulfur formation',`3${lead}S + 8HNO₃ → 3${lead}(NO₃)₂ + 3S↓ + 2NO↑ + 4H₂O`]);
+      const lead=gS[0].c;
+      res.push(['يذوب راسب الكبريتيد في حمض النيتريك المركز الساخن مع تصاعد أبخرة NO₂ وتكوّن كبريت','Sulfide precipitate dissolves in conc. HNO₃ with NO₂ fumes and sulfur formation',`3${lead}S + 8HNO₃ → 3${lead}(NO₃)₂ + 3S↓ + 2NO↑ + 4H₂O`]);
     }
   }
   if(R.a==='HPO4'&&(t.ions.has('Fe3')||old.some(p=>p.c==='Fe3'))){
@@ -470,38 +470,29 @@ function react(t,id,vol){
     const e={OH:`${x*ION[p.c][1]}H⁺ → ${ci} + ${x*ION[p.c][1]}H₂O`,CO3:`${2*y}H⁺ → ${ci} + ${yy}H₂O + ${yy}CO₂↑`,PO4:`${3*y}H⁺ → ${ci} + ${yy}H₃PO₄`,HPO4:`${2*y}H⁺ → ${ci} + ${yy}H₃PO₄`,S:`${2*y}H⁺ → ${ci} + ${yy}H₂S↑`,OX:`${2*y}H⁺ → ${ci} + ${yy}H₂C₂O₄`}[p.a];
     const gx={CO3:' مع تصاعد غاز CO₂',S:' مع تصاعد غاز H₂S'}[p.a]||'',ge={CO3:' with CO₂ evolution',S:' with H₂S evolution'}[p.a]||'';
     res.push([`يذوب الراسب في الحمض${gx}`,`Precipitate dissolves in acid${ge}`,p.dis||`${F(p.f)} + ${e}`])}
-  const strong=R.a==='OH'&&['Na','K','Ba','Ca'].includes(R.c);
-  for(const[c,mode,eq,tint,ar,en]of EXC){const p=old.find(q=>q.c===c&&q.a==='OH');if(!p||!t.ppts.includes(p))continue;
-    if(mode==='base'?!strong:id!=='NH3')continue;
-    t.ppts=t.ppts.filter(x=>x!==p);if(tint)t.tint=tint;ra=true;if(mode==='NH3')rc=true;res.push([ar,en,eq])}
-  if(id==='NH3'){
-    for(const ag of old.filter(p=>p.c==='Ag'&&['Cl','Br','PO4','OH'].includes(p.a)&&t.ppts.includes(p))){
-      t.ppts=t.ppts.filter(x=>x!==ag);
-      const spd=ag.a==='Br'?'ببطء في فائض الأمونيا':'بسهولة في محلول الأمونيا';
-      res.push([`يذوب راسب ${ag.f} ${spd} ويعطي محلولاً عديم اللون`,`${ag.f} dissolves in ammonia giving a colorless solution`,`${ag.f} + 2NH₃ → [Ag(NH₃)₂]⁺`]);
-    }
-    const agi=old.find(p=>p.c==='Ag'&&p.a==='I'&&t.ppts.includes(p));
-    if(agi)res.push(['راسب يوديد الفضة AgI الأصفر لا يذوب في محلول الأمونيا (مميز لليوديد)','Yellow AgI precipitate is insoluble in ammonia solution (confirms I⁻)','AgI(s) + NH₃(aq) → No dissolution']);
-  }
   const isAcidic=t.ions.has('H')||t.subs.some(s=>['HCl','H2SO4','HNO3'].includes(s));
-  const isAlkaline=t.ions.has('OH')||t.subs.includes('NH3');
+  const isAlkaline=t.ions.has('OH')||t.subs.includes('NH3')||id==='NH3';
   if((id==='H2S'||R.a==='S')&&!isAcidic&&!isAlkaline){
     const g2=['Cu','Cd','Bi','Hg'].find(c=>t.ions.has(c));
     if(g2)res.push(['تنبيه عملي: لترسيب كاتيونات المجموعة الثانية بالكامل يُفضل تحميض المحلول بقطرات HCl المخفف قبل إمرار H₂S','Lab note: acidify with dil. HCl before passing H₂S to precipitate Basic Group II cleanly']);
   }
   if((id==='H2S'||R.a==='S')&&isAlkaline){
-    for(const c of ['Ni','Co']){
-      const ohIdx=t.ppts.findIndex(p=>p.c===c&&p.a==='OH');
-      if(ohIdx!==-1){
-        const m=PPT[c+'|S'],pf=cmp(c,'S');
-        t.ppts.splice(ohIdx,1);
-        addPpt(t,c,'S',m[0],m[1]+' '+m[3],m[2]+' '+m[4],pf);
-        res.push([`في الوسط القلوي يتحول الراسب إلى كبريتيد ${pf} بلون ${m[1]} (مجموعة رابعة قاعدية)`,`In alkaline medium it converts to ${m[2]} ${pf} sulfide precipitate (Basic Group IV)`,`${F(c==='Ni'?'Ni(OH)2':'Co(OH)2')} + H₂S → ${F(pf)}↓ + 2H₂O`]);
-      }
+    for(const p of [...t.ppts]){
+      if(p.a!=='OH'||['Al','Fe3'].includes(p.c))continue;
+      const m=PPT[p.c+'|S'];
+      if(!m)continue;
+      const pf=cmp(p.c,'S'),oldF=p.f;
+      t.ppts=t.ppts.filter(x=>x!==p);
+      addPpt(t,p.c,'S',m[0],m[1]+' '+m[3],m[2]+' '+m[4],pf);
+      res.push([
+        `في الوسط القلوي يتحول راسب ${oldF} إلى كبريتيد ${pf} بلون ${m[1]}`,
+        `In alkaline medium ${oldF} converts to ${m[2]} ${pf} sulfide precipitate`,
+        `${F(oldF)} + H₂S → ${F(pf)}↓ + 2H₂O`
+      ]);
     }
   }
-  for(const sid of [...new Set(t.subs)].filter(s=>t.ions.has(SB[s].c)&&t.ions.has(SB[s].a))){
-    const S=SB[sid];if(sid===id)continue;
+  for(const sid of prevSubs.filter(s=>s!==id&&t.ions.has(SB[s].c)&&t.ions.has(SB[s].a))){
+    const S=SB[sid];
     const k1=S.c+'|'+R.a,k2=R.c+'|'+S.a;
     if(SPK.has(k1)||SPK.has(k2))continue;
     if((k1==='HPO4|Fe3'||k2==='Fe3|HPO4')&&t.ppts.some(p=>p.c==='Fe3'&&p.a==='HPO4'))continue;
@@ -533,6 +524,24 @@ function react(t,id,vol){
       if(!m1)pr.unshift(aq(cmp(S.c,R.a)));if(!m2)pr.push(aq(cmp(R.c,S.a)));
       const p1=m1?sd(cmp(S.c,R.a==='Cr2O7'?'CrO4':R.a)):aq(cmp(S.c,R.a)),p2=m2?sd(cmp(R.c,S.a==='Cr2O7'?'CrO4':S.a)):aq(cmp(R.c,S.a));
       res.push([bits.map(b=>`راسب ${b[1]} ${b[3]}`).join(' + '),bits.map(b=>`${b[2]} ${b[4]} precipitate`).join(' + '),eqStr([aq(S.f),aq(R.f)],[p1,p2])+`<br><small>${L('النواتج: ','Products: ')}${F(p1.f)} + ${F(p2.f)}</small>`])}}
+  const strong=R.a==='OH'&&['Na','K','Ba','Ca'].includes(R.c);
+  if(vol>=5||strong||id==='NH3'){
+    for(const[c,mode,eq,tint,ar,en]of EXC){
+      const p=t.ppts.find(q=>q.c===c&&q.a==='OH');
+      if(!p)continue;
+      if(mode==='base'?!strong:id!=='NH3')continue;
+      t.ppts=t.ppts.filter(x=>x!==p);if(tint)t.tint=tint;ra=true;if(mode==='NH3')rc=true;res.push([ar,en,eq]);
+    }
+  }
+  if(id==='NH3'&&vol>=5){
+    for(const ag of [...t.ppts].filter(p=>p.c==='Ag'&&['Cl','Br','PO4','OH'].includes(p.a))){
+      t.ppts=t.ppts.filter(x=>x!==ag);
+      const spd=ag.a==='Br'?'ببطء في فائض الأمونيا':'بسهولة في محلول الأمونيا';
+      res.push([`يذوب راسب ${ag.f} ${spd} ويعطي محلولاً عديم اللون`,`${ag.f} dissolves in ammonia giving a colorless solution`,`${ag.f} + 2NH₃ → [Ag(NH₃)₂]⁺`]);
+    }
+    const agi=t.ppts.find(p=>p.c==='Ag'&&p.a==='I');
+    if(agi)res.push(['راسب يوديد الفضة AgI الأصفر لا يذوب في محلول الأمونيا (مميز لليوديد)','Yellow AgI precipitate is insoluble in ammonia solution (confirms I⁻)','AgI(s) + NH₃(aq) → No dissolution']);
+  }
   if(!rc)t.ions.add(R.c);if(!ra)t.ions.add(R.a);t.subs.push(id);
   for(const r of RULES){if(r.ions.every(i=>t.ions.has(i))&&r.ions.some(i=>i===R.c||i===R.a)){const o=r.fn(t);if(o)res.push(o)}}
   if(!res.length){
