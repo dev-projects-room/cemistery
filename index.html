@@ -308,6 +308,7 @@ const PRESETS=[
 ['b3_al','قاعدية 3: الألومنيوم Al³⁺ (NH₄Cl + NH₄OH راسب أبيض + يذوب في فائض NaOH)','Basic Gr.III: Al³⁺ (NH₄Cl + NH₄OH white ppt + excess NaOH)',[['sol','AlCl3',5],['sol','NH4Cl',1],['sol','NH3',1],['sol','NaOH',5]]],
 ['b4_mn','قاعدية 4: المنجنيز Mn²⁺ (NH₄Cl + NH₄OH + H₂S راسب وردي سلموني)','Basic Gr.IV: Mn²⁺ (NH₄Cl + NH₄OH + H₂S salmon-pink ppt)',[['sol','MnSO4',5],['sol','NH4Cl',1],['sol','NH3',1],['sol','H2S',1]]],
 ['b4_zn','قاعدية 4: الخارصين Zn²⁺ (NH₄Cl + NH₄OH + H₂S راسب أبيض)','Basic Gr.IV: Zn²⁺ (NH₄Cl + NH₄OH + H₂S white ppt)',[['sol','ZnSO4',5],['sol','NH4Cl',1],['sol','NH3',1],['sol','H2S',1]]],
+['b4_ni','قاعدية 4: النيكل Ni²⁺ (NH₄Cl + NH₄OH + H₂S راسب أسود)','Basic Gr.IV: Ni²⁺ (NH₄Cl + NH₄OH + H₂S black ppt)',[['sol','NiCl2',5],['sol','NH4Cl',1],['sol','NH3',1],['sol','H2S',1]]],
 ['b5_ca','قاعدية 5: الكالسيوم Ca²⁺ ((NH₄)₂CO₃ + تأكيدي أكسالات الأمونيوم (NH₄)₂C₂O₄)','Basic Gr.V: Calcium Ca²⁺ ((NH₄)₂CO₃ + (NH₄)₂C₂O₄ test)',[['sol','CaCl2',5],['sol','NH4Cl',1],['sol','NH3',1],['sol','NH4OX',1]]],
 ['b6_mg','قاعدية 6: المغنيسيوم Mg²⁺ (NH₄Cl + NH₄OH + Na₂HPO₄ راسب أبيض بلوري)','Basic Gr.VI: Magnesium Mg²⁺ (NH₄Cl + NH₄OH + Na₂HPO₄ white ppt)',[['sol','MgSO4',5],['sol','NH4Cl',1],['sol','NH3',1],['sol','Na2HPO4',1]]],
 ['b6_nh4','قاعدية 6: الأمونيوم NH₄⁺ (NaOH + تسخين 🔥 ثم كاشف نسيلر)','Basic Gr.VI: Ammonium NH₄⁺ (NaOH + heat 🔥)',[['sol','NH4Cl',5],['sol','NaOH',1],['heat']]]
@@ -472,6 +473,17 @@ function react(t,id,vol){
   if((id==='H2S'||R.a==='S')&&!isAcidic&&!isAlkaline){
     const g2=['Cu','Cd','Bi','Hg'].find(c=>t.ions.has(c));
     if(g2)res.push(['تنبيه عملي: لترسيب كاتيونات المجموعة الثانية بالكامل يُفضل تحميض المحلول بقطرات HCl المخفف قبل إمرار H₂S','Lab note: acidify with dil. HCl before passing H₂S to precipitate Basic Group II cleanly']);
+  }
+  if((id==='H2S'||R.a==='S')&&isAlkaline){
+    for(const c of ['Ni','Co']){
+      const ohIdx=t.ppts.findIndex(p=>p.c===c&&p.a==='OH');
+      if(ohIdx!==-1){
+        const m=PPT[c+'|S'],pf=cmp(c,'S');
+        t.ppts.splice(ohIdx,1);
+        addPpt(t,c,'S',m[0],m[1]+' '+m[3],m[2]+' '+m[4],pf);
+        res.push([`في الوسط القلوي يتحول الراسب إلى كبريتيد ${pf} بلون ${m[1]} (مجموعة رابعة قاعدية)`,`In alkaline medium it converts to ${m[2]} ${pf} sulfide precipitate (Basic Group IV)`,`${F(c==='Ni'?'Ni(OH)2':'Co(OH)2')} + H₂S → ${F(pf)}↓ + 2H₂O`]);
+      }
+    }
   }
   for(const sid of [...new Set(t.subs)].filter(s=>t.ions.has(SB[s].c)&&t.ions.has(SB[s].a))){
     const S=SB[sid];if(sid===id)continue;
