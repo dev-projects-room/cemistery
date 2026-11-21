@@ -318,11 +318,11 @@ const PPT={'Cu|OH':['#2d82e5','أزرق','blue','جيلاتيني','gelatinous']
 'Fe2|CO3':['#c9d3b9','أبيض مخضر','greenish-white','ناعم','fine'],'Ag|Cl':['#f7f7f2','أبيض','white','متجبن (يذوب في الأمونيا)','curdy (soluble in NH₃)'],'Ag|I':['#f2e68a','أصفر شاحب','pale yellow','متجبن (لا يذوب في الأمونيا)','curdy (insoluble in NH₃)'],
 'Ag|CO3':['#e6dc8a','أصفر باهت','pale yellow','ناعم','fine'],'Ag|CrO4':['#9b2d1f','أحمر طوبي','brick-red','كثيف','dense'],'Ag|SCN':['#f7f7f2','أبيض','white','متجبن','curdy'],
 'Ag|SO3':['#f6f6f2','أبيض','white','ناعم (يسود بالتسخين)','fine (blackens on heating)'],'Ag|S2O3':['#242424','أبيض يتحول تدريجياً إلى أصفر ثم بني ثم أسود (Ag₂S)','white turning yellow → brown → black (Ag₂S)','كثيف','dense'],
-'Ba|SO4':['#fafafa','أبيض','white','كثيف ناعم (لا يذوب في HCl المخفف)','dense, fine (insoluble in dil. HCl)'],'Ba|CO3':['#f4f4f4','أبيض','white','ناعم (يذوب في HCl)','fine (soluble in HCl)'],'Ba|CrO4':['#f0d000','أصفر','yellow','ناعم','fine'],'Ba|OX':['#f5f5f5','أبيض','white','بلوري ناعم','fine crystalline'],
+'Ba|SO4':['#fafafa','أبيض','white','كثيف ناعم (لا يذوب في HCl المخفف)','dense, fine (insoluble in dil. HCl)'],'Ba|CO3':['#f4f4f4','أبيض','white','ناعم (يذوب في HCl)','fine (soluble in HCl)'],'Ba|CrO4':['#f0d000','أصفر','yellow','ناعم','fine'],'Ba|Cr2O7':['#f0d000','أصفر (كرومات الباريوم)','yellow (barium chromate)','ناعم','fine'],'Ba|OX':['#f5f5f5','أبيض','white','بلوري ناعم','fine crystalline'],
 'Sr|CO3':['#f5f5f5','أبيض','white','ناعم','fine'],'Sr|SO4':['#f5f5f5','أبيض','white','ناعم','fine'],'Sr|OX':['#f5f5f5','أبيض','white','بلوري ناعم','fine crystalline'],
 'Ca|CO3':['#f4f4f0','أبيض','white','ناعم','fine'],'Ca|OX':['#f5f5f5','أبيض','white','بلوري ناعم (لا يذوب في حمض الخليك ويذوب في HCl)','fine crystalline (insoluble in AcOH, soluble in HCl)'],
 'Pb|I':['#f2c500','أصفر ذهبي','golden yellow','متبلور','crystalline'],'Pb|Cl':['#f4f4f4','أبيض','white','متبلور (يذوب بالتسخين)','crystalline (dissolves on heating)'],
-'Pb|SO4':['#f8f8f8','أبيض','white','كثيف','dense'],'Pb|CO3':['#f4f4f4','أبيض','white','ناعم','fine'],'Pb|CrO4':['#f0c000','أصفر','yellow','كثيف','dense'],'Pb|OH':['#f6f6f6','أبيض','white','جيلاتيني','gelatinous'],
+'Pb|SO4':['#f8f8f8','أبيض','white','كثيف','dense'],'Pb|CO3':['#f4f4f4','أبيض','white','ناعم','fine'],'Pb|CrO4':['#f0c000','أصفر','yellow','كثيف','dense'],'Pb|Cr2O7':['#f0c000','أصفر (كرومات الرصاص)','yellow (lead chromate)','كثيف','dense'],'Pb|OH':['#f6f6f6','أبيض','white','جيلاتيني (مذبذب)','gelatinous (amphoteric)'],
 'Mn|OH':['#f4dce6','أبيض وردي (يتحول لبني في الهواء)','pink-white (browns in air)','جيلاتيني','gelatinous'],'Mn|S':['#e9c7d5','وردي سلموني','salmon-pink','ناعم','fine'],'Mn|CO3':['#f4e6ec','أبيض وردي','pinkish-white','ناعم','fine'],
 'Cr|OH':['#48a96c','أخضر جيلاتيني','green','جيلاتيني','gelatinous'],'Cd|S':['#f2d21e','أصفر ليموني','lemon-yellow','ناعم','fine'],'Bi|OH':['#f5f5f5','أبيض','white','جيلاتيني','gelatinous'],'Bi|S':['#141414','أسود','black','ناعم','fine'],'Hg|S':['#141414','أسود','black','ناعم','fine'],'Hg|OH':['#e4b818','أصفر','yellow','ناعم','fine']};
 const w=['#f5f5f5','أبيض','white'],k=['#141414','أسود','black'];
@@ -498,13 +498,13 @@ function react(t,id,vol){
       use('H',acid);use('OH',other);if(m)use(acid.a,acid);continue}
     if(S.id!=='NH3'&&R.id!=='NH3'&&((S.c==='NH4'&&R.a==='OH')||(R.c==='NH4'&&S.a==='OH'))){t.nh3=true;
       res.push(['لا تغير مرئي على البارد؛ عند التسخين تنطلق غاز النشادر ذو الرائحة النفاذة (يزرق عباد الشمس الحمراء)','No visible change cold; on heating pungent NH₃ gas is released (turns red litmus blue)','NH₄⁺ + OH⁻ ⇌ NH₃↑ + H₂O (on heating)']);continue}
-    if(m1){addPpt(t,S.c,R.a,m1[0],m1[1]+' '+m1[3],m1[2]+' '+m1[4],cmp(S.c,R.a));t.ions.delete(S.c);ra=true;
-      bits.push(m1);pr.push(sd(cmp(S.c,R.a)))}
-    if(m2){addPpt(t,R.c,S.a,m2[0],m2[1]+' '+m2[3],m2[2]+' '+m2[4],cmp(R.c,S.a));t.ions.delete(S.a);rc=true;
-      bits.push(m2);pr.push(sd(cmp(R.c,S.a)))}
+    if(m1){const pf=R.a==='Cr2O7'?cmp(S.c,'CrO4'):cmp(S.c,R.a);addPpt(t,S.c,R.a,m1[0],m1[1]+' '+m1[3],m1[2]+' '+m1[4],pf);t.ions.delete(S.c);ra=true;
+      bits.push(m1);pr.push(sd(pf))}
+    if(m2){const pf=S.a==='Cr2O7'?cmp(R.c,'CrO4'):cmp(R.c,S.a);addPpt(t,R.c,S.a,m2[0],m2[1]+' '+m2[3],m2[2]+' '+m2[4],pf);t.ions.delete(S.a);rc=true;
+      bits.push(m2);pr.push(sd(pf))}
     if(bits.length){
       if(!m1)pr.unshift(aq(cmp(S.c,R.a)));if(!m2)pr.push(aq(cmp(R.c,S.a)));
-      const p1=m1?sd(cmp(S.c,R.a)):aq(cmp(S.c,R.a)),p2=m2?sd(cmp(R.c,S.a)):aq(cmp(R.c,S.a));
+      const p1=m1?sd(cmp(S.c,R.a==='Cr2O7'?'CrO4':R.a)):aq(cmp(S.c,R.a)),p2=m2?sd(cmp(R.c,S.a==='Cr2O7'?'CrO4':S.a)):aq(cmp(R.c,S.a));
       res.push([bits.map(b=>`راسب ${b[1]} ${b[3]}`).join(' + '),bits.map(b=>`${b[2]} ${b[4]} precipitate`).join(' + '),eqStr([aq(S.f),aq(R.f)],[p1,p2])+`<br><small>${L('النواتج: ','Products: ')}${F(p1.f)} + ${F(p2.f)}</small>`])}}
   if(!rc)t.ions.add(R.c);if(!ra)t.ions.add(R.a);t.subs.push(id);
   for(const r of RULES){if(r.ions.every(i=>t.ions.has(i))&&r.ions.some(i=>i===R.c||i===R.a)){const o=r.fn(t);if(o)res.push(o)}}
