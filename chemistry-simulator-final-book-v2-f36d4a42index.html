@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chemistry Lab Simulator | محاكي معمل الكيمياء</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='liq' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0%25' stop-color='%232dd4bf'/%3E%3Cstop offset='100%25' stop-color='%230b7a75'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='%23101c28'/%3E%3Cpath d='M36 22V70a14 14 0 0 0 28 0V22z' fill='url(%23liq)' opacity='.92'/%3E%3Cpath d='M36 22V70a14 14 0 0 0 28 0V22' fill='none' stroke='%23e8f1fa' stroke-width='4'/%3E%3Cpath d='M30 22H70' stroke='%23e8f1fa' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='46' cy='58' r='3' fill='%23fff' opacity='.8'/%3E%3Ccircle cx='54' cy='45' r='2.2' fill='%23fff' opacity='.7'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230b7a75'/%3E%3Cpath d='M36 22V70a14 14 0 0 0 28 0V22z' fill='%23e8f1fa' opacity='.9'/%3E%3Cpath d='M30 22H70' stroke='%23ffffff' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta property="og:title" content="محاكي معمل الكيمياء | Chemistry Lab Simulator">
+<meta property="og:description" content="محاكي تفاعلي للتجارب الكيميائية وحسابات الكتلة المولية وتحضير المحاليل والتخفيف والمعايرة">
+<meta property="og:type" content="website">
+<meta property="og:image" content="preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="preview.png">
+<style>:root{--bg:#eef3f8;--card:#ffffff;--tx:#101c28;--mut:#556577;--ac:#0b7a75;--bd:#cfd9e4;--stroke:#3b4e63;--glass:rgba(215,235,250,.32);--sh:0 6px 18px rgba(16,28,40,.06)}
+[data-theme=dark]{--bg:#0a1017;--card:#131d27;--tx:#e8f1fa;--mut:#95a6b8;--ac:#2dd4bf;--bd:#253444;--stroke:#9fb5cc;--glass:rgba(155,198,230,.14);--sh:0 8px 22px rgba(0,0,0,.35)}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--tx);line-height:1.6}
+header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--bd);box-shadow:var(--sh)}
+h1{font-size:1.15rem;margin:0}h3{margin:.2rem 0 .6rem}
+.tools{display:flex;gap:8px;align-items:center}
+button,select,input{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:7px 11px}
+input,select{width:100%}
+button{cursor:pointer;background:var(--ac);color:#fff;border:0;font-weight:600;transition:transform .12s ease,filter .15s ease}
+button:hover:not(:disabled){filter:brightness(1.08);transform:translateY(-1px)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.ghost{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+button.warn{background:#c0392b}
+#tabs{display:flex;gap:6px;overflow-x:auto;padding:8px 16px}
+#tabs button{background:var(--card);color:var(--tx);border:1px solid var(--bd);white-space:nowrap}
+#tabs button.on{background:var(--ac);color:#fff}
+main{padding:0 16px 30px;max-width:1100px;margin:auto}
+section{display:none}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-top:12px;box-shadow:var(--sh)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.preset-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;margin-bottom:10px}
+label{display:block;font-size:.9rem;color:var(--mut)}label>span{display:block;margin-bottom:3px}
+.hint{color:var(--mut);font-size:.88rem;margin:.4rem 0}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.out,#mmOut{grid-column:1/-1;margin-top:8px}
+.out b,#mmOut b{color:var(--ac)}
+table{border-collapse:collapse;width:100%;direction:ltr;font-size:.92rem}
+td,th{border-bottom:1px solid var(--bd);padding:5px 8px;text-align:center}
+#qTube{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.qtube{grid-column:2;background:var(--card);border:2px solid var(--ac);border-radius:14px;text-align:center;padding:8px;box-shadow:var(--sh)}.qtube svg{width:100%;max-width:162px;height:auto;filter:drop-shadow(0 6px 10px rgba(0,0,0,.14))}.qtube small{display:block;color:var(--mut)}
+#tubes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.tube{background:var(--card);border:2px solid var(--bd);border-radius:14px;text-align:center;cursor:pointer;padding:8px;box-shadow:var(--sh);transition:border-color .18s ease,box-shadow .18s ease}
+.tube.sel{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac) inset,var(--sh)}
+.tube svg{width:100%;max-width:162px;height:auto;filter:drop-shadow(0 6px 10px rgba(0,0,0,.14))}
+.tube small{display:block;color:var(--mut)}
+.log{border-inline-start:4px solid var(--ac);padding:5px 11px;margin:8px 0;background:var(--glass);border-radius:8px}
+.eq{direction:ltr;text-align:left;font-family:"Cambria Math","Times New Roman",serif;font-size:1.02rem;margin-top:3px;word-break:break-word}
+.b{fill:#ffffff;opacity:.88;animation:rise 2.1s linear infinite}
+@keyframes rise{from{transform:translateY(0);opacity:.92}to{transform:translateY(-155px);opacity:0}}
+.fl{animation:fl .26s ease-in-out infinite alternate;transform-origin:50px 282px}
+@keyframes fl{to{transform:scale(1.16,.88)}}
+@media(max-width:560px){#tubes{gap:6px}.tube{padding:4px}.preset-row{grid-template-columns:1fr}}
+#subQ{margin-bottom:6px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
+#startHint{border-inline-start:5px solid var(--ac);display:flex;gap:10px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+#startHint p{margin:.2rem 0}
+.sw{display:inline-block;width:14px;height:14px;border-radius:50%;border:1px solid var(--bd);vertical-align:middle;margin-inline-end:5px}
+.obsrow{margin:4px 0}
+#obsTxt{width:100%;min-height:90px;direction:ltr;font-size:.85rem;margin-top:6px;display:none}
+.tests{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.tests button{padding:6px 9px;font-size:.88rem}
+.qres{border-inline-start:4px solid var(--ac);background:var(--glass);border-radius:8px;padding:5px 11px;margin:6px 0}
+.qok{color:#1a9a4a;font-weight:700}.qbad{color:#c0392b;font-weight:700}
+@media(max-width:560px){.row2{grid-template-columns:1fr}.tests button{flex:1 1 44%}}
+</style>
+</head>
+<body>
+<header>
+  <h1 data-ar="🧪 محاكي معمل الكيمياء" data-en="🧪 Chemistry Lab Simulator"></h1>
+  <div class="tools">
+    <label><span data-ar="الخانات العشرية" data-en="Decimals"></span>
+      <select id="dec"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option></select></label>
+    <button id="lang">EN</button>
+    <button id="theme" title="Dark / Lab mode">🌙</button>
+  </div>
+</header>
+<nav id="tabs">
+  <button data-p="bench" class="on" data-ar="منضدة الأنابيب" data-en="Test-Tube Bench"></button>
+  <button data-p="mm" data-ar="الكتلة المولية" data-en="Molar Mass"></button>
+  <button data-p="prep" data-ar="تحضير المحاليل" data-en="Solution Prep"></button>
+  <button data-p="dil" data-ar="التخفيف" data-en="Dilution"></button>
+  <button data-p="tit" data-ar="المعايرة" data-en="Titration"></button>
+  <button data-p="quiz" data-ar="🕵️ ملح مجهول" data-en="🕵️ Unknown Salt"></button>
+  <button data-p="quiz" data-m="syl" data-ar="🕵️ ملح مجهول (المنهج)" data-en="🕵️ Unknown Salt (Syllabus)"></button>
+</nav>
+<main>
+<section id="bench" class="on">
+  <div class="card" id="startHint">
+    <div><b data-ar="👋 ابدأ من هنا" data-en="👋 Start here"></b>
+    <p class="hint" data-ar="١) اختر تجربة من القائمة واضغط «نفّذ التجربة». ٢) أو اختر مادة من القائمة السفلية وأضفها لأنبوبة (اضغط على الأنبوبة لتحديدها). ٣) شاهد الملاحظات تحت الأنابيب وانسخها." data-en="1) Pick a test from the list and press “Run Test”. 2) Or choose a substance below and add it to a tube (tap a tube to select it). 3) Read the observations under the tubes and copy them."></p></div>
+    <div class="btns" style="margin:0"><button id="bExample" data-ar="🧪 جرّب مثالاً" data-en="🧪 Try an example"></button><button id="bHintX" class="ghost" data-ar="إخفاء" data-en="Hide"></button></div>
+  </div>
+  <div class="card ctl" id="quickCard">
+    <div class="preset-row">
+      <label><span data-ar="⚡ تشغيل سريع للتجارب الأساسية والتأكيدية (كل المجموعات)" data-en="⚡ Quick-Run Basic & Confirmatory Tests (All Groups)"></span>
+        <select id="preset"></select></label>
+      <button id="bRunPreset" class="ghost" data-ar="▶️ نفّذ التجربة" data-en="▶️ Run Test"></button>
+    </div>
+  </div>
+  <div id="tubes"></div>
+  <div class="card" id="obsCard"><h3 data-ar="📋 الملاحظات (الأنبوبة المحددة)" data-en="📋 Observations (selected tube)"></h3><div id="obsBox"></div>
+    <div class="btns"><button id="bCopyObs" data-ar="📄 نسخ الملاحظات" data-en="📄 Copy observations"></button><span id="obsMsg" class="hint"></span></div><textarea id="obsTxt" readonly></textarea></div>
+  <div class="card ctl">
+    <label><span data-ar="المادة / الكاشف (للخلط اليدوي الحر): ابحث ثم اختر" data-en="Substance / Reagent (Manual Mixing): search, then pick"></span><input id="subQ" type="search" autocomplete="off" spellcheck="false"></label>
+    <label><span data-ar="تجميع القائمة حسب" data-en="Group list by"></span><select id="grpMode"><option value="a" data-ar="الأنيون (الشق الحامضي)" data-en="Anion (acid radical)"></option><option value="c" data-ar="الكاتيون (الشق القاعدي)" data-en="Cation (basic radical)"></option></select></label>
+    <select id="sub" style="margin-top:6px"></select>
+    <div id="look" class="hint"></div>
+    <label><span data-ar="حجم المحلول المضاف" data-en="Solution volume"></span>
+      <select id="vol"><option value="1">1 mL</option><option value="5">5 mL</option></select></label>
+    <div class="btns">
+      <button id="bSolid" data-ar="➕ أضف صلب" data-en="➕ Add solid"></button>
+      <button id="bWater" data-ar="💧 أضف ماء (5 mL)" data-en="💧 Add water (5 mL)"></button>
+      <button id="bSol" data-ar="🧴 أضف محلولاً" data-en="🧴 Add solution"></button>
+      <button id="bHeat" data-ar="🔥 تسخين" data-en="🔥 Heat"></button>
+      <button id="bShake" class="ghost" data-ar="🫨 رج" data-en="🫨 Shake"></button>
+      <button id="bFlame" class="ghost" data-ar="🔥 اختبار اللهب" data-en="🔥 Flame test"></button>
+      <button id="bUndo" class="ghost" data-ar="↩️ تراجع خطوة" data-en="↩️ Undo step"></button>
+      <button id="bReset" class="warn" data-ar="↺ إعادة ضبط الأنبوبة" data-en="↺ Reset tube"></button>
+    </div>
+    <p class="hint" data-ar="يدعم جميع مجموعات الشقوق الحامضية والقاعدية (الأساسية والتأكيدية)، وسط التفاعل (حامضي / قاعدي / متعادل)، ذوبان الرواسب في الأحماض والأمونيا وهيدروكسيد الصوديوم، وأثر التسخين." data-en="Supports all acidic & basic radical groups (basic & confirmatory tests), reaction medium (acidic/alkaline/neutral), solubility in acids, ammonia & NaOH, and heating effects."></p>
+  </div>
+  <div class="card"><h3 data-ar="سجل الملاحظات (الأنبوبة المحددة)" data-en="Observation log (selected tube)"></h3><div id="log"></div></div>
+</section>
+
+<section id="mm"><div class="card">
+  <label><span data-ar="الصيغة الكيميائية" data-en="Chemical formula"></span>
+  <input id="mmIn" value="CuSO4.5H2O" dir="ltr" spellcheck="false"></label>
+  <p class="hint">CuSO4.5H2O · Ca3(PO4)2 · KMnO4 · Al2(SO4)3 · K4[Fe(CN)6]</p>
+  <div id="mmOut"></div>
+</div></section>
+
+<section id="prep"><div class="card grid">
+  <label><span data-ar="الصيغة" data-en="Formula"></span><input id="pF" value="NaOH" dir="ltr"></label>
+  <label><span data-ar="النوع" data-en="Type"></span><select id="pT"><option value="M">M (Molarity)</option><option value="N">N (Normality)</option></select></label>
+  <label><span data-ar="التركيز المطلوب" data-en="Target conc."></span><input id="pC" type="number" step="any" value="0.1"></label>
+  <label><span data-ar="الحجم (mL)" data-en="Volume (mL)"></span><input id="pV" type="number" step="any" value="250"></label>
+  <label><span data-ar="معامل التكافؤ n" data-en="Equivalence factor n"></span><input id="pN" type="number" step="any" value="1"></label>
+  <label><span data-ar="النقاوة %" data-en="Purity %"></span><input id="pP" type="number" step="any" value="100"></label>
+  <div id="pOut" class="out"></div>
+</div></section>
+
+<section id="dil"><div class="card grid">
+  <p class="hint" data-ar="اترك خانة واحدة فارغة ليتم حسابها: M₁V₁ = M₂V₂" data-en="Leave exactly one field empty: M₁V₁ = M₂V₂"></p>
+  <label>M₁<input id="d1" type="number" step="any"></label>
+  <label>V₁ (mL)<input id="d2" type="number" step="any"></label>
+  <label>M₂<input id="d3" type="number" step="any"></label>
+  <label>V₂ (mL)<input id="d4" type="number" step="any"></label>
+  <div id="dOut" class="out"></div>
+</div></section>
+
+<section id="quiz"><div class="card">
+  <h3 data-ar="🕵️ حدّد الملح المجهول" data-en="🕵️ Identify the unknown salt"></h3>
+  <p class="hint" data-ar="في الأنبوبة ملح مجهول. استخدم أدوات المنضدة نفسها: أضف ماءً أو أي كاشف أو سخّن، وراقب الراسب واللون والغاز، ثم حدد الكاتيون والأنيون." data-en="The tube holds an unknown salt. Use the same bench tools: add water, any reagent or heat, watch the precipitate, colour and gas, then name the cation and the anion."></p>
+  <p id="qScore"></p>
+  <div id="qTube"></div>
+  <div class="card" style="margin-top:12px"><h3 data-ar="📋 الملاحظات (أنبوبة الملح المجهول)" data-en="📋 Observations (unknown-salt tube)"></h3><div id="qObs"></div></div>
+  <div class="ctl" style="margin-top:12px">
+    <label><span data-ar="المادة / الكاشف (للخلط اليدوي الحر): ابحث ثم اختر" data-en="Substance / Reagent (Manual Mixing): search, then pick"></span><input id="qSubQ" type="search" autocomplete="off" spellcheck="false"></label>
+    <label><span data-ar="تجميع القائمة حسب" data-en="Group list by"></span><select id="qGrp"><option value="a" data-ar="الأنيون (الشق الحامضي)" data-en="Anion (acid radical)"></option><option value="c" data-ar="الكاتيون (الشق القاعدي)" data-en="Cation (basic radical)"></option></select></label>
+    <select id="qSub" style="margin-top:6px"></select>
+    <div id="qLook" class="hint"></div>
+    <label><span data-ar="حجم المحلول المضاف" data-en="Solution volume"></span><select id="qVol"><option value="1">1 mL</option><option value="5">5 mL</option></select></label>
+    <div class="btns">
+      <button id="qbSol" data-ar="🧴 أضف محلولاً" data-en="🧴 Add solution"></button>
+      <button id="qbWater" data-ar="💧 أضف ماء (5 mL)" data-en="💧 Add water (5 mL)"></button>
+      <button id="qbHeat" data-ar="🔥 تسخين" data-en="🔥 Heat"></button>
+      <button id="qbShake" class="ghost" data-ar="🫨 رج" data-en="🫨 Shake"></button>
+      <button id="qbFlame" class="ghost" data-ar="🔥 اختبار اللهب" data-en="🔥 Flame test"></button>
+      <button id="qbLook" class="ghost" data-ar="👁️ مظهر الملح" data-en="👁️ Salt appearance"></button>
+      <button id="qbSolid" class="ghost" data-ar="➕ أضف صلب" data-en="➕ Add solid"></button>
+      <button id="qbUndo" class="ghost" data-ar="↩️ تراجع خطوة" data-en="↩️ Undo step"></button>
+      <button id="qbReset" class="warn" data-ar="↺ إعادة ضبط الأنبوبة" data-en="↺ Reset tube"></button>
+    </div>
+  </div>
+  <h3 data-ar="دفتر الملاحظات" data-en="Lab notebook"></h3>
+  <div id="qNotes"></div>
+  <div id="qAns"></div>
+</div></section>
+
+<section id="tit"><div class="card grid">
+  <p class="hint" data-ar="a A + b T → النواتج ، المحلول المجهول A والمعاير T" data-en="a A + b T → products; A = analyte, T = titrant"></p>
+  <label><span data-ar="تركيز المعاير Cₜ (M)" data-en="Titrant conc. Cₜ (M)"></span><input id="t1" type="number" step="any" value="0.1"></label>
+  <label><span data-ar="حجم المعاير عند نقطة النهاية (mL)" data-en="Titrant volume at endpoint (mL)"></span><input id="t2" type="number" step="any" value="22.5"></label>
+  <label><span data-ar="حجم المجهول (mL)" data-en="Analyte volume (mL)"></span><input id="t3" type="number" step="any" value="25"></label>
+  <label>a<input id="t4" type="number" step="any" value="1"></label>
+  <label>b<input id="t5" type="number" step="any" value="1"></label>
+  <label><span data-ar="الكتلة المولية للمجهول (اختياري، g/mol)" data-en="Analyte molar mass (optional, g/mol)"></span><input id="t6" type="number" step="any"></label>
+  <div id="tOut" class="out"></div>
+</div></section>
+</main>
+<script>
+'use strict';
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const LS={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+let lang=LS.get('lang','ar'),dec=+LS.get('dec',4),cur=0;
+const L=(a,e)=>lang==='ar'?a:e;
+
+/* ---------- Atomic weights (118 elements) ---------- */
+const AW=Object.fromEntries('H:1.0080,He:4.0026,Li:6.94,Be:9.0122,B:10.81,C:12.011,N:14.007,O:15.999,F:18.9984,Ne:20.1797,Na:22.9898,Mg:24.305,Al:26.9815,Si:28.085,P:30.9738,S:32.06,Cl:35.45,Ar:39.948,K:39.0983,Ca:40.078,Sc:44.9559,Ti:47.867,V:50.9415,Cr:51.9961,Mn:54.9380,Fe:55.845,Co:58.9332,Ni:58.6934,Cu:63.546,Zn:65.38,Ga:69.723,Ge:72.630,As:74.9216,Se:78.971,Br:79.904,Kr:83.798,Rb:85.4678,Sr:87.62,Y:88.9058,Zr:91.224,Nb:92.9064,Mo:95.95,Tc:98,Ru:101.07,Rh:102.9055,Pd:106.42,Ag:107.8682,Cd:112.414,In:114.818,Sn:118.710,Sb:121.760,Te:127.60,I:126.9045,Xe:131.293,Cs:132.9055,Ba:137.327,La:138.9055,Ce:140.116,Pr:140.9077,Nd:144.242,Pm:145,Sm:150.36,Eu:151.964,Gd:157.25,Tb:158.9254,Dy:162.500,Ho:164.9303,Er:167.259,Tm:168.9342,Yb:173.045,Lu:174.9668,Hf:178.486,Ta:180.9479,W:183.84,Re:186.207,Os:190.23,Ir:192.217,Pt:195.084,Au:196.9666,Hg:200.592,Tl:204.38,Pb:207.2,Bi:208.9804,Po:209,At:210,Rn:222,Fr:223,Ra:226,Ac:227,Th:232.0377,Pa:231.0359,U:238.0289,Np:237,Pu:244,Am:243,Cm:247,Bk:247,Cf:251,Es:252,Fm:257,Md:258,No:259,Lr:266,Rf:267,Db:268,Sg:269,Bh:270,Hs:277,Mt:278,Ds:281,Rg:282,Cn:285,Nh:286,Fl:289,Mc:290,Lv:293,Ts:294,Og:294'.split(',').map(x=>{const[e,w]=x.split(':');return[e,+w]}));
+
+/* Formula parser: (), [], hydrates (. · • *), leading coefficients */
+function parse(str){
+  const clean=str.replace(/\s+/g,'').replace(/[₀-₉]/g,c=>c.charCodeAt(0)-8320);
+  if(!clean)throw Error(L('أدخل صيغة','Enter a formula'));
+  let total={};
+  for(const part of clean.split(/[.·•*]/)){
+    if(!part)continue;
+    const m=part.match(/^(\d+)(.*)$/),k=m?+m[1]:1,body=m?m[2]:part;
+    let i=0;
+    const grp=close=>{const a={};
+      while(i<body.length){const ch=body[i];
+        if(ch==='('||ch==='['){i++;const g=grp(ch==='('?')':']');const n=num();for(const e in g)a[e]=(a[e]||0)+g[e]*n}
+        else if(ch===')'||ch===']'){if(ch!==close)throw Error(L('أقواس غير متطابقة','Bracket mismatch'));i++;return a}
+        else if(/[A-Z]/.test(ch)){let el=ch;i++;if(i<body.length&&/[a-z]/.test(body[i]))el+=body[i++];
+          if(!(el in AW))throw Error(L('عنصر غير معروف: ','Unknown element: ')+el);a[el]=(a[el]||0)+num()}
+        else throw Error(L('رمز غير صالح: ','Invalid symbol: ')+ch)}
+      if(close)throw Error(L('أقواس غير متطابقة','Bracket mismatch'));return a};
+    const num=()=>{let s='';while(i<body.length&&/\d/.test(body[i]))s+=body[i++];return s?+s:1};
+    const r=grp(null);for(const e in r)total[e]=(total[e]||0)+r[e]*k}
+  return total;
+}
+const mass=a=>Object.entries(a).reduce((s,[e,n])=>s+AW[e]*n,0);
+const fx=(x,d=dec)=>Number.isFinite(x)?x.toFixed(d):'—';
+const F=f=>f.replace(/(?<=[A-Za-z)\]])(\d+)/g,'<sub>$1</sub>');
+const SUBU=s=>s.replace(/\d/g,d=>'₀₁₂₃₄₅₆₇₈₉'[d]);
+
+/* ---------- Ions & compounds (Acidic & Basic radicals + confirmatory reagents) ---------- */
+const ION={Cu:['Cu',2],Fe3:['Fe',3],Fe2:['Fe',2],K:['K',1],Na:['Na',1],Ca:['Ca',2],Sr:['Sr',2],Ba:['Ba',2],Ag:['Ag',1],Pb:['Pb',2],Hg:['Hg',2],Bi:['Bi',3],Cd:['Cd',2],Mn:['Mn',2],Cr:['Cr',3],NH4:['NH4',1,1],H:['H',1],
+ SO4:['SO4',2,1],I3:['I3',1],DMG:['C4H7N2O2',1],CoNO26:['Co(NO2)6',3,1],TAR:['C4H4O6',1,1],B4O7:['B4O7',2,1],Cu0:['Cu',1],M0:['M',1,0],SO3:['SO3',2,1],S2O3:['S2O3',2,1],NO2:['NO2',1,1],Cl:['Cl',1],NO3:['NO3',1,1],CO3:['CO3',2,1],OH:['OH',1,1],I:['I',1],MnO4:['MnO4',1,1],CrO4:['CrO4',2,1],Cr2O7:['Cr2O7',2,1],SCN:['SCN',1,1],FeCN6:['Fe(CN)6',4,1],Fe3CN6:['Fe(CN)6',3,1],Mg:['Mg',2],Al:['Al',3],Zn:['Zn',2],Ni:['Ni',2],Co:['Co',2],Br:['Br',1],S:['S',2],HCO3:['HCO3',1,1],PO4:['PO4',3,1],HPO4:['HPO4',2,1],AC:['CH3COO',1,1],OX:['C2O4',2,1]};
+const CAT=new Set(['Cu0','Mg','Al','Zn','Ni','Co','Cu','Fe3','Fe2','K','Na','Ca','Sr','Ba','Ag','Pb','Hg','Bi','Cd','Mn','Cr','NH4','H']);
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+const cnt=(c,a)=>{const g=gcd(ION[c][1],ION[a][1]);return[ION[a][1]/g,ION[c][1]/g]};
+const part=(f,n,p)=>n===1?f:(p?`(${f})${n}`:f+n);
+const cmp=(c,a)=>{if(c==='H'&&a==='AC')return'CH3COOH';if(c==='H'&&a==='OX')return'H2C2O4';if(c==='Hg'&&a==='OH')return'HgO';const[x,y]=cnt(c,a);return part(ION[c][0],x,ION[c][2])+part(ION[a][0],y,ION[a][2])};
+const SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+const iS=i=>i==='Cu0'?'Cu (فلز)':i==='M0'?'—':SUBU(ION[i][0])+(ION[i][1]>1?SUP[ION[i][1]]:'')+(CAT.has(i)?'⁺':'⁻');
+const ICOL=[['I3','#b5651d',.72],['MnO4','#7d1599',.84],['Cr2O7','#eb7d09',.8],['CrO4','#f0cf11',.8],['Cu','#1e88e5',.7],['Fe3','#d4921e',.72],['Fe2','#9fd082',.62],['Ni','#3bb263',.65],['Co','#df568b',.64],['Cr','#48a96c',.64],['Mn','#f3b6d0',.56]];
+
+const SBL=[
+['Na2CO3','Na','CO3','كربونات الصوديوم [CO₃²⁻ / Na⁺]','Sodium carbonate [CO₃²⁻ / Na⁺]','#f4f4ef','مسحوق أبيض','white powder',''],
+['KHCO3','K','HCO3','بيكربونات البوتاسيوم [HCO₃⁻ / K⁺]','Potassium bicarbonate [HCO₃⁻ / K⁺]','#f6f6f2','بلورات بيضاء','white crystals',''],
+['NaHCO3','Na','HCO3','بيكربونات الصوديوم [HCO₃⁻ / Na⁺]','Sodium bicarbonate [HCO₃⁻ / Na⁺]','#f8f8f6','مسحوق أبيض','white powder',''],
+['Na2SO3','Na','SO3','كبريتيت الصوديوم [SO₃²⁻ / Na⁺]','Sodium sulfite [SO₃²⁻ / Na⁺]','#f6f6f2','بلورات بيضاء','white crystals',''],
+['Na2S2O3','Na','S2O3','ثيوكبريتات الصوديوم [S₂O₃²⁻ / Na⁺]','Sodium thiosulfate [S₂O₃²⁻ / Na⁺]','#f6f6f2','بلورات بيضاء','white crystals','·5H2O'],
+['Na2S','Na','S','كبريتيد الصوديوم [S²⁻ / Na⁺]','Sodium sulfide [S²⁻ / Na⁺]','#f3eedd','بلورات بيضاء مصفرة (رائحة H₂S)','yellowish-white crystals (H₂S smell)','·9H2O'],
+['NaNO2','Na','NO2','نيتريت الصوديوم [NO₂⁻ / Na⁺]','Sodium nitrite [NO₂⁻ / Na⁺]','#f4f1e2','بلورات بيضاء مصفرة','pale yellowish crystals',''],
+['NaCl','Na','Cl','كلوريد الصوديوم [Cl⁻ / Na⁺]','Sodium chloride [Cl⁻ / Na⁺]','#f6f6f2','بلورات بيضاء','white crystals',''],
+['KCl','K','Cl','كلوريد البوتاسيوم [Cl⁻ / K⁺]','Potassium chloride [Cl⁻ / K⁺]','#f6f6f2','بلورات بيضاء','white crystals',''],
+['NaBr','Na','Br','بروميد الصوديوم [Br⁻ / Na⁺]','Sodium bromide [Br⁻ / Na⁺]','#f6f6f2','بلورات بيضاء','white crystals',''],
+['KBr','K','Br','بروميد البوتاسيوم [Br⁻ / K⁺]','Potassium bromide [Br⁻ / K⁺]','#f6f6f2','بلورات بيضاء','white crystals',''],
+['KI','K','I','يوديد البوتاسيوم [I⁻ / K⁺]','Potassium iodide [I⁻ / K⁺]','#f6f6f2','بلورات بيضاء','white crystals',''],
+['NaNO3','Na','NO3','نترات الصوديوم [NO₃⁻ / Na⁺]','Sodium nitrate [NO₃⁻ / Na⁺]','#f6f6f2','بلورات بيضاء','white crystals',''],
+['KNO3','K','NO3','نترات البوتاسيوم [NO₃⁻ / K⁺]','Potassium nitrate [NO₃⁻ / K⁺]','#f6f6f2','بلورات بيضاء','white crystals',''],
+['Na2SO4','Na','SO4','كبريتات الصوديوم [SO₄²⁻ / Na⁺]','Sodium sulfate [SO₄²⁻ / Na⁺]','#f6f6f2','بلورات بيضاء','white crystals',''],
+['Na3PO4','Na','PO4','فوسفات الصوديوم [PO₄³⁻ / Na⁺]','Sodium phosphate [PO₄³⁻ / Na⁺]','#f6f6f2','بلورات بيضاء','white crystals','·12H2O'],
+['Na2HPO4','Na','HPO4','فوسفات الصوديوم الهيدروجينية [HPO₄²⁻ / Na⁺]','Disodium hydrogen phosphate [HPO₄²⁻ / Na⁺]','#f6f6f2','بلورات بيضاء','white crystals','·12H2O'],
+['Na2B4O7','Na','B4O7','بورات الصوديوم (بوراكس) [B₄O₇²⁻ / Na⁺]','Sodium tetraborate (borax) [B₄O₇²⁻ / Na⁺]','#f6f6f2','بلورات بيضاء','white crystals','·10H2O'],
+['NaAc','Na','AC','أسيتات الصوديوم [CH₃COO⁻ / Na⁺]','Sodium acetate [CH₃COO⁻ / Na⁺]','#f6f6f2','بلورات بيضاء','white crystals','·3H2O'],
+['NH4Cl','NH4','Cl','كلوريد الأمونيوم (كاشف مجموعة أساسية) [NH₄⁺]','Ammonium chloride (Basic group reagent) [NH₄⁺]','#f6f6f2','مسحوق أبيض','white powder',''],
+['NH4NO3','NH4','NO3','نترات الأمونيوم [NH₄⁺ / NO₃⁻]','Ammonium nitrate [NH₄⁺ / NO₃⁻]','#f6f6f2','بلورات بيضاء','white crystals',''],
+['NH42SO4','NH4','SO4','كبريتات الأمونيوم [NH₄⁺ / SO₄²⁻]','Ammonium sulfate [NH₄⁺ / SO₄²⁻]','#f6f6f2','بلورات بيضاء','white crystals',''],
+['NH42CO3','NH4','CO3','كربونات الأمونيوم (كاشف المجموعة الخامسة) [CO₃²⁻]','Ammonium carbonate (Group V reagent) [CO₃²⁻]','#f6f6f2','بلورات بيضاء (رائحة نشادر)','white solid (ammonia smell)',''],
+['NH4OX','NH4','OX','أكسالات الأمونيوم (كاشف الكالسيوم Ca²⁺) [C₂O₄²⁻]','Ammonium oxalate (Ca²⁺ test reagent) [C₂O₄²⁻]','#f6f6f2','بلورات بيضاء','white crystals','·H2O'],
+['CaCl2','Ca','Cl','كلوريد الكالسيوم [Ca²⁺ / Cl⁻]','Calcium chloride [Ca²⁺ / Cl⁻]','#f6f6f2','حبيبات بيضاء','white granules',''],
+['CaSO4','Ca','SO4','كبريتات الكالسيوم [Ca²⁺ / SO₄²⁻]','Calcium sulfate [Ca²⁺ / SO₄²⁻]','#f5f5f5','مسحوق أبيض (شحيح الذوبان)','white powder (sparingly soluble)','·2H2O'],
+['CaNO32','Ca','NO3','نترات الكالسيوم [Ca²⁺ / NO₃⁻]','Calcium nitrate [Ca²⁺ / NO₃⁻]','#f6f6f2','بلورات بيضاء','white crystals','·4H2O'],
+['SrCl2','Sr','Cl','كلوريد السترونتيوم [Sr²⁺ / Cl⁻]','Strontium chloride [Sr²⁺ / Cl⁻]','#f6f6f2','بلورات بيضاء','white crystals','·6H2O'],
+['BaCl2','Ba','Cl','كلوريد الباريوم (كاشف المجموعة 3 حامضية) [Ba²⁺ / Cl⁻]','Barium chloride (Acid group III reagent) [Ba²⁺ / Cl⁻]','#f6f6f2','بلورات بيضاء (سامة)','white crystals (toxic)','·2H2O'],
+['BaNO32','Ba','NO3','نترات الباريوم [Ba²⁺ / NO₃⁻]','Barium nitrate [Ba²⁺ / NO₃⁻]','#f6f6f2','بلورات بيضاء (سامة)','white crystals (toxic)',''],
+['BaSO4','Ba','SO4','كبريتات الباريوم [Ba²⁺ / SO₄²⁻]','Barium sulfate [Ba²⁺ / SO₄²⁻]','#fafafa','مسحوق أبيض كثيف','dense white powder',''],
+['MgSO4','Mg','SO4','كبريتات المغنيسيوم (تمييز CO₃²⁻ / HCO₃⁻) [Mg²⁺ / SO₄²⁻]','Magnesium sulfate (CO₃²⁻ / HCO₃⁻ test) [Mg²⁺ / SO₄²⁻]','#f6f6f2','بلورات بيضاء (ملح إبسوم)','white crystals (Epsom salt)','·7H2O'],
+['MgCl2','Mg','Cl','كلوريد المغنيسيوم [Mg²⁺ / Cl⁻]','Magnesium chloride [Mg²⁺ / Cl⁻]','#f6f6f2','بلورات بيضاء','white crystals','·6H2O'],
+['MgNO32','Mg','NO3','نترات المغنيسيوم [Mg²⁺ / NO₃⁻]','Magnesium nitrate [Mg²⁺ / NO₃⁻]','#f6f6f2','بلورات بيضاء','white crystals','·6H2O'],
+['AlCl3','Al','Cl','كلوريد الألومنيوم [Al³⁺ / Cl⁻]','Aluminium chloride [Al³⁺ / Cl⁻]','#f2f0e0','مسحوق أبيض مصفر','white-yellowish powder',''],
+['Al2SO43','Al','SO4','كبريتات الألومنيوم [Al³⁺ / SO₄²⁻]','Aluminium sulfate [Al³⁺ / SO₄²⁻]','#f6f6f2','بلورات بيضاء','white crystals','·18H2O'],
+['AlNO33','Al','NO3','نترات الألومنيوم [Al³⁺ / NO₃⁻]','Aluminium nitrate [Al³⁺ / NO₃⁻]','#f6f6f2','بلورات بيضاء','white crystals','·9H2O'],
+['ZnSO4','Zn','SO4','كبريتات الخارصين [Zn²⁺ / SO₄²⁻]','Zinc sulfate [Zn²⁺ / SO₄²⁻]','#f6f6f2','بلورات بيضاء','white crystals','·7H2O'],
+['ZnCl2','Zn','Cl','كلوريد الخارصين [Zn²⁺ / Cl⁻]','Zinc chloride [Zn²⁺ / Cl⁻]','#f4f4f0','بلورات بيضاء (متميعة)','white deliquescent solid',''],
+['ZnNO32','Zn','NO3','نترات الخارصين [Zn²⁺ / NO₃⁻]','Zinc nitrate [Zn²⁺ / NO₃⁻]','#f6f6f2','بلورات بيضاء','white crystals','·6H2O'],
+['MnSO4','Mn','SO4','كبريتات المنجنيز II [Mn²⁺ / SO₄²⁻]','Manganese(II) sulfate [Mn²⁺ / SO₄²⁻]','#f6dce6','بلورات وردية باهتة','pale pink crystals','·H2O'],
+['MnCl2','Mn','Cl','كلوريد المنجنيز II [Mn²⁺ / Cl⁻]','Manganese(II) chloride [Mn²⁺ / Cl⁻]','#f4d4e0','بلورات وردية','pink crystals','·4H2O'],
+['CrCl3','Cr','Cl','كلوريد الكروم III [Cr³⁺ / Cl⁻]','Chromium(III) chloride [Cr³⁺ / Cl⁻]','#3c9b63','بلورات خضراء داكنة','dark green crystals','·6H2O'],
+['FeCl3','Fe3','Cl','كلوريد الحديد III [Fe³⁺ / Cl⁻]','Iron(III) chloride [Fe³⁺ / Cl⁻]','#b8791a','بلورات صفراء بنية','yellow-brown crystals','·6H2O'],
+['Fe2SO43','Fe3','SO4','كبريتات الحديد III [Fe³⁺ / SO₄²⁻]','Iron(III) sulfate [Fe³⁺ / SO₄²⁻]','#d8c58a','مسحوق أصفر مبيض','pale yellow powder',''],
+['FeNO33','Fe3','NO3','نترات الحديد III [Fe³⁺ / NO₃⁻]','Iron(III) nitrate [Fe³⁺ / NO₃⁻]','#b8791a','بلورات بنفسجية/صفراء','violet-yellow crystals','·9H2O'],
+['FeSO4','Fe2','SO4','كبريتات الحديد II (حديثة التحضير) [Fe²⁺ / SO₄²⁻]','Iron(II) sulfate (freshly prepared) [Fe²⁺ / SO₄²⁻]','#a9d6a2','بلورات خضراء باهتة','pale green crystals','·7H2O'],
+['FeCl2','Fe2','Cl','كلوريد الحديد II [Fe²⁺ / Cl⁻]','Iron(II) chloride [Fe²⁺ / Cl⁻]','#b9d2a0','بلورات خضراء مصفرة','pale green crystals','·4H2O'],
+['FeS','Fe2','S','كبريتيد الحديد II [Fe²⁺ / S²⁻]','Iron(II) sulfide [Fe²⁺ / S²⁻]','#141414','مسحوق أسود','black powder',''],
+['CuSO4','Cu','SO4','كبريتات النحاس II [Cu²⁺ / SO₄²⁻]','Copper(II) sulfate [Cu²⁺ / SO₄²⁻]','#1e78e6','بلورات زرقاء لامعة','bright blue crystals','·5H2O'],
+['CuCl2','Cu','Cl','كلوريد النحاس II [Cu²⁺ / Cl⁻]','Copper(II) chloride [Cu²⁺ / Cl⁻]','#239678','بلورات خضراء مزرقة','blue-green crystals','·2H2O'],
+['CuNO3','Cu','NO3','نترات النحاس II [Cu²⁺ / NO₃⁻]','Copper(II) nitrate [Cu²⁺ / NO₃⁻]','#2778cc','بلورات زرقاء','blue crystals','·3H2O'],
+['CuS','Cu','S','كبريتيد النحاس II [Cu²⁺ / S²⁻]','Copper(II) sulfide [Cu²⁺ / S²⁻]','#141414','مسحوق أسود','black powder',''],
+['CdSO4','Cd','SO4','كبريتات الكادميوم [Cd²⁺ / SO₄²⁻]','Cadmium sulfate [Cd²⁺ / SO₄²⁻]','#f6f6f2','بلورات بيضاء','white crystals','·8/3H2O'],
+['BiNO33','Bi','NO3','نترات البزموت III [Bi³⁺ / NO₃⁻]','Bismuth(III) nitrate [Bi³⁺ / NO₃⁻]','#f6f6f2','بلورات بيضاء','white crystals','·5H2O'],
+['HgCl2','Hg','Cl','كلوريد الزئبق II [Hg²⁺ / Cl⁻]','Mercury(II) chloride [Hg²⁺ / Cl⁻]','#f6f6f2','بلورات بيضاء (سامة)','white crystals (toxic)',''],
+['AgNO3','Ag','NO3','نترات الفضة (كاشف تأكيدي هام) [Ag⁺ / NO₃⁻]','Silver nitrate (key confirmatory reagent) [Ag⁺ / NO₃⁻]','#f2f2f2','بلورات بيضاء','white crystals',''],
+['AgCl','Ag','Cl','كلوريد الفضة [Ag⁺ / Cl⁻]','Silver chloride [Ag⁺ / Cl⁻]','#f7f7f2','راسب/مسحوق أبيض','white solid',''],
+['AgBr','Ag','Br','بروميد الفضة [Ag⁺ / Br⁻]','Silver bromide [Ag⁺ / Br⁻]','#eae3a8','مسحوق أصفر كريمي','cream solid',''],
+['AgI','Ag','I','يوديد الفضة [Ag⁺ / I⁻]','Silver iodide [Ag⁺ / I⁻]','#f2e68a','مسحوق أصفر شاحب','pale yellow solid',''],
+['PbNO3','Pb','NO3','نترات الرصاص II [Pb²⁺ / NO₃⁻]','Lead(II) nitrate [Pb²⁺ / NO₃⁻]','#f6f6f2','بلورات بيضاء (سامة)','white crystals (toxic)',''],
+['PbCl2','Pb','Cl','كلوريد الرصاص II [Pb²⁺ / Cl⁻]','Lead(II) chloride [Pb²⁺ / Cl⁻]','#f4f4f4','بلورات بيضاء','white crystals',''],
+['PbI2','Pb','I','يوديد الرصاص II [Pb²⁺ / I⁻]','Lead(II) iodide [Pb²⁺ / I⁻]','#f2c500','مسحوق أصفر ذهبي','golden-yellow powder',''],
+['PbSO4','Pb','SO4','كبريتات الرصاص II [Pb²⁺ / SO₄²⁻]','Lead(II) sulfate [Pb²⁺ / SO₄²⁻]','#f8f8f8','مسحوق أبيض','white powder',''],
+['PbAc2','Pb','AC','أسيتات الرصاص II (كاشف S²⁻ / SO₄²⁻) [Pb²⁺ / CH₃COO⁻]','Lead(II) acetate (S²⁻ / SO₄²⁻ reagent) [Pb²⁺ / CH₃COO⁻]','#f6f6f2','بلورات بيضاء (سامة)','white crystals (toxic)','·3H2O'],
+['NiSO4','Ni','SO4','كبريتات النيكل [Ni²⁺ / SO₄²⁻]','Nickel(II) sulfate [Ni²⁺ / SO₄²⁻]','#4fb86a','بلورات خضراء زمردية','emerald-green crystals','·6H2O'],
+['NiCl2','Ni','Cl','كلوريد النيكل [Ni²⁺ / Cl⁻]','Nickel(II) chloride [Ni²⁺ / Cl⁻]','#6cc17a','بلورات خضراء','green crystals','·6H2O'],
+['CoCl2','Co','Cl','كلوريد الكوبالت II [Co²⁺ / Cl⁻]','Cobalt(II) chloride [Co²⁺ / Cl⁻]','#b0405f','بلورات حمراء وردية','pink-red crystals','·6H2O'],
+['CoNO32','Co','NO3','نترات الكوبالت II [Co²⁺ / NO₃⁻]','Cobalt(II) nitrate [Co²⁺ / NO₃⁻]','#a83a4f','بلورات حمراء داكنة','dark-red crystals','·6H2O'],
+['NaOH','Na','OH','هيدروكسيد الصوديوم','Sodium hydroxide','#f0f0f0','أقراص بيضاء','white pellets',''],
+['KOH','K','OH','هيدروكسيد البوتاسيوم','Potassium hydroxide','#f0f0f0','أقراص بيضاء','white pellets',''],
+['BaOH2','Ba','OH','هيدروكسيد الباريوم','Barium hydroxide','#f4f4f4','بلورات بيضاء (سامة)','white crystals (toxic)','·8H2O'],
+['CaOH2','Ca','OH','هيدروكسيد الكالسيوم (ماء الجير)','Calcium hydroxide (limewater)','#f6f6f2','مسحوق أبيض','white powder',''],
+['AlOH3','Al','OH','هيدروكسيد الألومنيوم','Aluminium hydroxide','#f1f4f6','مسحوق أبيض (مذبذب)','white powder (amphoteric)',''],
+['ZnOH2','Zn','OH','هيدروكسيد الخارصين','Zinc hydroxide','#f4f6f6','مسحوق أبيض (مذبذب)','white powder (amphoteric)',''],
+['KMnO4','K','MnO4','برمنجنات البوتاسيوم (كاشف تأكيدي NO₂⁻ / Fe²⁺)','Potassium permanganate (NO₂⁻ / Fe²⁺ confirmatory)','#3d0b4f','بلورات بنفسجية داكنة','dark purple crystals',''],
+['K2CrO4','K','CrO4','كرومات البوتاسيوم','Potassium chromate','#f2c40f','بلورات صفراء','yellow crystals',''],
+['K2Cr2O7','K','Cr2O7','ثاني كرومات البوتاسيوم','Potassium dichromate','#e4570f','بلورات برتقالية حمراء','orange-red crystals',''],
+['KSCN','K','SCN','ثيوسيانات البوتاسيوم (كاشف Fe³⁺ / الدم الصناعي)','Potassium thiocyanate (Fe³⁺ / artificial blood)','#f3efe6','بلورات بيضاء','white crystals',''],
+['NH4SCN','NH4','SCN','ثيوسيانات الأمونيوم (كاشف Fe³⁺ / الدم الصناعي)','Ammonium thiocyanate (Fe³⁺ / artificial blood)','#f4f2ec','بلورات بيضاء','white crystals',''],
+['K4FeCN6','K','FeCN6','فيروسيانيد البوتاسيوم (أزرق بروسيا مع Fe³⁺)','Potassium ferrocyanide (Prussian blue with Fe³⁺)','#e6d868','بلورات صفراء ليمونية','lemon-yellow crystals','·3H2O'],
+['K3FeCN6','K','Fe3CN6','فيريسيانيد البوتاسيوم (أزرق ترنبول مع Fe²⁺)','Potassium ferricyanide (Turnbull blue with Fe²⁺)','#b8292f','بلورات حمراء ياقوتية','ruby-red crystals',''],
+['H2S','H','S','غاز/محلول كبريتيد الهيدروجين (كاشف مجموعتي 2 و 4)','Hydrogen sulfide (Group II & IV reagent)',null,'محلول مائي ذو رائحة البيض الفاسد','aqueous H₂S (rotten-egg odor)',''],
+['HCl','H','Cl','حمض الهيدروكلوريك المخفف (كاشف مجموعة 1 حامضية و 1 قاعدية)','Dilute HCl (Acid Gr.I & Basic Gr.I reagent)',null,'سائل عديم اللون','colorless liquid',''],
+['H2SO4','H','SO4','حمض الكبريتيك المخفف','Dilute sulfuric acid',null,'سائل عديم اللون','colorless liquid',''],
+['H2SO4C','H','SO4','حمض الكبريتيك المركز (كاشف مجموعة 2 حامضية والحلقة البنية)','Concentrated H₂SO₄ (Acid Gr.II & brown ring)',null,'سائل زيتي كثيف عديم اللون','dense oily colorless liquid',''],
+['HNO3','H','NO3','حمض النيتريك المخفف','Dilute nitric acid',null,'سائل عديم اللون','colorless liquid',''],
+['HNO3C','H','NO3','حمض النيتريك المركز','Concentrated nitric acid',null,'سائل حامضي كثيف','dense fuming acid',''],
+['NH3','NH4','OH','محلول الأمونيا (كاشف مجموعة 3 قاعدية)','Ammonia solution (Basic Gr.III reagent)',null,'سائل عديم اللون ذو رائحة نفاذة','colorless pungent liquid',''],
+['NESSLER','K','I','كاشف نسيلر (للكشف عن NH₄⁺)','Nessler reagent (NH₄⁺ test)','#f2e874','محلول قلوي أصفر شاحب','pale yellow alkaline solution',''],
+['DMG','H','DMG','ثنائي ميثيل جليوكسيم DMG (كاشف Ni²⁺)','Dimethylglyoxime DMG (Ni²⁺ reagent)',null,'محلول عديم اللون','colourless solution',''],
+['Na3CoNO26','Na','CoNO26','هكسا نيترو كوبالتات الصوديوم Na₃[Co(NO₂)₆]','Sodium hexanitritocobaltate Na₃[Co(NO₂)₆]','#e8b800','مسحوق أصفر برتقالي','yellow-orange powder',''],
+['TARTARIC','H','TAR','حمض الطرطريك','Tartaric acid','#f7f7f5','بلورات بيضاء','white crystals',''],
+['I2','K','I3','محلول اليود I₂ (كاشف الثيوكبريتات)','Iodine solution I₂ (thiosulfate reagent)',null,'محلول بني محمر','brown solution',''],
+['CUMETAL','Cu0','M0','قطع فلز النحاس Cu (لتجربة النترات)','Copper metal pieces Cu (nitrate test)','#b87333','قطع حمراء برتقالية لامعة','shiny orange-red pieces',''],
+['AcOH','H','AC','حمض الخليك المخفف','Dilute acetic acid',null,'سائل عديم اللون برائحة الخل','colorless liquid, vinegar smell',''],
+['H3PO4','H','PO4','حمض الفوسفوريك المخفف','Dilute phosphoric acid',null,'سائل عديم اللون','colorless liquid',''],
+['H2C2O4','H','OX','حمض الأكساليك المخفف','Dilute oxalic acid','#f7f7f5','بلورات بيضاء (محلول عديم اللون)','white crystals (colorless solution)','·2H2O']];
+const SB={};SBL.forEach(r=>SB[r[0]]={id:r[0],c:r[1],a:r[2],ar:r[3],en:r[4],col:r[5],lk:[r[6],r[7]],hy:r[8],f:r[0]==='H2S'?'H2S':r[0]==='NH4OX'?'(NH4)2C2O4':r[0]==='K4FeCN6'?'K4[Fe(CN)6]':r[0]==='K3FeCN6'?'K3[Fe(CN)6]':cmp(r[1],r[2])});
+SB.NH3.f='NH4OH';
+SB.NESSLER.f='K2HgI4';SB.I2.f='I2';SB.DMG.f='C4H8N2O2';SB.Na3CoNO26.f='Na3[Co(NO2)6]';SB.TARTARIC.f='C4H6O6';SB.CUMETAL.f='Cu';
+
+const PRESETS=[
+['book_b1_pb_hcl','📘 الكتاب | قاعدية 1: Pb²⁺ + HCl المخفف (يذوب في الماء الساخن ويترسب بالتبريد)','Book | Basic Gr.I: Pb²⁺ + dil. HCl (dissolves in hot water, re-forms on cooling)',[['sol','PbNO3',5],['sol','HCl',1],['heat']]],
+['book_b1_pb_h2so4','📘 الكتاب | قاعدية 1: Pb²⁺ + H₂SO₄ (أبيض يذوب في NaOH الساخن)','Book | Basic Gr.I: Pb²⁺ + H₂SO₄ (white, soluble in hot NaOH)',[['sol','PbNO3',5],['sol','H2SO4',1],['sol','NaOH',1],['heat']]],
+['book_b1_pb_naoh','📘 الكتاب | قاعدية 1: Pb²⁺ + NaOH (قليل ثم فائض)','Book | Basic Gr.I: Pb²⁺ + NaOH (few drops, then excess)',[['sol','PbNO3',5],['sol','NaOH',1],['sol','NaOH',5]]],
+['book_b1_pb_nh3','📘 الكتاب | قاعدية 1: Pb²⁺ + NH₄OH (قليل ثم فائض: لا يذوب)','Book | Basic Gr.I: Pb²⁺ + NH₄OH (few drops, then excess: does not dissolve)',[['sol','PbNO3',5],['sol','NH3',1],['sol','NH3',5]]],
+['book_b1_pb_ki','📘 الكتاب | قاعدية 1: Pb²⁺ + KI (قليل ثم فائض مركز)','Book | Basic Gr.I: Pb²⁺ + KI (few drops, then excess)',[['sol','PbNO3',5],['sol','KI',1],['sol','KI',5]]],
+['book_b1_pb_cro4','📘 الكتاب | قاعدية 1: Pb²⁺ + K₂CrO₄ (أصفر يذوب في NaOH الساخن)','Book | Basic Gr.I: Pb²⁺ + K₂CrO₄ (yellow, soluble in hot NaOH)',[['sol','PbNO3',5],['sol','K2CrO4',1],['sol','NaOH',1],['heat']]],
+['book_b1_pb_cro4_hno3','📘 الكتاب | قاعدية 1: Pb²⁺ + K₂CrO₄ (أصفر يذوب في HNO₃ المخفف الساخن)','Book | Basic Gr.I: Pb²⁺ + K₂CrO₄ (yellow, soluble in hot dil. HNO₃)',[['sol','PbNO3',5],['sol','K2CrO4',1],['sol','HNO3',1],['heat']]],
+['book_b1_pb_h2s','📘 الكتاب | قاعدية 1: Pb²⁺ + H₂S (أسود يذوب في HNO₃ المخفف الساخن)','Book | Basic Gr.I: Pb²⁺ + H₂S (black, soluble in hot dil. HNO₃)',[['sol','PbNO3',5],['sol','H2S',1],['sol','HNO3',1],['heat']]],
+['book_b2_bi_h2s','📘 الكتاب | قاعدية 2: Bi³⁺ + HCl مخفف + H₂S (بني يذوب في HNO₃ ساخن)','Book | Basic Gr.II: Bi³⁺ + dil. HCl + H₂S (brown, soluble in hot HNO₃)',[['sol','BiNO33',5],['sol','HCl',1],['sol','H2S',1],['sol','HNO3',1],['heat']]],
+['book_b2_cu_h2s','📘 الكتاب | قاعدية 2: Cu²⁺ + HCl مخفف + H₂S (أسود يذوب في HNO₃ ساخن)','Book | Basic Gr.II: Cu²⁺ + dil. HCl + H₂S (black, soluble in hot HNO₃)',[['sol','CuSO4',5],['sol','HCl',1],['sol','H2S',1],['sol','HNO3',1],['heat']]],
+['book_b2_cd_h2s','📘 الكتاب | قاعدية 2: Cd²⁺ + HCl مخفف + H₂S (أصفر كناري يذوب في HNO₃ ساخن)','Book | Basic Gr.II: Cd²⁺ + dil. HCl + H₂S (canary yellow, soluble in hot HNO₃)',[['sol','CdSO4',5],['sol','HCl',1],['sol','H2S',1],['sol','HNO3',1],['heat']]],
+['book_b2_bi_naoh','📘 الكتاب | قاعدية 2: Bi³⁺ + NaOH (أبيض لا يذوب في الزيادة)','Book | Basic Gr.II: Bi³⁺ + NaOH (white, insoluble in excess)',[['sol','BiNO33',5],['sol','NaOH',1],['sol','NaOH',5]]],
+['book_b2_bi_nh3','📘 الكتاب | قاعدية 2: Bi³⁺ + NH₄OH (أبيض لا يذوب في الزيادة)','Book | Basic Gr.II: Bi³⁺ + NH₄OH (white, insoluble in excess)',[['sol','BiNO33',5],['sol','NH3',1],['sol','NH3',5]]],
+['book_b2_bi_ki','📘 الكتاب | قاعدية 2: Bi³⁺ + KI (أسود يذوب في الزيادة محلول أصفر)','Book | Basic Gr.II: Bi³⁺ + KI (black, dissolves in excess: yellow solution)',[['sol','BiNO33',5],['sol','KI',1],['sol','KI',5]]],
+['book_b2_bi_h2o','📘 الكتاب | قاعدية 2: Bi³⁺ + ماء (راسب أبيض)','Book | Basic Gr.II: Bi³⁺ + water (white precipitate)',[['sol','BiNO33',5],['water']]],
+['book_b2_bi_cr','📘 الكتاب | قاعدية 2: Bi³⁺ + K₂Cr₂O₇ (أصفر لا يذوب في الزيادة)','Book | Basic Gr.II: Bi³⁺ + K₂Cr₂O₇ (yellow, insoluble in excess)',[['sol','BiNO33',5],['sol','K2Cr2O7',1],['sol','K2Cr2O7',5]]],
+['book_b2_cu_naoh','📘 الكتاب | قاعدية 2: Cu²⁺ + NaOH (أزرق لا يذوب في الزيادة)','Book | Basic Gr.II: Cu²⁺ + NaOH (bluish, insoluble in excess)',[['sol','CuSO4',5],['sol','NaOH',1],['sol','NaOH',5]]],
+['book_b2_cu_nh3','📘 الكتاب | قاعدية 2: Cu²⁺ + NH₄OH (أخضر ثم محلول أزرق داكن)','Book | Basic Gr.II: Cu²⁺ + NH₄OH (greenish, then intense blue solution)',[['sol','CuSO4',5],['sol','NH3',1],['sol','NH3',5]]],
+['book_b2_cu_fe','📘 الكتاب | قاعدية 2: Cu²⁺ + K₄[Fe(CN)₆] (بني محمر)','Book | Basic Gr.II: Cu²⁺ + K₄[Fe(CN)₆] (reddish-brown)',[['sol','CuSO4',5],['sol','K4FeCN6',1]]],
+['book_b2_cu_scn','📘 الكتاب | قاعدية 2: Cu²⁺ + NH₄SCN (أسود لا يذوب في الزيادة)','Book | Basic Gr.II: Cu²⁺ + NH₄SCN (black, insoluble in excess)',[['sol','CuSO4',5],['sol','NH4SCN',1],['sol','NH4SCN',5]]],
+['book_b2_cd_naoh','📘 الكتاب | قاعدية 2: Cd²⁺ + NaOH (أبيض لا يذوب في الزيادة)','Book | Basic Gr.II: Cd²⁺ + NaOH (white, insoluble in excess)',[['sol','CdSO4',5],['sol','NaOH',1],['sol','NaOH',5]]],
+['book_b2_cd_nh3','📘 الكتاب | قاعدية 2: Cd²⁺ + NH₄OH (أبيض يذوب في الزيادة)','Book | Basic Gr.II: Cd²⁺ + NH₄OH (white, dissolves in excess)',[['sol','CdSO4',5],['sol','NH3',1],['sol','NH3',5]]],
+['book_b2_cd_fe','📘 الكتاب | قاعدية 2: Cd²⁺ + K₄[Fe(CN)₆] (أبيض)','Book | Basic Gr.II: Cd²⁺ + K₄[Fe(CN)₆] (white)',[['sol','CdSO4',5],['sol','K4FeCN6',1]]],
+['book_b3_al_nh3','📘 الكتاب | قاعدية 3: Al³⁺ + NH₄Cl + NH₄OH (أبيض جيلاتيني يذوب في NaOH أو HCl)','Book | Basic Gr.III: Al³⁺ + NH₄Cl + NH₄OH (white gelatinous, soluble in NaOH or HCl)',[['sol','AlCl3',5],['sol','NH4Cl',1],['sol','NH3',1],['sol','HCl',3]]],
+['book_b3_al_naoh','📘 الكتاب | قاعدية 3: Al³⁺ + NaOH (أبيض يذوب في الزيادة أو HCl)','Book | Basic Gr.III: Al³⁺ + NaOH (white, dissolves in excess or HCl)',[['sol','AlCl3',5],['sol','NaOH',1],['sol','NaOH',5]]],
+['book_b3_al_h2s','📘 الكتاب | قاعدية 3: Al³⁺ + NH₄OH + H₂S (أبيض جيلاتيني)','Book | Basic Gr.III: Al³⁺ + NH₄OH + H₂S (white gelatinous)',[['sol','AlCl3',5],['sol','NH3',1],['sol','H2S',5]]],
+['book_b3_al_hpo4','📘 الكتاب | قاعدية 3: Al³⁺ + NH₄OH + Na₂HPO₄ (أبيض جيلاتيني يذوب في HCl)','Book | Basic Gr.III: Al³⁺ + NH₄OH + Na₂HPO₄ (white gelatinous, soluble in HCl)',[['sol','AlCl3',5],['sol','NH3',1],['sol','Na2HPO4',5],['sol','HCl',3]]],
+['book_b3_fe_nh3','📘 الكتاب | قاعدية 3: Fe³⁺ + NH₄OH (بني محمر يذوب في HCl)','Book | Basic Gr.III: Fe³⁺ + NH₄OH (reddish-brown, soluble in HCl)',[['sol','FeCl3',5],['sol','NH3',1],['sol','HCl',3]]],
+['book_b3_fe_h2s','📘 الكتاب | قاعدية 3: Fe³⁺ + NH₄OH + H₂S (أسود يذوب في HCl)','Book | Basic Gr.III: Fe³⁺ + NH₄OH + H₂S (black, soluble in HCl)',[['sol','FeCl3',5],['sol','NH3',1],['sol','H2S',5],['sol','HCl',3]]],
+['book_b4_zn_h2s','📘 الكتاب | قاعدية 4: Zn²⁺ + NH₄OH + H₂S (أبيض يذوب في HCl)','Book | Basic Gr.IV: Zn²⁺ + NH₄OH + H₂S (white, soluble in HCl)',[['sol','ZnSO4',5],['sol','NH3',1],['sol','H2S',1],['sol','HCl',3]]],
+['book_b4_mn_h2s','📘 الكتاب | قاعدية 4: Mn²⁺ + NH₄OH + H₂S (لحمي يذوب في HCl)','Book | Basic Gr.IV: Mn²⁺ + NH₄OH + H₂S (buff, soluble in HCl)',[['sol','MnSO4',5],['sol','NH3',1],['sol','H2S',1],['sol','HCl',3]]],
+['book_b4_co_h2s','📘 الكتاب | قاعدية 4: Co²⁺ + NH₄OH + H₂S (أسود)','Book | Basic Gr.IV: Co²⁺ + NH₄OH + H₂S (black)',[['sol','CoCl2',5],['sol','NH3',1],['sol','H2S',1],['sol','HNO3C',1],['heat']]],
+['book_b4_ni_h2s','📘 الكتاب | قاعدية 4: Ni²⁺ + NH₄OH + H₂S (أسود)','Book | Basic Gr.IV: Ni²⁺ + NH₄OH + H₂S (black)',[['sol','NiSO4',5],['sol','NH3',1],['sol','H2S',1],['sol','HNO3C',1],['heat']]],
+['book_b4_zn_naoh','📘 الكتاب | قاعدية 4: Zn²⁺ + NaOH (أبيض يذوب في الزيادة)','Book | Basic Gr.IV: Zn²⁺ + NaOH (white, dissolves in excess)',[['sol','ZnSO4',5],['sol','NaOH',1],['sol','NaOH',5]]],
+['book_b4_zn_nh3','📘 الكتاب | قاعدية 4: Zn²⁺ + NH₄OH (أبيض يذوب في الزيادة)','Book | Basic Gr.IV: Zn²⁺ + NH₄OH (white, dissolves in excess)',[['sol','ZnSO4',5],['sol','NH3',1],['sol','NH3',5]]],
+['book_b4_zn_fe4','📘 الكتاب | قاعدية 4: Zn²⁺ + K₄[Fe(CN)₆] (أبيض يذوب في NaOH)','Book | Basic Gr.IV: Zn²⁺ + K₄[Fe(CN)₆] (white, soluble in NaOH)',[['sol','ZnSO4',5],['sol','K4FeCN6',1],['sol','NaOH',3]]],
+['book_b4_zn_fe3','📘 الكتاب | قاعدية 4: Zn²⁺ + K₃[Fe(CN)₆] (بني مصفر)','Book | Basic Gr.IV: Zn²⁺ + K₃[Fe(CN)₆] (brownish-yellow)',[['sol','ZnSO4',5],['sol','K3FeCN6',1],['sol','HCl',3]]],
+['book_b4_mn_naoh','📘 الكتاب | قاعدية 4: Mn²⁺ + NaOH (أبيض يتحول لبني فاتح)','Book | Basic Gr.IV: Mn²⁺ + NaOH (white turning buff)',[['sol','MnSO4',5],['sol','NaOH',1]]],
+['book_b4_mn_nh3','📘 الكتاب | قاعدية 4: Mn²⁺ + NH₄OH (أبيض يتحول لبني فاتح)','Book | Basic Gr.IV: Mn²⁺ + NH₄OH (white turning buff)',[['sol','MnSO4',5],['sol','NH3',1]]],
+['book_b4_mn_hpo4','📘 الكتاب | قاعدية 4: Mn²⁺ + NH₄OH + Na₂HPO₄','Book | Basic Gr.IV: Mn²⁺ + NH₄OH + Na₂HPO₄',[['sol','MnSO4',5],['sol','NH3',1],['sol','Na2HPO4',5]]],
+['book_b4_co_naoh','📘 الكتاب | قاعدية 4: Co²⁺ + NaOH (أزرق يتحول لوردي بالزيادة والتسخين)','Book | Basic Gr.IV: Co²⁺ + NaOH (blue, pink with excess and heating)',[['sol','CoCl2',5],['sol','NaOH',1],['sol','NaOH',5],['heat']]],
+['book_b4_co_nh3','📘 الكتاب | قاعدية 4: Co²⁺ + NH₄OH (أزرق يذوب في الزيادة محلول أصفر بني)','Book | Basic Gr.IV: Co²⁺ + NH₄OH (blue, dissolves in excess: yellow-brown)',[['sol','CoCl2',5],['sol','NH3',1],['sol','NH3',5]]],
+['book_b4_co_hpo4','📘 الكتاب | قاعدية 4: Co²⁺ + NH₄OH + Na₂HPO₄ (بنفسجي)','Book | Basic Gr.IV: Co²⁺ + NH₄OH + Na₂HPO₄ (violet)',[['sol','CoCl2',5],['sol','NH3',1],['sol','Na2HPO4',5],['sol','HCl',3]]],
+['book_b4_co_scn','📘 الكتاب | قاعدية 4: Co²⁺ + NH₄SCN (أزرق يتحول لوردي بالماء)','Book | Basic Gr.IV: Co²⁺ + NH₄SCN (blue, pink with water)',[['sol','CoCl2',5],['sol','NH4SCN',1],['water']]],
+['book_b4_ni_naoh','📘 الكتاب | قاعدية 4: Ni²⁺ + NaOH (أخضر مزرق يذوب في NH₄OH)','Book | Basic Gr.IV: Ni²⁺ + NaOH (greenish, soluble in NH₄OH)',[['sol','NiSO4',5],['sol','NaOH',1],['sol','NaOH',5],['sol','NH3',5]]],
+['book_b4_ni_nh3','📘 الكتاب | قاعدية 4: Ni²⁺ + NH₄OH (أخضر مزرق يذوب في الزيادة محلول أزرق)','Book | Basic Gr.IV: Ni²⁺ + NH₄OH (greenish, dissolves in excess: blue)',[['sol','NiSO4',5],['sol','NH3',1],['sol','NH3',5]]],
+['book_b4_ni_hpo4','📘 الكتاب | قاعدية 4: Ni²⁺ + NH₄OH + Na₂HPO₄ (أخضر مزرق)','Book | Basic Gr.IV: Ni²⁺ + NH₄OH + Na₂HPO₄ (greenish)',[['sol','NiSO4',5],['sol','NH3',1],['sol','Na2HPO4',5],['sol','NH3',5]]],
+['book_b4_ni_fe3','📘 الكتاب | قاعدية 4: Ni²⁺ + K₃[Fe(CN)₆] (أصفر)','Book | Basic Gr.IV: Ni²⁺ + K₃[Fe(CN)₆] (yellow)',[['sol','NiSO4',5],['sol','K3FeCN6',1]]],
+['book_b4_ni_dmg','📘 الكتاب | قاعدية 4: Ni²⁺ + DMG + NH₄OH (راسب أحمر)','Book | Basic Gr.IV: Ni²⁺ + DMG + NH₄OH (red precipitate)',[['sol','NiSO4',5],['sol','NH3',1],['sol','DMG',1]]],
+['book_b5_ca_co3','📘 الكتاب | قاعدية 5: Ca²⁺ + (NH₄)₂CO₃ (أبيض يذوب في الأحماض)','Book | Basic Gr.V: Ca²⁺ + (NH₄)₂CO₃ (white, soluble in acids)',[['sol','CaCl2',5],['sol','NH4Cl',1],['sol','NH3',1],['sol','NH42CO3',1],['sol','HCl',3]]],
+['book_b5_sr_co3','📘 الكتاب | قاعدية 5: Sr²⁺ + (NH₄)₂CO₃ (أبيض يذوب في الأحماض)','Book | Basic Gr.V: Sr²⁺ + (NH₄)₂CO₃ (white, soluble in acids)',[['sol','SrCl2',5],['sol','NH4Cl',1],['sol','NH3',1],['sol','NH42CO3',1],['sol','HCl',3]]],
+['book_b5_ba_co3','📘 الكتاب | قاعدية 5: Ba²⁺ + (NH₄)₂CO₃ (أبيض يذوب في الأحماض)','Book | Basic Gr.V: Ba²⁺ + (NH₄)₂CO₃ (white, soluble in acids)',[['sol','BaCl2',5],['sol','NH4Cl',1],['sol','NH3',1],['sol','NH42CO3',1],['sol','HCl',3]]],
+['book_b5_sr_so4','📘 الكتاب | قاعدية 5: Sr²⁺ + CaSO₄ المشبع (راسب أبيض لا يذوب في الأحماض)','Book | Basic Gr.V: Sr²⁺ + saturated CaSO₄ (white, insoluble in acids)',[['sol','SrCl2',5],['sol','CaSO4',1],['sol','HCl',3]]],
+['book_b5_ba_so4','📘 الكتاب | قاعدية 5: Ba²⁺ + CaSO₄ المشبع (راسب أبيض ثقيل لا يذوب في الأحماض)','Book | Basic Gr.V: Ba²⁺ + saturated CaSO₄ (heavy white, insoluble in acids)',[['sol','BaCl2',5],['sol','CaSO4',1],['sol','HCl',3]]],
+['book_b5_ca_so4','📘 الكتاب | قاعدية 5: Ca²⁺ + CaSO₄ المشبع (لا تفاعل)','Book | Basic Gr.V: Ca²⁺ + saturated CaSO₄ (no reaction)',[['sol','CaCl2',5],['sol','CaSO4',1]]],
+['book_b5_ca_cro4','📘 الكتاب | قاعدية 5: Ca²⁺ + K₂CrO₄ (لون أصفر فقط، لا راسب)','Book | Basic Gr.V: Ca²⁺ + K₂CrO₄ (yellow colour only, no ppt)',[['sol','CaCl2',5],['sol','K2CrO4',1]]],
+['book_b5_sr_cro4','📘 الكتاب | قاعدية 5: Sr²⁺ + K₂CrO₄ (أصفر يذوب في حمض الخليك)','Book | Basic Gr.V: Sr²⁺ + K₂CrO₄ (yellow, soluble in acetic acid)',[['sol','SrCl2',5],['sol','K2CrO4',1],['sol','AcOH',3]]],
+['book_b5_ba_cro4','📘 الكتاب | قاعدية 5: Ba²⁺ + K₂CrO₄ (أصفر لا يذوب في حمض الخليك)','Book | Basic Gr.V: Ba²⁺ + K₂CrO₄ (yellow, insoluble in acetic acid)',[['sol','BaCl2',5],['sol','K2CrO4',1],['sol','AcOH',3]]],
+['book_b5_ca_hpo4','📘 الكتاب | قاعدية 5: Ca²⁺ + NH₄OH + Na₂HPO₄ (أبيض يذوب في HCl)','Book | Basic Gr.V: Ca²⁺ + NH₄OH + Na₂HPO₄ (white, soluble in HCl)',[['sol','CaCl2',5],['sol','NH3',1],['sol','Na2HPO4',5],['sol','HCl',3]]],
+['book_b5_ba_hpo4','📘 الكتاب | قاعدية 5: Ba²⁺ + NH₄OH + Na₂HPO₄ (أبيض يذوب في HCl)','Book | Basic Gr.V: Ba²⁺ + NH₄OH + Na₂HPO₄ (white, soluble in HCl)',[['sol','BaCl2',5],['sol','NH3',1],['sol','Na2HPO4',5],['sol','HCl',3]]],
+['book_b5_ca_fe','📘 الكتاب | قاعدية 5: Ca²⁺ + NH₄Cl + K₄[Fe(CN)₆] (أبيض يذوب في الأحماض)','Book | Basic Gr.V: Ca²⁺ + NH₄Cl + K₄[Fe(CN)₆] (white, soluble in acids)',[['sol','CaCl2',5],['sol','NH4Cl',1],['sol','K4FeCN6',1],['sol','HCl',3]]],
+['book_b5_ca_ox','📘 الكتاب | قاعدية 5: Ca²⁺ + NH₄OH + أكسالات الأمونيوم (أبيض يذوب في HCl)','Book | Basic Gr.V: Ca²⁺ + NH₄OH + ammonium oxalate (white, soluble in HCl)',[['sol','CaCl2',5],['sol','NH3',1],['sol','NH4OX',1],['sol','HCl',3]]],
+['book_b5_ba_cr2','📘 الكتاب | قاعدية 5: Ba²⁺ + K₂Cr₂O₇ (أصفر)','Book | Basic Gr.V: Ba²⁺ + K₂Cr₂O₇ (yellow)',[['sol','BaCl2',5],['sol','K2Cr2O7',1]]],
+['book_b5_ca_flame','📘 الكتاب | قاعدية 5: Ca²⁺ لهب (أحمر طوبي)','Book | Basic Gr.V: Ca²⁺ flame (brick red)',[['sol','CaCl2',5],['flame']]],
+['book_b5_sr_flame','📘 الكتاب | قاعدية 5: Sr²⁺ لهب (قرمزي)','Book | Basic Gr.V: Sr²⁺ flame (crimson)',[['sol','SrCl2',5],['flame']]],
+['book_b5_ba_flame','📘 الكتاب | قاعدية 5: Ba²⁺ لهب (أخضر تفاحي)','Book | Basic Gr.V: Ba²⁺ flame (apple green)',[['sol','BaCl2',5],['flame']]],
+['book_b6_nh4_naoh','📘 الكتاب | قاعدية 6: NH₄⁺ + NaOH + تسخين (نشادر، سحب بيضاء)','Book | Basic Gr.VI: NH₄⁺ + NaOH + heating (NH₃, white clouds)',[['sol','NH4Cl',5],['sol','NaOH',1],['heat']]],
+['book_b6_nh4_na2co3','📘 الكتاب | قاعدية 6: NH₄⁺ + Na₂CO₃ + تسخين (نشادر)','Book | Basic Gr.VI: NH₄⁺ + Na₂CO₃ + heating (NH₃)',[['sol','NH4Cl',5],['sol','Na2CO3',1],['heat']]],
+['book_b6_nh4_co','📘 الكتاب | قاعدية 6: NH₄⁺ + Na₃[Co(NO₂)₆] (أصفر)','Book | Basic Gr.VI: NH₄⁺ + Na₃[Co(NO₂)₆] (yellow ppt)',[['sol','NH4Cl',5],['sol','Na3CoNO26',1]]],
+['book_b6_mg_naoh','📘 الكتاب | قاعدية 6: Mg²⁺ + NaOH (أبيض جيلاتيني يذوب في HCl)','Book | Basic Gr.VI: Mg²⁺ + NaOH (white gelatinous, soluble in HCl)',[['sol','MgCl2',5],['sol','NaOH',1],['sol','HCl',3]]],
+['book_b6_mg_na2co3','📘 الكتاب | قاعدية 6: Mg²⁺ + Na₂CO₃ (أبيض يذوب في HCl)','Book | Basic Gr.VI: Mg²⁺ + Na₂CO₃ (white, soluble in HCl)',[['sol','MgCl2',5],['sol','Na2CO3',1],['heat'],['sol','HCl',3]]],
+['book_b6_mg_nh3','📘 الكتاب | قاعدية 6: Mg²⁺ + NH₄OH (أبيض جيلاتيني يذوب في HCl)','Book | Basic Gr.VI: Mg²⁺ + NH₄OH (white gelatinous, soluble in HCl)',[['sol','MgCl2',5],['sol','NH3',1],['sol','HCl',3]]],
+['book_b6_mg_hpo4','📘 الكتاب | قاعدية 6: Mg²⁺ + NH₄OH + Na₂HPO₄ (أبيض بلوري بعد الرج)','Book | Basic Gr.VI: Mg²⁺ + NH₄OH + Na₂HPO₄ (white crystalline after shaking)',[['sol','MgCl2',5],['sol','NH3',1],['sol','Na2HPO4',5],['shake']]],
+['book_b6_na_co','📘 الكتاب | قاعدية 6: Na⁺ + Na₃[Co(NO₂)₆] (محلول أصفر، سالب)','Book | Basic Gr.VI: Na⁺ + Na₃[Co(NO₂)₆] (yellow solution, negative)',[['sol','NaCl',5],['sol','Na3CoNO26',1]]],
+['book_b6_na_flame','📘 الكتاب | قاعدية 6: Na⁺ لهب (أصفر ذهبي)','Book | Basic Gr.VI: Na⁺ flame (golden yellow)',[['sol','NaCl',5],['flame']]],
+['book_b6_k_co','📘 الكتاب | قاعدية 6: K⁺ + Na₃[Co(NO₂)₆] (راسب أصفر)','Book | Basic Gr.VI: K⁺ + Na₃[Co(NO₂)₆] (yellow ppt)',[['sol','KCl',5],['sol','Na3CoNO26',1]]],
+['book_b6_k_tart','📘 الكتاب | قاعدية 6: K⁺ + حمض الطرطريك (أبيض بلوري بعد الرج)','Book | Basic Gr.VI: K⁺ + tartaric acid (white crystalline after shaking)',[['sol','KCl',5],['sol','TARTARIC',1],['shake']]],
+['book_b6_k_flame','📘 الكتاب | قاعدية 6: K⁺ لهب (بنفسجي)','Book | Basic Gr.VI: K⁺ flame (violet)',[['sol','KCl',5],['flame']]],
+['book_a3_so4','📘 الكتاب | حامضية 3: كبريتات SO₄²⁻ + BaCl₂ (محلول مركز) ثم HCl المخفف','Book | Acid Gr.III: SO₄²⁻ + BaCl₂ (conc. solution) then dil. HCl',[['sol','Na2SO4',5],['sol','BaCl2',1],['sol','HCl',1]]],
+['book_a3_po4','📘 الكتاب | حامضية 3: فوسفات PO₄³⁻ + BaCl₂ (محلول مركز) ثم HCl المخفف','Book | Acid Gr.III: PO₄³⁻ + BaCl₂ (conc. solution) then dil. HCl',[['sol','Na3PO4',5],['sol','BaCl2',1],['sol','HCl',1]]],
+['book_a3_b4o7','📘 الكتاب | حامضية 3: بورات B₄O₇²⁻ + BaCl₂ (محلول مركز) ثم HCl المخفف','Book | Acid Gr.III: B₄O₇²⁻ + BaCl₂ (conc. solution) then dil. HCl',[['sol','Na2B4O7',5],['sol','BaCl2',1],['sol','HCl',1]]],
+['book_a3_so4_ag','📘 الكتاب | حامضية 3: SO₄²⁻ + AgNO₃ (راسب أبيض شاحب أو عكارة تزداد بالتسخين)','Book | Acid Gr.III: SO₄²⁻ + AgNO₃ (pale white ppt/turbidity, more on heating)',[['sol','Na2SO4',5],['sol','AgNO3',1],['heat']]],
+['book_a3_po4_ag','📘 الكتاب | حامضية 3: PO₄³⁻ + AgNO₃ (أصفر) ثم HNO₃ المخفف','Book | Acid Gr.III: PO₄³⁻ + AgNO₃ (yellow) then dil. HNO₃',[['sol','Na3PO4',5],['sol','AgNO3',1],['sol','HNO3',1]]],
+['book_a3_po4_ag_nh3','📘 الكتاب | حامضية 3: PO₄³⁻ + AgNO₃ (أصفر) ثم NH₄OH','Book | Acid Gr.III: PO₄³⁻ + AgNO₃ (yellow) then NH₄OH',[['sol','Na3PO4',5],['sol','AgNO3',1],['sol','NH3',5]]],
+['book_a3_b4o7_ag','📘 الكتاب | حامضية 3: B₄O₇²⁻ + AgNO₃ (أبيض ← بني بالتسخين)','Book | Acid Gr.III: B₄O₇²⁻ + AgNO₃ (white → brown on heating)',[['sol','Na2B4O7',5],['sol','AgNO3',1],['heat']]],
+['book_a3_b4o7_ag_dil','📘 الكتاب | حامضية 3: B₄O₇²⁻ (محلول مخفف) + AgNO₃ (بني مباشرة)','Book | Acid Gr.III: B₄O₇²⁻ (dilute solution) + AgNO₃ (brown at once)',[['sol','Na2B4O7',5],['water'],['water'],['sol','AgNO3',1]]],
+['book_a3_so4_pb','📘 الكتاب | حامضية 3: SO₄²⁻ + أسيتات الرصاص (أبيض يذوب في H₂SO₄ المركز الساخن)','Book | Acid Gr.III: SO₄²⁻ + lead acetate (white, soluble in hot conc. H₂SO₄)',[['sol','Na2SO4',5],['sol','PbAc2',1],['sol','H2SO4C',1],['heat']]],
+['book_a3_po4_fe','📘 الكتاب | حامضية 3: PO₄³⁻ + FeCl₃ (أبيض مصفر) ثم HCl المخفف','Book | Acid Gr.III: PO₄³⁻ + FeCl₃ (yellowish-white) then dil. HCl',[['sol','Na3PO4',5],['sol','FeCl3',1],['sol','HCl',1]]],
+['book_a2_cl','📘 الكتاب | حامضية 2: كلوريد Cl⁻ (ملح صلب + H₂SO₄ المركز)','Book | Acid Gr.II: Cl⁻ (solid salt + conc. H₂SO₄)',[['solid','NaCl'],['sol','H2SO4C',1]]],
+['book_a2_br','📘 الكتاب | حامضية 2: بروميد Br⁻ (ملح صلب + H₂SO₄ المركز)','Book | Acid Gr.II: Br⁻ (solid salt + conc. H₂SO₄)',[['solid','KBr'],['sol','H2SO4C',1]]],
+['book_a2_i','📘 الكتاب | حامضية 2: يوديد I⁻ (ملح صلب + H₂SO₄ المركز + تسخين)','Book | Acid Gr.II: I⁻ (solid salt + conc. H₂SO₄ + warming)',[['solid','KI'],['sol','H2SO4C',1],['heat']]],
+['book_a2_no3','📘 الكتاب | حامضية 2: نترات NO₃⁻ (ملح صلب + H₂SO₄ المركز + تسخين + قطع نحاس)','Book | Acid Gr.II: NO₃⁻ (solid salt + conc. H₂SO₄ + heating + Cu pieces)',[['solid','NaNO3'],['sol','H2SO4C',1],['heat'],['sol','CUMETAL',0.3]]],
+['book_a2_cl_ag','📘 الكتاب | حامضية 2: Cl⁻ + AgNO₃ ثم NH₄OH','Book | Acid Gr.II: Cl⁻ + AgNO₃ then NH₄OH',[['sol','NaCl',5],['sol','AgNO3',1],['sol','NH3',5]]],
+['book_a2_br_ag','📘 الكتاب | حامضية 2: Br⁻ + AgNO₃ ثم NH₄OH (شحيح الذوبان)','Book | Acid Gr.II: Br⁻ + AgNO₃ then NH₄OH (sparingly soluble)',[['sol','KBr',5],['sol','AgNO3',1],['sol','NH3',5]]],
+['book_a2_i_ag','📘 الكتاب | حامضية 2: I⁻ + AgNO₃ ثم NH₄OH (لا يذوب)','Book | Acid Gr.II: I⁻ + AgNO₃ then NH₄OH (insoluble)',[['sol','KI',5],['sol','AgNO3',1],['sol','NH3',5]]],
+['book_a2_cl_pb','📘 الكتاب | حامضية 2: Cl⁻ + أسيتات الرصاص + ماء مغلي (يذوب ويترسب بالتبريد)','Book | Acid Gr.II: Cl⁻ + lead acetate + boiling (dissolves, re-forms on cooling)',[['sol','NaCl',5],['sol','PbAc2',1],['heat']]],
+['book_a2_br_pb','📘 الكتاب | حامضية 2: Br⁻ + أسيتات الرصاص + ماء مغلي','Book | Acid Gr.II: Br⁻ + lead acetate + boiling',[['sol','KBr',5],['sol','PbAc2',1],['heat']]],
+['book_a2_i_pb','📘 الكتاب | حامضية 2: I⁻ + أسيتات الرصاص + ماء مغلي','Book | Acid Gr.II: I⁻ + lead acetate + boiling',[['sol','KI',5],['sol','PbAc2',1],['heat']]],
+['book_a2_ring','📘 الكتاب | حامضية 2: نترات NO₃⁻ تجربة الحلقة البنية (FeSO₄ + H₂SO₄ المركز ثم رج)','Book | Acid Gr.II: NO₃⁻ brown ring test (FeSO₄ + conc. H₂SO₄, then shake)',[['sol','NaNO3',5],['sol','FeSO4',3],['sol','H2SO4C',1]]],
+['book_a1_co3','📘 الكتاب | حامضية 1: كربونات CO₃²⁻ (ملح صلب + HCl مخفف)','Book | Acid Gr.I: CO₃²⁻ (solid salt + dil. HCl)',[['solid','Na2CO3'],['sol','HCl',1]]],
+['book_a1_hco3','📘 الكتاب | حامضية 1: بيكربونات HCO₃⁻ (ملح صلب + HCl مخفف)','Book | Acid Gr.I: HCO₃⁻ (solid salt + dil. HCl)',[['solid','NaHCO3'],['sol','HCl',1]]],
+['book_a1_s2o3','📘 الكتاب | حامضية 1: ثيوكبريتات S₂O₃²⁻ (ملح صلب + HCl مخفف)','Book | Acid Gr.I: S₂O₃²⁻ (solid salt + dil. HCl)',[['solid','Na2S2O3'],['sol','HCl',1]]],
+['book_a1_co3_mg','📘 الكتاب | حامضية 1: CO₃²⁻ + MgSO₄ (على البارد) ثم حمض معدني مخفف','Book | Acid Gr.I: CO₃²⁻ + MgSO₄ (cold), then dil. mineral acid',[['sol','Na2CO3',5],['sol','MgSO4',1],['sol','HCl',1]]],
+['book_a1_hco3_mg','📘 الكتاب | حامضية 1: HCO₃⁻ + MgSO₄ (راسب بالتسخين) ثم حمض معدني مخفف','Book | Acid Gr.I: HCO₃⁻ + MgSO₄ (ppt on heating), then dil. mineral acid',[['sol','NaHCO3',5],['sol','MgSO4',1],['heat'],['sol','HCl',1]]],
+['book_a1_co3_ba','📘 الكتاب | حامضية 1: CO₃²⁻ + BaCl₂ (على البارد) ثم حمض معدني مخفف','Book | Acid Gr.I: CO₃²⁻ + BaCl₂ (cold), then dil. mineral acid',[['sol','Na2CO3',5],['sol','BaCl2',1],['sol','HCl',1]]],
+['book_a1_hco3_ba','📘 الكتاب | حامضية 1: HCO₃⁻ + BaCl₂ (راسب بالتسخين) ثم حمض معدني مخفف','Book | Acid Gr.I: HCO₃⁻ + BaCl₂ (ppt on heating), then dil. mineral acid',[['sol','NaHCO3',5],['sol','BaCl2',1],['heat'],['sol','HCl',1]]],
+['book_a1_co3_ag','📘 الكتاب | حامضية 1: CO₃²⁻ + AgNO₃ (أبيض ← بني بالتسخين)','Book | Acid Gr.I: CO₃²⁻ + AgNO₃ (white → brown on heating)',[['sol','Na2CO3',5],['sol','AgNO3',1],['heat']]],
+['book_a1_co3_ag_dil','📘 الكتاب | حامضية 1: CO₃²⁻ (محلول مخفف) + AgNO₃ (بني مباشرة)','Book | Acid Gr.I: CO₃²⁻ (dilute solution) + AgNO₃ (brown at once)',[['sol','Na2CO3',5],['water'],['water'],['sol','AgNO3',1]]],
+['book_a1_hco3_ag','📘 الكتاب | حامضية 1: HCO₃⁻ + AgNO₃ (راسب أبيض بالتسخين)','Book | Acid Gr.I: HCO₃⁻ + AgNO₃ (white ppt on heating)',[['sol','NaHCO3',5],['sol','AgNO3',1],['heat']]],
+['book_a1_s2o3_ag','📘 الكتاب | حامضية 1: S₂O₃²⁻ + AgNO₃ (أبيض ← أصفر ← برتقالي ← بني ← أسود)','Book | Acid Gr.I: S₂O₃²⁻ + AgNO₃ (white → yellow → orange → brown → black)',[['sol','AgNO3',5],['sol','Na2S2O3',1]]],
+['book_a1_s2o3_i2','📘 الكتاب | حامضية 1: S₂O₃²⁻ + محلول اليود (زوال اللون)','Book | Acid Gr.I: S₂O₃²⁻ + iodine solution (colour disappears)',[['sol','Na2S2O3',5],['sol','I2',1]]],
+['book_a1_s2o3_fe','📘 الكتاب | حامضية 1: S₂O₃²⁻ + FeCl₃ (بنفسجي داكن يزول)','Book | Acid Gr.I: S₂O₃²⁻ + FeCl₃ (dark violet, fades)',[['sol','Na2S2O3',5],['sol','FeCl3',1]]],
+['book_a1_s2o3_pb','📘 الكتاب | حامضية 1: S₂O₃²⁻ + أسيتات الرصاص (أبيض ← أسود بالتسخين)','Book | Acid Gr.I: S₂O₃²⁻ + lead acetate (white → black on heating)',[['sol','Na2S2O3',5],['sol','PbAc2',1],['heat']]],
+['book_a1_s2o3_mn','📘 الكتاب | حامضية 1: S₂O₃²⁻ + H₂SO₄ المخفف + KMnO₄ (زوال اللون)','Book | Acid Gr.I: S₂O₃²⁻ + dil. H₂SO₄ + KMnO₄ (colour disappears)',[['sol','Na2S2O3',5],['sol','H2SO4',1],['sol','KMnO4',1]]],
+['a1_co3','حامضية 1: كربونات CO₃²⁻ (أساسي HCl + تأكيدي MgSO₄ على البارد)','Acid Gr.I: Carbonate CO₃²⁻ (HCl + cold MgSO₄)',[['sol','Na2CO3',5],['sol','MgSO4',1],['sol','HCl',1]]],
+['a1_hco3','حامضية 1: بيكربونات HCO₃⁻ (تأكيدي MgSO₄ ثم تسخين 🔥)','Acid Gr.I: Bicarbonate HCO₃⁻ (MgSO₄ then heat 🔥)',[['sol','NaHCO3',5],['sol','MgSO4',1],['heat']]],
+['a1_so3','حامضية 1: كبريتيت SO₃²⁻ (أساسي HCl + تأكيدي AgNO₃ ثم تسخين 🔥)','Acid Gr.I: Sulfite SO₃²⁻ (HCl + AgNO₃ then heat 🔥)',[['sol','Na2SO3',5],['sol','AgNO3',1],['heat']]],
+['a1_s2o3','حامضية 1: ثيوكبريتات S₂O₃²⁻ (أساسي HCl: غاز SO₂ + راسب كبريت أصفر)','Acid Gr.I: Thiosulfate S₂O₃²⁻ (HCl: SO₂ + yellow S)',[['sol','Na2S2O3',5],['sol','HCl',1]]],
+['a1_s2o3_ag','حامضية 1: ثيوكبريتات S₂O₃²⁻ (تأكيدي AgNO₃: أبيض ← أسود)','Acid Gr.I: Thiosulfate S₂O₃²⁻ (AgNO₃: white → black)',[['sol','Na2S2O3',5],['sol','AgNO3',1]]],
+['a1_s','حامضية 1: كبريتيد S²⁻ (أساسي HCl + تأكيدي أسيتات الرصاص)','Acid Gr.I: Sulfide S²⁻ (HCl + lead acetate)',[['sol','Na2S',5],['sol','PbAc2',1]]],
+['a1_no2','حامضية 1: نيتريت NO₂⁻ (أساسي HCl + تأكيدي KMnO₄ المحمضة)','Acid Gr.I: Nitrite NO₂⁻ (HCl + acidified KMnO₄)',[['sol','NaNO2',5],['sol','KMnO4',1],['sol','H2SO4',1]]],
+['a2_cl','حامضية 2: كلوريد Cl⁻ (تأكيدي AgNO₃ + ذوبان في الأمونيا NH₄OH)','Acid Gr.II: Chloride Cl⁻ (AgNO₃ + dissolves in NH₄OH)',[['sol','NaCl',5],['sol','AgNO3',1],['sol','NH3',5]]],
+['a2_br','حامضية 2: بروميد Br⁻ (تأكيدي AgNO₃ أصفر كريمي + فائض NH₄OH)','Acid Gr.II: Bromide Br⁻ (AgNO₃ cream ppt + excess NH₄OH)',[['sol','KBr',5],['sol','AgNO3',1],['sol','NH3',5]]],
+['a2_i','حامضية 2: يوديد I⁻ (تأكيدي AgNO₃ أصفر لا يذوب في NH₄OH)','Acid Gr.II: Iodide I⁻ (AgNO₃ yellow ppt insoluble in NH₄OH)',[['sol','KI',5],['sol','AgNO3',1],['sol','NH3',5]]],
+['a2_no3','حامضية 2: نترات NO₃⁻ (تجربة الحلقة البنية: FeSO₄ + H₂SO₄ مركز)','Acid Gr.II: Nitrate NO₃⁻ (Brown ring: FeSO₄ + conc. H₂SO₄)',[['sol','NaNO3',5],['sol','FeSO4',1],['sol','H2SO4C',1]]],
+['a3_so4','حامضية 3: كبريتات SO₄²⁻ (BaCl₂ راسب أبيض لا يذوب في HCl)','Acid Gr.III: Sulfate SO₄²⁻ (BaCl₂ white ppt insoluble in HCl)',[['sol','Na2SO4',5],['sol','BaCl2',1],['sol','HCl',1]]],
+['a3_po4','حامضية 3: فوسفات PO₄³⁻ (BaCl₂ راسب أبيض يذوب في HCl + تأكيدي AgNO₃)','Acid Gr.III: Phosphate PO₄³⁻ (BaCl₂ soluble in HCl)',[['sol','Na3PO4',5],['sol','BaCl2',1],['sol','HCl',1]]],
+['a_ac','كشف الأسيتات CH₃COO⁻ (تأكيدي FeCl₃ أحمر دموي ← راسب بني بالتسخين 🔥)','Acetate CH₃COO⁻ test (FeCl₃ blood-red → brown ppt on heating 🔥)',[['sol','NaAc',5],['sol','FeCl3',1],['heat']]],
+['b1_ag','قاعدية 1: الفضة Ag⁺ (HCl مخفف راسب أبيض + يذوب في NH₄OH)','Basic Gr.I: Silver Ag⁺ (dil. HCl white ppt + dissolves in NH₄OH)',[['sol','AgNO3',5],['sol','HCl',1],['sol','NH3',5]]],
+['b1_pb','قاعدية 1: الرصاص Pb²⁺ (HCl مخفف + تسخين 🔥 + تأكيدي KI أصفر ذهبي)','Basic Gr.I: Lead Pb²⁺ (dil. HCl + heat 🔥 + KI golden yellow)',[['sol','PbNO3',5],['sol','HCl',1],['heat'],['sol','KI',1]]],
+['b2_cu','قاعدية 2: النحاس Cu²⁺ (HCl + H₂S راسب أسود + تأكيدي NH₄OH أزرق داكن)','Basic Gr.II: Copper Cu²⁺ (HCl + H₂S black ppt)',[['sol','CuSO4',5],['sol','HCl',1],['sol','H2S',1]]],
+['b2_cu_nh3','قاعدية 2: النحاس Cu²⁺ (تأكيدي NH₄OH قليل ثم فائض: معقد أزرق داكن)','Basic Gr.II: Copper Cu²⁺ (NH₄OH excess: deep-blue complex)',[['sol','CuSO4',5],['sol','NH3',1],['sol','NH3',5]]],
+['b2_cd','قاعدية 2: الكادميوم Cd²⁺ (HCl + H₂S راسب أصفر ليموني)','Basic Gr.II: Cadmium Cd²⁺ (HCl + H₂S lemon-yellow ppt)',[['sol','CdSO4',5],['sol','HCl',1],['sol','H2S',1]]],
+['b3_fe3_hpo4','قاعدية 3: الحديديك Fe³⁺ (NH₄OH قليل + فائض Na₂HPO₄ ← أصفر باهت يذوب في HCl)','Basic Gr.III: Fe³⁺ (NH₄OH few + excess Na₂HPO₄ → pale yellow)',[['solid','FeCl3'],['water'],['sol','NH3',1],['sol','Na2HPO4',5]]],
+['b3_fe3_scn','قاعدية 3: الحديديك Fe³⁺ (تأكيدي NH₄SCN: تجربة الدم الصناعي)','Basic Gr.III: Fe³⁺ (NH₄SCN: artificial blood red complex)',[['sol','FeCl3',5],['sol','NH4SCN',1]]],
+['b3_fe3_pruss','قاعدية 3: الحديديك Fe³⁺ (تأكيدي K₄[Fe(CN)₆]: راسب أزرق بروسيا)','Basic Gr.III: Fe³⁺ (K₄[Fe(CN)₆]: Prussian blue ppt)',[['sol','FeCl3',5],['sol','K4FeCN6',1]]],
+['b3_fe2_turn','قاعدية 3: الحديدوز Fe²⁺ (تأكيدي K₃[Fe(CN)₆]: راسب أزرق ترنبول)','Basic Gr.III: Fe²⁺ (K₃[Fe(CN)₆]: Turnbull blue ppt)',[['sol','FeSO4',5],['sol','K3FeCN6',1]]],
+['b3_al','قاعدية 3: الألومنيوم Al³⁺ (NH₄Cl + NH₄OH راسب أبيض + يذوب في فائض NaOH)','Basic Gr.III: Al³⁺ (NH₄Cl + NH₄OH white ppt + excess NaOH)',[['sol','AlCl3',5],['sol','NH4Cl',1],['sol','NH3',1],['sol','NaOH',5]]],
+['b4_mn','قاعدية 4: المنجنيز Mn²⁺ (NH₄Cl + NH₄OH + H₂S راسب وردي سلموني)','Basic Gr.IV: Mn²⁺ (NH₄Cl + NH₄OH + H₂S salmon-pink ppt)',[['sol','MnSO4',5],['sol','NH4Cl',1],['sol','NH3',1],['sol','H2S',1]]],
+['b4_zn','قاعدية 4: الخارصين Zn²⁺ (NH₄Cl + NH₄OH + H₂S راسب أبيض)','Basic Gr.IV: Zn²⁺ (NH₄Cl + NH₄OH + H₂S white ppt)',[['sol','ZnSO4',5],['sol','NH4Cl',1],['sol','NH3',1],['sol','H2S',1]]],
+['b4_ni','قاعدية 4: النيكل Ni²⁺ (NH₄Cl + NH₄OH + H₂S راسب أسود)','Basic Gr.IV: Ni²⁺ (NH₄Cl + NH₄OH + H₂S black ppt)',[['sol','NiCl2',5],['sol','NH4Cl',1],['sol','NH3',1],['sol','H2S',1]]],
+['b5_ca','قاعدية 5: الكالسيوم Ca²⁺ ((NH₄)₂CO₃ + تأكيدي أكسالات الأمونيوم (NH₄)₂C₂O₄)','Basic Gr.V: Calcium Ca²⁺ ((NH₄)₂CO₃ + (NH₄)₂C₂O₄ test)',[['sol','CaCl2',5],['sol','NH4Cl',1],['sol','NH3',1],['sol','NH4OX',1]]],
+['b6_mg','قاعدية 6: المغنيسيوم Mg²⁺ (NH₄Cl + NH₄OH + Na₂HPO₄ راسب أبيض بلوري)','Basic Gr.VI: Magnesium Mg²⁺ (NH₄Cl + NH₄OH + Na₂HPO₄ white ppt)',[['sol','MgSO4',5],['sol','NH4Cl',1],['sol','NH3',1],['sol','Na2HPO4',1]]],
+['b6_nh4','قاعدية 6: الأمونيوم NH₄⁺ (NaOH + تسخين 🔥 ثم كاشف نسيلر)','Basic Gr.VI: Ammonium NH₄⁺ (NaOH + heat 🔥)',[['sol','NH4Cl',5],['sol','NaOH',1],['heat']]]
+];
+
+const PPT={'Cu|OH':['#2d82e5','أزرق','blue','جيلاتيني','gelatinous'],'Cu|CO3':['#46b396','أزرق مخضر','blue-green','ناعم','fine (basic copper carbonate)'],
+'Fe3|OH':['#8b3a14','بني محمر','reddish-brown','جيلاتيني','gelatinous'],'Fe2|OH':['#698c53','أخضر باهت قذر','dirty green','جيلاتيني','gelatinous (browns in air)'],
+'Fe2|CO3':['#c9d3b9','أبيض مخضر','greenish-white','ناعم','fine'],'Ag|Cl':['#f7f7f2','أبيض','white','متجبن (يذوب في NH₄OH ويتحول إلى بنفسجي في ضوء الشمس المباشر)','curdy (soluble in NH₄OH; turns violet in direct sunlight)'],'Ag|I':['#f2e04a','أصفر','yellow','متجبن (لا يذوب في NH₄OH)','curdy (insoluble in NH₄OH)'],
+'Ag|CO3':['#e6dc8a','أصفر باهت','pale yellow','ناعم','fine'],'Ag|CrO4':['#9b2d1f','أحمر طوبي','brick-red','كثيف','dense'],'Ag|SCN':['#f7f7f2','أبيض','white','متجبن','curdy'],
+'Ag|SO3':['#f6f6f2','أبيض','white','ناعم (يسود بالتسخين)','fine (blackens on heating)'],'Ag|S2O3':['#242424','أبيض يتحول تدريجياً إلى أصفر ثم بني ثم أسود (Ag₂S)','white turning yellow → brown → black (Ag₂S)','كثيف','dense'],
+'Ba|SO4':['#fafafa','أبيض','white','كثيف ناعم (لا يذوب في HCl المخفف)','dense, fine (insoluble in dil. HCl)'],'Ba|CO3':['#f4f4f4','أبيض','white','ناعم (يذوب في HCl)','fine (soluble in HCl)'],'Ba|CrO4':['#f0d000','أصفر','yellow','ناعم','fine'],'Ba|Cr2O7':['#f0d000','أصفر (كرومات الباريوم)','yellow (barium chromate)','ناعم','fine'],'Ba|OX':['#f5f5f5','أبيض','white','بلوري ناعم','fine crystalline'],
+'Sr|CO3':['#f5f5f5','أبيض','white','ناعم','fine'],'Sr|SO4':['#f5f5f5','أبيض','white','ناعم','fine'],'Sr|OX':['#f5f5f5','أبيض','white','بلوري ناعم','fine crystalline'],
+'Ca|CO3':['#f4f4f0','أبيض','white','ناعم','fine'],'Ca|OX':['#f5f5f5','أبيض','white','بلوري ناعم (لا يذوب في حمض الخليك ويذوب في HCl)','fine crystalline (insoluble in AcOH, soluble in HCl)'],
+'Pb|I':['#f2c500','أصفر ذهبي','golden yellow','متبلور','crystalline'],'Pb|Cl':['#f4f4f4','أبيض','white','متبلور (يذوب بالتسخين)','crystalline (dissolves on heating)'],
+'Pb|SO4':['#f8f8f8','أبيض','white','كثيف','dense'],'Pb|CO3':['#f4f4f4','أبيض','white','ناعم','fine'],'Pb|CrO4':['#f0c000','أصفر','yellow','كثيف','dense'],'Pb|Cr2O7':['#f0c000','أصفر (كرومات الرصاص)','yellow (lead chromate)','كثيف','dense'],'Pb|OH':['#f6f6f6','أبيض','white','جيلاتيني (مذبذب)','gelatinous (amphoteric)'],
+'Mn|OH':['#f4dce6','أبيض وردي (يتحول لبني في الهواء)','pink-white (browns in air)','جيلاتيني','gelatinous'],'Mn|S':['#e9c7d5','وردي سلموني','salmon-pink','ناعم','fine'],'Mn|CO3':['#f4e6ec','أبيض وردي','pinkish-white','ناعم','fine'],
+'Cr|OH':['#48a96c','أخضر جيلاتيني','green','جيلاتيني','gelatinous'],'Cd|S':['#f2d21e','أصفر ليموني','lemon-yellow','ناعم','fine'],'Bi|OH':['#f5f5f5','أبيض','white','جيلاتيني','gelatinous'],'Bi|S':['#141414','أسود','black','ناعم','fine'],'Hg|S':['#141414','أسود','black','ناعم','fine'],'Hg|OH':['#e4b818','أصفر (أكسيد الزئبق HgO)','yellow (mercury(II) oxide HgO)','ناعم','fine']};
+const w=['#f5f5f5','أبيض','white'],k=['#141414','أسود','black'];
+Object.assign(PPT,{'Mg|OH':[...w,'جيلاتيني','gelatinous'],'Al|OH':['#f1f4f6','أبيض','white','جيلاتيني (مذبذب)','gelatinous (amphoteric)'],'Zn|OH':['#f4f6f6','أبيض','white','جيلاتيني (مذبذب)','gelatinous (amphoteric)'],
+'Ni|OH':['#6cc17a','أخضر تفاحي','apple-green','جيلاتيني','gelatinous'],'Co|OH':['#6b8fd8','أزرق (يتحول إلى وردي)','blue (turns pink)','جيلاتيني','gelatinous'],
+'Mg|CO3':[...w,'ناعم','fine'],'Zn|CO3':[...w,'ناعم','fine'],'Ni|CO3':['#a8d8a8','أخضر فاتح','light green','ناعم','fine'],'Co|CO3':['#c46a9a','وردي بنفسجي','pink-violet','ناعم','fine'],
+'Ca|SO4':[...w,'ناعم (شحيح الذوبان)','fine (sparingly soluble)'],'Ag|Br':['#f0e9a0','أصفر شاحب','pale yellow','متجبن (شحيح الذوبان في NH₄OH)','curdy (sparingly soluble in NH₄OH)'],'Pb|Br':[...w,'متبلور','crystalline'],
+'Cu|S':[...k,'ناعم','fine'],'Ag|S':[...k,'ناعم','fine'],'Pb|S':[...k,'ناعم','fine'],'Fe2|S':[...k,'ناعم','fine'],'Ni|S':[...k,'ناعم','fine'],'Co|S':[...k,'ناعم','fine'],'Zn|S':[...w,'ناعم','fine'],
+'Ca|PO4':[...w,'جيلاتيني','gelatinous'],'Ba|PO4':[...w,'ناعم (يذوب في HCl المخفف)','fine (soluble in dil. HCl)'],'Mg|PO4':[...w,'بلوري','crystalline'],'Zn|PO4':[...w,'ناعم','fine'],'Pb|PO4':[...w,'ناعم','fine'],'Al|PO4':[...w,'جيلاتيني','gelatinous'],
+'Ag|PO4':['#f0d84a','أصفر','yellow','ناعم (يذوب في الأمونيا وحمض النيتريك)','fine (soluble in NH₃ & HNO₃)'],'Fe3|PO4':['#efe7a6','أصفر باهت (أبيض مصفر، يذوب في HCl المخفف)','pale yellow (yellowish-white, soluble in dil. HCl)','ناعم','fine'],'Fe3|HPO4':['#efe7a6','أصفر باهت (أبيض مصفر، يذوب في HCl المخفف)','pale yellow (yellowish-white, soluble in dil. HCl)','ناعم','fine'],
+'Fe2|PO4':['#bfc9c4','أبيض مزرق','bluish-white','ناعم','fine'],
+'Cu|PO4':['#8fc8e8','أزرق فاتح','pale blue','ناعم','fine'],'Ni|PO4':['#7ccf8a','أخضر','green','ناعم','fine'],'Co|PO4':['#8e5fb0','بنفسجي','violet','ناعم','fine']});
+
+const W5='#f5f5f5';
+Object.assign(PPT,{
+'Cd|OH':[W5,'أبيض','white','جيلاتيني (لا يذوب في فائض NaOH، يذوب في الأمونيا)','gelatinous (insoluble in excess NaOH, soluble in NH₃)'],'Cd|CO3':[W5,'أبيض','white','ناعم','fine'],'Cd|PO4':[W5,'أبيض','white','ناعم','fine'],'Cd|FeCN6':[W5,'أبيض','white','ناعم','fine'],
+'Bi|CO3':[W5,'أبيض (كربونات البزموت القاعدية)','white (basic bismuth carbonate)','ناعم','fine'],'Bi|I':['#3b2a1c','أسود بني (BiI₃)','brownish-black (BiI₃)','ناعم','fine'],'Bi|PO4':[W5,'أبيض','white','ناعم','fine'],
+'Hg|I':['#d8381f','أحمر قرمزي (HgI₂)','scarlet-red (HgI₂)','ناعم (يذوب في فائض KI)','fine (dissolves in excess KI)'],'Hg|CO3':['#a8552c','بني محمر (HgO)','reddish-brown (HgO)','ناعم','fine'],'Hg|PO4':[W5,'أبيض','white','ناعم','fine'],
+'Cu|CrO4':['#8a4a1c','بني محمر','reddish-brown','ناعم','fine'],'Cu|SO3':['#4fae72','أخضر','green','ناعم','fine'],'Cu|Fe3CN6':['#9aa63c','أخضر مصفر','yellow-green','ناعم','fine'],
+'Pb|SO3':[W5,'أبيض','white','ناعم','fine'],'Pb|FeCN6':[W5,'أبيض','white','ناعم','fine'],
+'Ag|FeCN6':[W5,'أبيض','white','ناعم','fine'],'Ag|Fe3CN6':['#d9622b','برتقالي محمر','orange-red','ناعم','fine'],'Ag|Cr2O7':['#9b2d1f','أحمر طوبي','brick-red','كثيف','dense'],
+'Ni|FeCN6':['#b9d9b0','أخضر باهت','pale green','ناعم','fine'],'Co|FeCN6':['#6fb08a','أخضر','green','ناعم','fine'],'Zn|FeCN6':[W5,'أبيض','white','ناعم','fine'],'Zn|Fe3CN6':['#b98a3a','أصفر بني','yellow-brown','ناعم','fine'],'Mn|FeCN6':[W5,'أبيض مصفر','yellowish-white','ناعم','fine'],'Fe2|FeCN6':['#cfd8e6','أبيض مزرق (يزرق في الهواء)','bluish-white (turns blue in air)','ناعم','fine'],
+'Ba|SO3':[W5,'أبيض','white','ناعم (يذوب في HCl مع SO₂)','fine (dissolves in HCl with SO₂)'],'Ca|SO3':[W5,'أبيض','white','ناعم (يذوب في HCl مع SO₂)','fine (dissolves in HCl with SO₂)'],'Sr|SO3':[W5,'أبيض','white','ناعم','fine'],'Zn|SO3':[W5,'أبيض','white','ناعم','fine'],
+'Sr|PO4':[W5,'أبيض','white','ناعم','fine'],'Mn|PO4':['#f1dbe4','أبيض وردي','pinkish-white','ناعم','fine'],'Cr|PO4':['#6fae7c','أخضر','green','ناعم','fine']});
+for(const k of Object.keys(PPT)){if(k.endsWith('|PO4')){const h=k.replace('|PO4','|HPO4');if(!PPT[h])PPT[h]=PPT[k]}}
+PPT['Ag|S2O3'][0]='#ece9dd';
+const SPK=new Set(['Fe3|HCO3','Al|HCO3','Cr|CO3','Cr|HCO3','Cr|S','Cu|I','Fe3|I','Fe3|SCN','Fe3|CO3','Ag|OH','Al|CO3','Fe3|S','Al|S','Mg|HCO3','Fe3|AC']);
+const GAS=['فوران قوي وتصاعد غاز عديم اللون (CO₂)','Strong effervescence with evolution of colorless gas (CO₂)'];
+const EXC=[['Cu','NH3','Cu(OH)₂ + 4NH₃ → [Cu(NH₃)₄]²⁺ + 2OH⁻','#1a3cb8','يذوب الراسب ويتكون محلول أزرق داكن (معقد رباعي أمين النحاس II)','Precipitate dissolves giving a deep-blue solution, [Cu(NH₃)₄]²⁺'],
+['Zn','NH3','Zn(OH)₂ + 4NH₃ → [Zn(NH₃)₄]²⁺ + 2OH⁻',null,'يذوب الراسب في فائض الأمونيا ويعطي محلولاً عديم اللون','Precipitate dissolves in excess ammonia (colorless solution)'],
+['Cd','NH3','Cd(OH)₂ + 4NH₃ → [Cd(NH₃)₄]²⁺ + 2OH⁻',null,'يذوب الراسب في فائض الأمونيا ويعطي محلولاً عديم اللون','Precipitate dissolves in excess ammonia (colorless solution)'],
+['Ni','NH3','Ni(OH)₂ + 6NH₃ → [Ni(NH₃)₆]²⁺ + 2OH⁻','#3c5fd4','يذوب الراسب ويتكون محلول أزرق بنفسجي','Precipitate dissolves giving a blue-violet [Ni(NH₃)₆]²⁺ solution'],
+['Co','NH3','Co(OH)₂ + 6NH₃ → [Co(NH₃)₆]²⁺ + 2OH⁻','#a0663a','يذوب الراسب ويتكون محلول بني مصفر (يغمق في الهواء)','Precipitate dissolves giving a yellow-brown solution (darkens in air)'],
+['Al','base','Al(OH)₃ + OH⁻ → [Al(OH)₄]⁻',null,'يذوب الراسب الأبيض في فائض القاعدة القوية (مذبذب) ويعطي محلولاً عديم اللون','White precipitate dissolves in excess strong base (amphoteric) giving a colorless solution'],
+['Zn','base','Zn(OH)₂ + 2OH⁻ → [Zn(OH)₄]²⁻',null,'يذوب الراسب الأبيض في فائض القاعدة القوية (مذبذب) ويعطي محلولاً عديم اللون','White precipitate dissolves in excess strong base (amphoteric) giving a colorless solution'],
+['Cr','base','Cr(OH)₃ + OH⁻ → [Cr(OH)₄]⁻','#2b8a57','يذوب الراسب الأخضر في فائض القاعدة ويعطي محلولاً أخضر زمردياً','Green precipitate dissolves in excess strong base giving an emerald-green solution'],
+['Pb','base','Pb(OH)₂ + 2OH⁻ → [Pb(OH)₄]²⁻',null,'يذوب الراسب الأبيض في فائض القاعدة القوية (بلمبيت)','White precipitate dissolves in excess strong base (plumbite)']];
+
+function balance(rf,pf){
+  const R=rf.map(x=>parse(x)),P=pf.map(x=>parse(x)),n=R.length+P.length,els=new Set();
+  [...R,...P].forEach(o=>Object.keys(o).forEach(e=>els.add(e)));
+  let best=null,v=Array(n).fill(1);
+  const ok=()=>{for(const e of els){let s=0;R.forEach((o,i)=>s+=(o[e]||0)*v[i]);P.forEach((o,i)=>s-=(o[e]||0)*v[R.length+i]);if(s)return false}return true};
+  const rec=i=>{if(i===n){if(ok()){const s=v.reduce((a,b)=>a+b);if(!best||s<best[0])best=[s,[...v]]}return}
+    for(let k=1;k<=6;k++){v[i]=k;rec(i+1)}};
+  rec(0);return best?best[1]:Array(n).fill(1);
+}
+const eqStr=(R,P)=>{const c=balance(R.map(r=>r.f),P.map(p=>p.f)),t=(x,k)=>(c[k]>1?c[k]:'')+F(x.f)+`<small>(${x.s})</small>`;
+  return R.map((x,i)=>t(x,i)).join(' + ')+' → '+P.map((x,i)=>t(x,R.length+i)).join(' + ').replace(/ \+ $/,'')};
+const aq=f=>({f,s:'aq'}),sd=f=>({f,s:'s'}),gs=f=>({f,s:'g'}),lq=f=>({f,s:'l'});
+const GS={
+  CO3:[...GAS,[lq('H2O'),gs('CO2')]],
+  HCO3:[...GAS,[lq('H2O'),gs('CO2')]],
+  SO3:['تصاعد غاز SO₂ ذو الرائحة النفاذة الذي يخضّر ورقة مبللة بثاني كرومات البوتاسيوم المحمضة','Pungent SO₂ gas evolves (turns acidified K₂Cr₂O₇ paper green)',[lq('H2O'),gs('SO2')]],
+  S2O3:['يتكون راسب أبيض مصفر بعد الرج مع تصاعد غاز عديم اللون ذي رائحة نفاذة (SO₂)','Yellowish-white precipitate after shaking, with evolution of colorless gas of pungent odor (SO₂)',[sd('S'),lq('H2O'),gs('SO2')]],
+  NO2:['تصاعد أبخرة بنية حمراء من NO₂ (تزداد عند ملامسة الهواء)','Reddish-brown NO₂ fumes evolve (intensifies on contact with air)',[gs('NO2'),lq('H2O')]],
+  S:['تصاعد غاز كبريتيد الهيدروجين برائحة البيض الفاسد (يسوّد ورقة خلات الرصاص)','Rotten-egg smell: H₂S gas (blackens lead acetate paper)',[gs('H2S')]]
+};
+
+const newTube=()=>({bk:null,level:0,solid:null,solidCol:null,subs:[],ions:new Set(),ppts:[],tint:null,nh3:false,hco3Mg:false,fe3Ac:false,gasUntil:0,heatUntil:0,log:[],hist:[]});
+const snap=t=>({bk:t.bk?JSON.parse(JSON.stringify(t.bk)):null,level:t.level,solid:t.solid,solidCol:t.solidCol,subs:[...t.subs],ions:[...t.ions],ppts:t.ppts.map(p=>({...p})),tint:t.tint,nh3:t.nh3,hco3Mg:t.hco3Mg,fe3Ac:t.fe3Ac,gasUntil:t.gasUntil,heatUntil:t.heatUntil,log:t.log.map(l=>({...l}))});
+const restoreSnap=(t,s)=>{Object.assign(t,snap(s),{ions:new Set(s.ions)})};
+let tubes=(LS.get('tubes',null)||[null,null,null]).map(t=>t?{...newTube(),...t,ions:new Set(t.ions||[]),hist:Array.isArray(t.hist)?t.hist:[],gasUntil:0,heatUntil:0}:newTube());
+const save=()=>LS.set('tubes',tubes.map(t=>({...t,ions:[...t.ions],hist:t.hist.slice(-25)})));
+const pushLog=(t,ar,en,eq)=>{t._sq=(t._sq||0)+1;t.log.unshift({ar,en,eq:eq||''});t.log=t.log.slice(0,14)};
+const liq=t=>{if(t.tint)return[t.tint,.82];for(const[i,c,o]of ICOL)if(t.ions.has(i))return[c,o];return['#9cd4f2',.38]};
+const name=id=>L(SB[id].ar,SB[id].en);
+
+function dissolve(t){const s=SB[t.solid];t.subs.push(s.id);t.ions.add(s.c);t.ions.add(s.a);t.solid=null;t.solidCol=null}
+function addPpt(t,c,a,hex,ar,en,f,extra){t.ppts.push({c,a,hex,ar,en,f,...extra})}
+
+const RULES=[
+{ions:['NO2','MnO4','H'],fn:t=>{['NO2','MnO4'].forEach(i=>t.ions.delete(i));t.ions.add('NO3');
+  return['تجربة تأكيدية للنيتريت (NO₂⁻): يزول اللون البنفسجي لبرمنجنات البوتاسيوم المحمضة','Confirmatory NO₂⁻ test: purple acidified KMnO₄ is decolorised','5NO₂⁻ + 2MnO₄⁻ + 6H⁺ → 5NO₃⁻ + 2Mn²⁺ + 3H₂O']}},
+{ions:['Fe2','MnO4','H'],fn:t=>{['Fe2','MnO4'].forEach(i=>t.ions.delete(i));t.ions.add('Fe3');
+  return['يزول اللون البنفسجي لبرمنجنات البوتاسيوم ويتحول المحلول إلى أصفر بني (أكسدة Fe²⁺ إلى Fe³⁺)','Purple permanganate is decolorised; solution turns yellow-brown (Fe²⁺ oxidised to Fe³⁺)','MnO₄⁻ + 5Fe²⁺ + 8H⁺ → Mn²⁺ + 5Fe³⁺ + 4H₂O']}},
+{ions:['NO3','Fe2','H'],fn:t=>{if(!t.subs.includes('H2SO4C'))return null;['NO3'].forEach(i=>t.ions.delete(i));bkT(t).ring=true;
+  return['تجربة الحلقة البنية للنترات (NO₃⁻): تتكون حلقة بنية داكنة عند السطح الفاصل بين الحمض والمحلول (تزول بالرج)','Brown ring test for NO₃⁻: dark brown [Fe(H₂O)₅NO]²⁺ ring forms at the acid-solution interface (disappears on shaking)','2NO₃⁻ + 4H₂SO₄ + 6Fe²⁺ → 6Fe³⁺ + 2NO + 4SO₄²⁻ + 4H₂O · [Fe(H₂O)₆]²⁺ + NO → [Fe(H₂O)₅NO]²⁺ + H₂O']}},
+{ions:['Cu','I'],fn:t=>{['Cu','I'].forEach(i=>t.ions.delete(i));t.tint='#8a5a2b';addPpt(t,'Cu','I','#f1ede2','أبيض','white','CuI',{special:1});
+  return['يتكون راسب أبيض من يوديد النحاس I ويتحول المحلول إلى بني (تحرر اليود I₂)','White CuI precipitate forms and the solution turns brown (iodine I₂ liberated)','2Cu²⁺ + 4I⁻ → 2CuI↓ + I₂']}},
+{ions:['Fe3','I'],fn:t=>{['Fe3','I'].forEach(i=>t.ions.delete(i));t.ions.add('Fe2');t.tint='#7a4a1e';
+  return['يتحول المحلول إلى بني داكن (تحرر اليود واختزال Fe³⁺ إلى Fe²⁺)','Solution turns dark brown (iodine liberated, Fe³⁺ reduced to Fe²⁺)','2Fe³⁺ + 2I⁻ → 2Fe²⁺ + I₂']}},
+{ions:['Fe3','SCN'],fn:t=>{t.ions.delete('SCN');t.tint='#9b0c18';
+  return['تجربة الدم الصناعي: يتكون لون أحمر دموي قاتم فوراً (معقد ثيوسيانات الحديد III) بدون راسب','Artificial blood reaction: deep blood-red [Fe(SCN)]²⁺ complex forms immediately (no precipitate)','Fe³⁺ + SCN⁻ ⇌ [Fe(SCN)]²⁺ (deep blood-red)']}},
+{ions:['Fe3','AC'],fn:t=>{t.tint='#9e1b18';t.fe3Ac=true;
+  return['تجربة تأكيدية للأسيتات (CH₃COO⁻): يتكون لون أحمر دموي (أسيتات الحديد III)، وبالتسخين يتكون راسب بني محمر','Confirmatory acetate test: blood-red iron(III) acetate color forms (gives reddish-brown basic acetate ppt on heating)','3CH₃COO⁻ + Fe³⁺ → Fe(CH₃COO)₃ (blood-red)']}},
+{ions:['Fe3','FeCN6'],fn:t=>{t.ions.delete('FeCN6');t.tint='#0d3b8c';addPpt(t,'Fe3','FeCN6','#0f3c91','أزرق بروسيا داكن','deep Prussian blue','Fe4[Fe(CN)6]3');
+  return['يتكون راسب ولون أزرق بروسيا مميز جداً لأيون الحديد الثلاثي (Fe³⁺)','Characteristic deep Prussian blue precipitate/color for Fe³⁺','4Fe³⁺ + 3[Fe(CN)₆]⁴⁻ → Fe₄[Fe(CN)₆]₃↓ (Prussian blue)']}},
+{ions:['Cu','FeCN6'],fn:t=>{t.ions.delete('FeCN6');addPpt(t,'Cu','FeCN6','#7c2d12','بني محمر (شوكولاتة)','reddish-brown','Cu2[Fe(CN)6]');
+  return['يتكون راسب بني محمر مميز لأيون النحاس الثنائي (Cu²⁺) مع فيروسيانيد البوتاسيوم','Characteristic reddish-brown precipitate for Cu²⁺ with ferrocyanide','2Cu²⁺ + [Fe(CN)₆]⁴⁻ → Cu₂[Fe(CN)₆]↓']}},
+{ions:['Fe2','Fe3CN6'],fn:t=>{t.ions.delete('Fe3CN6');t.tint='#0b357a';addPpt(t,'Fe2','Fe3CN6','#0c3882','أزرق ترنبول داكن','deep Turnbull blue','Fe3[Fe(CN)6]2');
+  return['يتكون راسب ولون أزرق ترنبول داكن لأيون الحديد الثنائي (Fe²⁺) مع فيريسيانيد البوتاسيوم','Deep Turnbull blue precipitate/color for Fe²⁺ with ferricyanide','3Fe²⁺ + 2[Fe(CN)₆]³⁻ → Fe₃[Fe(CN)₆]₂↓']}},
+{ions:['Mg','HCO3'],fn:t=>{t.hco3Mg=true;
+  return['تمييز البيكربونات (HCO₃⁻): لا يتكون راسب على البارد (تتكون بيكربونات المغنيسيوم الذائبة)؛ يتكون راسب أبيض بعد التسخين فقط','Bicarbonate test: no precipitate when cold (soluble Mg(HCO₃)₂); white MgCO₃ forms only on heating','Mg²⁺ + 2HCO₃⁻ → Mg(HCO₃)₂(aq) (cold)']}},
+{ions:['Fe3','CO3'],fn:t=>{['Fe3','CO3'].forEach(i=>t.ions.delete(i));addPpt(t,'Fe3','OH',...PPT['Fe3|OH'].slice(0,1),'بني محمر جيلاتيني','reddish-brown gelatinous','Fe(OH)3');t.gasUntil=Date.now()+5000;
+  return['راسب بني محمر من Fe(OH)₃ مع تصاعد فقاعات CO₂','Reddish-brown Fe(OH)₃ precipitate with CO₂ bubbles','2Fe³⁺ + 3CO₃²⁻ + 3H₂O → 2Fe(OH)₃↓ + 3CO₂↑']}},
+{ions:['Al','CO3'],fn:t=>{['Al','CO3'].forEach(i=>t.ions.delete(i));addPpt(t,'Al','OH','#f1f4f6','أبيض جيلاتيني','white gelatinous','Al(OH)3');t.gasUntil=Date.now()+5000;
+  return['راسب أبيض جيلاتيني من Al(OH)₃ مع تصاعد فقاعات CO₂','White gelatinous Al(OH)₃ precipitate with CO₂ bubbles','2Al³⁺ + 3CO₃²⁻ + 3H₂O → 2Al(OH)₃↓ + 3CO₂↑']}},
+{ions:['Fe3','S'],fn:t=>{const h2s=t.subs[t.subs.length-1]==='H2S',alk=t.ions.has('OH')||t.subs.includes('NH3');
+  if(h2s&&!alk){['Fe3','S'].forEach(i=>t.ions.delete(i));t.ions.add('Fe2');addPpt(t,'S','S','#efe46d','أصفر (كبريت)','yellow (sulfur)','S');
+   return['يختزل H₂S أيون Fe³⁺ إلى Fe²⁺ ويترسب كبريت أصفر عكر (لا يتكون FeS في الوسط الحمضي)','H₂S reduces Fe³⁺ to Fe²⁺ and milky yellow sulfur precipitates (no FeS in acidic medium)','2Fe³⁺ + H₂S → 2Fe²⁺ + S↓ + 2H⁺']}
+  ['Fe3','S'].forEach(i=>t.ions.delete(i));addPpt(t,'Fe2','S','#141414','أسود','black','FeS');
+  return['راسب أسود من FeS مع ترسب كبريت أصفر شاحب (اختزال Fe³⁺)','Black FeS precipitate with pale-yellow sulfur (Fe³⁺ is reduced)','2Fe³⁺ + 3S²⁻ → 2FeS↓ + S↓']}},
+{ions:['Al','S'],fn:t=>{if(t.subs[t.subs.length-1]==='H2S')return null;['Al','S'].forEach(i=>t.ions.delete(i));addPpt(t,'Al','OH','#f1f4f6','أبيض جيلاتيني','white gelatinous','Al(OH)3');t.gasUntil=Date.now()+5000;
+  return['راسب أبيض من Al(OH)₃ وتصاعد غاز H₂S برائحة البيض الفاسد (تحلل مائي كامل)','White Al(OH)₃ precipitate and rotten-egg H₂S gas (complete hydrolysis)','2Al³⁺ + 3S²⁻ + 6H₂O → 2Al(OH)₃↓ + 3H₂S↑']}},
+{ions:['Fe3','HCO3'],fn:t=>{['Fe3','HCO3'].forEach(i=>t.ions.delete(i));addPpt(t,'Fe3','OH','#8b3a14','بني محمر جيلاتيني','reddish-brown gelatinous','Fe(OH)3');t.gasUntil=Date.now()+5000;
+  return['راسب بني محمر من Fe(OH)₃ مع تصاعد CO₂ (تحلل مائي)','Reddish-brown Fe(OH)₃ precipitate with CO₂ (hydrolysis)','Fe³⁺ + 3HCO₃⁻ → Fe(OH)₃↓ + 3CO₂↑']}},
+{ions:['Al','HCO3'],fn:t=>{['Al','HCO3'].forEach(i=>t.ions.delete(i));addPpt(t,'Al','OH','#f1f4f6','أبيض جيلاتيني','white gelatinous','Al(OH)3');t.gasUntil=Date.now()+5000;
+  return['راسب أبيض جيلاتيني من Al(OH)₃ مع تصاعد CO₂ (تحلل مائي)','White gelatinous Al(OH)₃ precipitate with CO₂ (hydrolysis)','Al³⁺ + 3HCO₃⁻ → Al(OH)₃↓ + 3CO₂↑']}},
+{ions:['Cr','CO3'],fn:t=>{['Cr','CO3'].forEach(i=>t.ions.delete(i));addPpt(t,'Cr','OH','#48a96c','أخضر جيلاتيني','green gelatinous','Cr(OH)3');t.gasUntil=Date.now()+5000;
+  return['راسب أخضر من Cr(OH)₃ مع تصاعد فقاعات CO₂','Green Cr(OH)₃ precipitate with CO₂ bubbles','2Cr³⁺ + 3CO₃²⁻ + 3H₂O → 2Cr(OH)₃↓ + 3CO₂↑']}},
+{ions:['Cr','HCO3'],fn:t=>{['Cr','HCO3'].forEach(i=>t.ions.delete(i));addPpt(t,'Cr','OH','#48a96c','أخضر جيلاتيني','green gelatinous','Cr(OH)3');t.gasUntil=Date.now()+5000;
+  return['راسب أخضر من Cr(OH)₃ مع تصاعد CO₂','Green Cr(OH)₃ precipitate with CO₂','Cr³⁺ + 3HCO₃⁻ → Cr(OH)₃↓ + 3CO₂↑']}},
+{ions:['Cr','S'],fn:t=>{if(t.subs[t.subs.length-1]==='H2S')return null;['Cr','S'].forEach(i=>t.ions.delete(i));addPpt(t,'Cr','OH','#48a96c','أخضر جيلاتيني','green gelatinous','Cr(OH)3');t.gasUntil=Date.now()+5000;
+  return['راسب أخضر من Cr(OH)₃ وتصاعد H₂S (تحلل مائي كامل)','Green Cr(OH)₃ precipitate and H₂S gas (complete hydrolysis)','2Cr³⁺ + 3S²⁻ + 6H₂O → 2Cr(OH)₃↓ + 3H₂S↑']}},
+{ions:['Cr2O7','H'],fn:t=>{if(t.subs[t.subs.length-1]!=='H2S')return null;['Cr2O7','S'].forEach(i=>t.ions.delete(i));t.ions.add('Cr');t.tint='#2f8f5a';addPpt(t,'S','S','#efe46d','أصفر (كبريت)','yellow (sulfur)','S');
+  return['يختزل H₂S ثاني الكرومات: يتحول اللون من البرتقالي إلى الأخضر (Cr³⁺) مع ترسب كبريت أصفر','H₂S reduces dichromate: orange turns green (Cr³⁺) with yellow sulfur precipitate','Cr₂O₇²⁻ + 3H₂S + 8H⁺ → 2Cr³⁺ + 3S↓ + 7H₂O']}},
+{ions:['MnO4','H'],fn:t=>{if(t.subs[t.subs.length-1]!=='H2S')return null;['MnO4','S'].forEach(i=>t.ions.delete(i));t.ions.add('Mn');t.tint=null;addPpt(t,'S','S','#efe46d','أصفر (كبريت)','yellow (sulfur)','S');
+  return['يزول اللون البنفسجي لبرمنجنات البوتاسيوم ويترسب كبريت أصفر (يختزل H₂S الـ MnO₄⁻)','Purple permanganate is decolorised and yellow sulfur precipitates (H₂S reduces MnO₄⁻)','2MnO₄⁻ + 5H₂S + 6H⁺ → 2Mn²⁺ + 5S↓ + 8H₂O']}},
+{ions:['Ag','OH'],fn:t=>{['Ag','OH'].forEach(i=>t.ions.delete(i));addPpt(t,'Ag','OH','#5a3b22','بني','brown','Ag2O',{dis:'Ag₂O + 2H⁺ → 2Ag⁺ + H₂O'});
+  return['راسب بني داكن من أكسيد الفضة Ag₂O (يذوب في فائض الأمونيا وحمض النيتريك)','Dark-brown precipitate of silver(I) oxide, Ag₂O (soluble in NH₃ & HNO₃)','2Ag⁺ + 2OH⁻ → Ag₂O↓ + H₂O']}},
+{ions:['Cr2O7','OH'],fn:t=>{['Cr2O7','OH'].forEach(i=>t.ions.delete(i));t.ions.add('CrO4');
+  return['يتحول اللون من البرتقالي إلى الأصفر (كرومات)','Orange → yellow (chromate forms)','Cr₂O₇²⁻ + 2OH⁻ → 2CrO₄²⁻ + H₂O']}},
+{ions:['CrO4','H'],fn:t=>{if(t.subs[t.subs.length-1]==='H2S'){['CrO4','S'].forEach(i=>t.ions.delete(i));t.ions.add('Cr');t.tint='#2f8f5a';addPpt(t,'S','S','#efe46d','أصفر (كبريت)','yellow (sulfur)','S');return['يختزل H₂S الكرومات: يتحول اللون إلى الأخضر (Cr³⁺) مع ترسب كبريت أصفر','H₂S reduces chromate: colour turns green (Cr³⁺) with yellow sulfur precipitate','2CrO₄²⁻ + 3H₂S + 10H⁺ → 2Cr³⁺ + 3S↓ + 8H₂O']}
+  ['CrO4','H'].forEach(i=>t.ions.delete(i));t.ions.add('Cr2O7');
+  return['يتحول اللون من الأصفر إلى البرتقالي (ثاني كرومات)','Yellow → orange (dichromate forms)','2CrO₄²⁻ + 2H⁺ → Cr₂O₇²⁻ + H₂O']}}];
+
+/* ===== Textbook layer: experiments exactly as in the student's book ===== */
+const BW='#f5f5f5';
+const pairOf=(t,R,c,a)=>(R.c===c&&t.ions.has(a))||(R.a===a&&t.ions.has(c));
+const bkT=(t)=>{t.bk=t.bk||{};t.bk.hot=t.bk.hot||[];t.bk.hotlog=t.bk.hotlog||[];return t.bk};
+function bkTick(t){const now=Date.now();
+  for(const p of t.ppts)if(p.ev){let k=-1;p.ev.s.forEach((s,i)=>{if(now-p.ev.t0>=s[0])k=i});if(k>=0){const s=p.ev.s[k];p.hex=s[1];p.ar=s[2];p.en=s[3]}}
+  const e=t.bk&&t.bk.tev;
+  if(e){let k=-1;e.s.forEach((s,i)=>{if(now-e.t0>=s[0])k=i});if(k>=0){t.tint=e.s[k][1];
+    if(k===e.s.length-1&&!e.done){e.done=true;(e.del||[]).forEach(i=>t.ions.delete(i));(e.add||[]).forEach(i=>t.ions.add(i))}}}}
+function bkBusy(t){const now=Date.now();
+  for(const p of t.ppts)if(p.ev&&now-p.ev.t0<p.ev.s[p.ev.s.length-1][0])return 1;
+  const e=t.bk&&t.bk.tev;return e&&!e.done?1:0}
+const bkPpt=(t,c,a,hex,ar,en,f,extra)=>addPpt(t,c,a,hex,ar,en,f,extra);
+
+const BK2=[
+{k:'bih2s',c:'Bi',r:['H2S'],a:'S',hex:'#5a3a22',pa:'بني (Bi₂S₃)',pe:'brown (Bi₂S₃)',f:'Bi2S3',sol:{HNO3:'hot'},ar:'يتكون راسب بني من Bi₂S₃ يذوب في HNO₃ المخفف الساخن',en:'A brown Bi₂S₃ precipitate forms; it dissolves in hot dil. HNO₃',eq:'2Bi³⁺ + 3H₂S → Bi₂S₃↓ + 6H⁺'},
+{k:'cuh2s',c:'Cu',r:['H2S'],a:'S',hex:'#151515',pa:'أسود (CuS)',pe:'black (CuS)',f:'CuS',sol:{HNO3:'hot'},ar:'يتكون راسب أسود من CuS يذوب في HNO₃ المخفف الساخن',en:'A black CuS precipitate forms; it dissolves in hot dil. HNO₃',eq:'Cu²⁺ + H₂S → CuS↓ + 2H⁺'},
+{k:'cdh2s',c:'Cd',r:['H2S'],a:'S',hex:'#ffd400',pa:'أصفر كناري (CdS)',pe:'canary yellow (CdS)',f:'CdS',sol:{HNO3:'hot'},ar:'يتكون راسب أصفر كناري من CdS يذوب في HNO₃ المخفف الساخن',en:'A canary-yellow CdS precipitate forms; it dissolves in hot dil. HNO₃',eq:'Cd²⁺ + H₂S → CdS↓ + 2H⁺'},
+{k:'bioh',c:'Bi',r:['NaOH','KOH'],a:'OH',hex:'#f5f5f5',pa:'أبيض (Bi(OH)₃)',pe:'white (Bi(OH)₃)',f:'Bi(OH)3',sol:{},xs:false,ar:'يتكون راسب أبيض لا يذوب في زيادة NaOH',en:'A white precipitate forms; it does not dissolve in excess NaOH',eq:'Bi³⁺ + 3OH⁻ → Bi(OH)₃↓'},
+{k:'biamm',c:'Bi',r:['NH3'],a:'OH',hex:'#f5f5f5',pa:'أبيض (Bi(OH)₃)',pe:'white (Bi(OH)₃)',f:'Bi(OH)3',sol:{},xs:false,ar:'يتكون راسب أبيض لا يذوب في زيادة NH₄OH',en:'A white precipitate forms; it does not dissolve in excess NH₄OH',eq:'Bi³⁺ + 3NH₃ + 3H₂O → Bi(OH)₃↓ + 3NH₄⁺'},
+{k:'biki',c:'Bi',r:['KI'],a:'I',hex:'#2a1d14',pa:'أسود (BiI₃)',pe:'black (BiI₃)',f:'BiI3',sol:{KI:'excess'},dt:'#e7b52f',dar:'مكوناً محلولاً أصفر ([BiI₄]⁻)',den:'forming a yellow solution ([BiI₄]⁻)',xs:true,xar:'لا يظهر راسب: زيادة KI تعطي محلولاً أصفر ([BiI₄]⁻)',xen:'No precipitate: excess KI gives a yellow solution ([BiI₄]⁻)',ar:'يتكون راسب أسود من BiI₃ يذوب في زيادة KI مكوناً محلولاً أصفر',en:'A black BiI₃ precipitate forms; it dissolves in excess KI forming a yellow solution',eq:'Bi³⁺ + 3I⁻ → BiI₃↓; BiI₃ + I⁻ → [BiI₄]⁻'},
+{k:'bicr',c:'Bi',r:['K2Cr2O7'],a:'Cr2O7',hex:'#e8c518',pa:'أصفر',pe:'yellow',f:'(BiO)2Cr2O7',sol:{HNO3:true},xm:[['لا يذوب الراسب الأصفر في زيادة الكاشف (يذوب في HNO₃ المخفف)','The yellow precipitate does not dissolve in excess reagent (it dissolves in dil. HNO₃)']],ar:'يتكون راسب أصفر من ثاني كرومات البزمووتيل لا يذوب في زيادة الكاشف (يذوب في HNO₃ المخفف)',en:'A yellow precipitate forms; it does not dissolve in excess reagent (it dissolves in dil. HNO₃)',eq:'2Bi³⁺ + Cr₂O₇²⁻ + 2H₂O → (BiO)₂Cr₂O₇↓ + 4H⁺'},
+{k:'cuoh',c:'Cu',r:['NaOH','KOH'],a:'OH',hex:'#5b9bd5',pa:'أزرق مخضر (Cu(OH)₂)',pe:'bluish (Cu(OH)₂)',f:'Cu(OH)2',sol:{},xs:false,ar:'يتكون راسب أزرق لا يذوب في زيادة NaOH',en:'A bluish precipitate forms; it does not dissolve in excess NaOH',eq:'Cu²⁺ + 2OH⁻ → Cu(OH)₂↓'},
+{k:'cunh',c:'Cu',r:['NH3'],a:'OH',hex:'#6aa88a',pa:'أخضر مزرق (ملح نحاس قاعدي)',pe:'greenish (basic copper salt)',f:'Cu(OH)2·CuSO4',sol:{NH3:'excess'},dt:'#1d3fcf',dar:'مكوناً محلولاً أزرق داكن ([Cu(NH₃)₄]²⁺)',den:'forming an intense blue solution ([Cu(NH₃)₄]²⁺)',xs:true,xar:'لا يظهر راسب: زيادة NH₄OH تعطي محلولاً أزرق داكن',xen:'No precipitate: excess NH₄OH gives an intense blue solution',ar:'يتكون راسب أخضر مزرق يذوب في زيادة NH₄OH مكوناً محلولاً أزرق داكن',en:'A greenish precipitate forms; it dissolves in excess NH₄OH forming an intense blue solution',eq:'Cu²⁺ + 4NH₃ → [Cu(NH₃)₄]²⁺'},
+{k:'cuscn',c:'Cu',r:['NH4SCN'],a:'SCN',hex:'#151515',pa:'أسود (Cu(SCN)₂)',pe:'black (Cu(SCN)₂)',f:'Cu(SCN)2',sol:{},xm:[['لا يذوب الراسب الأسود في زيادة NH₄SCN','The black precipitate does not dissolve in excess NH₄SCN']],ar:'يتكون راسب أسود من Cu(SCN)₂ لا يذوب في زيادة NH₄SCN',en:'A black Cu(SCN)₂ precipitate forms; it does not dissolve in excess NH₄SCN',eq:'Cu²⁺ + 2SCN⁻ → Cu(SCN)₂↓'},
+{k:'cdoh',c:'Cd',r:['NaOH','KOH'],a:'OH',hex:'#f5f5f5',pa:'أبيض (Cd(OH)₂)',pe:'white (Cd(OH)₂)',f:'Cd(OH)2',sol:{},xs:false,ar:'يتكون راسب أبيض لا يذوب في زيادة NaOH',en:'A white precipitate forms; it does not dissolve in excess NaOH',eq:'Cd²⁺ + 2OH⁻ → Cd(OH)₂↓'},
+{k:'cdnh',c:'Cd',r:['NH3'],a:'OH',hex:'#f5f5f5',pa:'أبيض (Cd(OH)₂)',pe:'white (Cd(OH)₂)',f:'Cd(OH)2',sol:{NH3:'excess'},xs:true,xar:'لا يظهر راسب: زيادة NH₄OH تذيبه (محلول عديم اللون)',xen:'No precipitate: excess NH₄OH dissolves it (colourless solution)',ar:'يتكون راسب أبيض يذوب في زيادة NH₄OH',en:'A white precipitate forms; it dissolves in excess NH₄OH',eq:'Cd²⁺ + 2NH₃ + 2H₂O → Cd(OH)₂↓; Cd(OH)₂ + 4NH₃ → [Cd(NH₃)₄]²⁺ + 2OH⁻'},
+{k:'cdfe',c:'Cd',r:['K4FeCN6'],a:'FeCN6',hex:'#f5f5f5',pa:'أبيض',pe:'white',f:'Cd2[Fe(CN)6]',sol:{},xs:false,ar:'يتكون راسب أبيض (ملحوظة: يجب أن يكون الكاشف مخففاً جداً حتى يظهر الراسب أبيض)',en:'A white precipitate forms (note: the reagent must be very dilute to give the white precipitate)',eq:'2Cd²⁺ + [Fe(CN)₆]⁴⁻ → Cd₂[Fe(CN)₆]↓'},
+{k:'aloh',c:'Al',r:['NaOH','KOH'],a:'OH',hex:'#f5f5f5',pa:'أبيض جيلاتيني (Al(OH)₃)',pe:'white gelatinous (Al(OH)₃)',f:'Al(OH)3',sol:{NaOH:'excess',KOH:'excess',acid:true},xs:true,xar:'لا يظهر راسب: زيادة NaOH تذيب Al(OH)₃ (محلول عديم اللون)',xen:'No precipitate: excess NaOH dissolves Al(OH)₃ (colourless solution)',ar:'يتكون راسب أبيض جيلاتيني يذوب في زيادة NaOH وفي HCl المخفف',en:'A white gelatinous precipitate forms; it dissolves in excess NaOH and in dil. HCl',eq:'Al³⁺ + 3OH⁻ → Al(OH)₃↓; Al(OH)₃ + OH⁻ → [Al(OH)₄]⁻'},
+{k:'alnh',c:'Al',r:['NH3'],a:'OH',hex:'#f5f5f5',pa:'أبيض جيلاتيني (Al(OH)₃)',pe:'white gelatinous (Al(OH)₃)',f:'Al(OH)3',sol:{NaOH:true,KOH:true,acid:true},xs:false,ar:'يتكون راسب أبيض جيلاتيني يذوب في NaOH أو HCl المخفف (ولا يذوب في زيادة NH₄OH)',en:'A white gelatinous precipitate forms; it dissolves in NaOH or dil. HCl (not in excess NH₄OH)',eq:'Al³⁺ + 3NH₃ + 3H₂O → Al(OH)₃↓ + 3NH₄⁺'},
+{k:'feoh',c:'Fe3',r:['NaOH','KOH','NH3'],a:'OH',hex:'#8b3a1a',pa:'بني محمر جيلاتيني (Fe(OH)₃)',pe:'reddish-brown gelatinous (Fe(OH)₃)',f:'Fe(OH)3',sol:{acid:true},xs:false,ar:'يتكون راسب بني محمر جيلاتيني يذوب في HCl المخفف',en:'A reddish-brown gelatinous precipitate forms; it dissolves in dil. HCl',eq:'Fe³⁺ + 3OH⁻ → Fe(OH)₃↓'},
+];
+
+const BK3=[
+{k:'znh2s',c:'Zn',r:['H2S'],need:['NH3','NaOH'],a:'S',hex:'#f5f5f5',pa:'أبيض جيلاتيني (ZnS)',pe:'white gelatinous (ZnS)',f:'ZnS',sol:{acid:true},ar:'يتكون راسب أبيض من ZnS يذوب في HCl المخفف',en:'A white ZnS precipitate forms; it dissolves in dil. HCl',eq:'Zn²⁺ + H₂S → ZnS↓ + 2H⁺'},
+{k:'mnh2s',c:'Mn',r:['H2S'],need:['NH3','NaOH'],a:'S',hex:'#e2b9a0',pa:'لحمي/بني فاتح (MnS)',pe:'buff / flesh-coloured (MnS)',f:'MnS',sol:{acid:true},ar:'يتكون راسب لحمي (بني فاتح) من MnS يذوب في HCl المخفف',en:'A buff (flesh-coloured) MnS precipitate forms; it dissolves in dil. HCl',eq:'Mn²⁺ + H₂S → MnS↓ + 2H⁺'},
+{k:'coh2s',c:'Co',r:['H2S'],need:['NH3','NaOH'],a:'S',hex:'#121212',pa:'أسود (CoS)',pe:'black (CoS)',f:'CoS',sol:{acid:'hot'},ar:'يتكون راسب أسود من CoS يذوب في HNO₃ المركز الساخن أو الماء الملكي',en:'A black CoS precipitate forms; it dissolves in hot conc. HNO₃ or aqua regia',eq:'Co²⁺ + H₂S → CoS↓ + 2H⁺'},
+{k:'nih2s',c:'Ni',r:['H2S'],need:['NH3','NaOH'],a:'S',hex:'#121212',pa:'أسود (NiS)',pe:'black (NiS)',f:'NiS',sol:{acid:'hot'},ar:'يتكون راسب أسود من NiS يذوب في HNO₃ المركز الساخن أو الماء الملكي',en:'A black NiS precipitate forms; it dissolves in hot conc. HNO₃ or aqua regia',eq:'Ni²⁺ + H₂S → NiS↓ + 2H⁺'},
+{k:'znoh',c:'Zn',r:['NaOH','KOH'],a:'OH',hex:'#f5f5f5',pa:'أبيض جيلاتيني (Zn(OH)₂)',pe:'white gelatinous (Zn(OH)₂)',f:'Zn(OH)2',sol:{NaOH:'excess',KOH:'excess',acid:true},xs:true,xar:'لا يظهر راسب: زيادة NaOH تذيب Zn(OH)₂',xen:'No precipitate: excess NaOH dissolves Zn(OH)₂',ar:'يتكون راسب أبيض جيلاتيني يذوب في زيادة NaOH',en:'A white gelatinous precipitate forms; it dissolves in excess NaOH',eq:'Zn²⁺ + 2OH⁻ → Zn(OH)₂↓; Zn(OH)₂ + 2OH⁻ → [Zn(OH)₄]²⁻'},
+{k:'znnh',c:'Zn',r:['NH3'],a:'OH',hex:'#f5f5f5',pa:'أبيض جيلاتيني (Zn(OH)₂)',pe:'white gelatinous (Zn(OH)₂)',f:'Zn(OH)2',sol:{NH3:'excess',acid:true},xs:true,xar:'لا يظهر راسب: زيادة NH₄OH تذيب الراسب',xen:'No precipitate: excess NH₄OH dissolves it',ar:'يتكون راسب أبيض جيلاتيني يذوب في زيادة NH₄OH',en:'A white gelatinous precipitate forms; it dissolves in excess NH₄OH',eq:'Zn²⁺ + 2NH₃ + 2H₂O → Zn(OH)₂↓; Zn(OH)₂ + 4NH₃ → [Zn(NH₃)₄]²⁺ + 2OH⁻'},
+{k:'znfe4',c:'Zn',r:['K4FeCN6'],a:'FeCN6',hex:'#f5f5f5',pa:'أبيض',pe:'white',f:'Zn2[Fe(CN)6]',sol:{NaOH:true,KOH:true},ar:'يتكون راسب أبيض يذوب في NaOH',en:'A white precipitate forms; it dissolves in NaOH',eq:'2Zn²⁺ + [Fe(CN)₆]⁴⁻ → Zn₂[Fe(CN)₆]↓'},
+{k:'znfe3',c:'Zn',r:['K3FeCN6'],a:'Fe3CN6',hex:'#b88a3a',pa:'أصفر مبني (بني مصفر)',pe:'brownish-yellow',f:'Zn3[Fe(CN)6]2',sol:{acid:true,NH3:true},ar:'يتكون راسب بني مصفر يذوب في HCl المخفف أو NH₄OH',en:'A brownish-yellow precipitate forms; it dissolves in dil. HCl or NH₄OH',eq:'3Zn²⁺ + 2[Fe(CN)₆]³⁻ → Zn₃[Fe(CN)₆]₂↓'},
+{k:'mnoh',c:'Mn',r:['NaOH','KOH'],a:'OH',hex:'#f5f5f5',pa:'أبيض (Mn(OH)₂)',pe:'white (Mn(OH)₂)',f:'Mn(OH)2',sol:{acid:'hot'},ev:[[0,'#f5f5f5','أبيض (Mn(OH)₂)','white (Mn(OH)₂)'],[5000,'#b58a5a','بني فاتح (buff)','buff']],xs:false,ar:'يتكون راسب أبيض يتحول بسرعة إلى بني فاتح (buff) بالتأكسد في الهواء، ويذوب في HCl المركز الساخن',en:'A white precipitate forms that quickly turns buff by air oxidation; it dissolves in hot conc. HCl',eq:'Mn²⁺ + 2OH⁻ → Mn(OH)₂↓ (white) → MnO(OH)₂ (buff)'},
+{k:'mnnh',c:'Mn',r:['NH3'],a:'OH',hex:'#f5f5f5',pa:'أبيض (Mn(OH)₂)',pe:'white (Mn(OH)₂)',f:'Mn(OH)2',sol:{acid:'hot'},ev:[[0,'#f5f5f5','أبيض (Mn(OH)₂)','white (Mn(OH)₂)'],[5000,'#b58a5a','بني فاتح (buff)','buff']],xs:false,ar:'يتكون راسب أبيض يتحول بسرعة إلى بني فاتح (buff)',en:'A white precipitate forms that quickly turns buff',eq:'Mn²⁺ + 2NH₃ + 2H₂O → Mn(OH)₂↓'},
+{k:'cooh',c:'Co',r:['NaOH','KOH'],a:'OH',hex:'#4a6fd0',pa:'أزرق (ملح كوبالت قاعدي)',pe:'blue (basic cobalt salt)',f:'Co(OH)Cl',sol:{},heat:{hex:'#e07fa8',ar:'وردي (Co(OH)₂)',en:'pink (Co(OH)₂)',f:'Co(OH)2',log:['بزيادة NaOH والتسخين يتحول الراسب الأزرق إلى وردي','With excess NaOH and heating the blue precipitate turns pink','Co(OH)Cl + OH⁻ → Co(OH)₂↓ (pink) + Cl⁻']},xs:false,xm:[['لا يذوب الراسب الأزرق؛ سخّن فيتحول إلى وردي','The blue precipitate does not dissolve; heat it and it turns pink']],ar:'يتكون راسب أزرق يتحول إلى وردي بزيادة NaOH والتسخين (اضغط تسخين)',en:'A blue precipitate forms; it turns pink with excess NaOH and heating (press Heat)',eq:'Co²⁺ + OH⁻ + Cl⁻ → Co(OH)Cl↓ (blue)'},
+{k:'conh',c:'Co',r:['NH3'],a:'OH',hex:'#4a6fd0',pa:'أزرق (ملح كوبالت قاعدي)',pe:'blue (basic cobalt salt)',f:'Co(OH)Cl',sol:{NH3:'excess'},dt:'#a8742a',dar:'مكوناً محلولاً أصفر بني ([Co(NH₃)₆]²⁺، يغمق في الهواء)',den:'forming a yellow-brown solution ([Co(NH₃)₆]²⁺, darkens in air)',xs:true,xar:'لا يظهر راسب: زيادة NH₄OH المركز تعطي محلولاً أصفر بني',xen:'No precipitate: excess conc. NH₄OH gives a yellow-brown solution',ar:'يتكون راسب أزرق يذوب في زيادة NH₄OH المركز مكوناً محلولاً أصفر بني',en:'A blue precipitate forms; it dissolves in excess conc. NH₄OH forming a yellow-brown solution',eq:'Co²⁺ + OH⁻ + Cl⁻ → Co(OH)Cl↓; + 6NH₃ → [Co(NH₃)₆]²⁺'},
+{k:'nioh',c:'Ni',r:['NaOH','KOH'],a:'OH',hex:'#8fd27a',pa:'أخضر مزرق (Ni(OH)₂)',pe:'greenish (Ni(OH)₂)',f:'Ni(OH)2',sol:{NH3:true,acid:true},dt:'#2a5bd7',dar:'مكوناً محلولاً أزرق',den:'forming a blue solution',xs:false,xm:[['لا يذوب الراسب في زيادة NaOH (يذوب في NH₄OH)','The precipitate does not dissolve in excess NaOH (it dissolves in NH₄OH)']],ar:'يتكون راسب أخضر مزرق لا يذوب في زيادة NaOH لكنه يذوب في NH₄OH مكوناً محلولاً أزرق',en:'A greenish precipitate forms; it does not dissolve in excess NaOH but dissolves in NH₄OH forming a blue solution',eq:'Ni²⁺ + 2OH⁻ → Ni(OH)₂↓'},
+{k:'ninh',c:'Ni',r:['NH3'],a:'OH',hex:'#8fd27a',pa:'أخضر مزرق (Ni(OH)₂)',pe:'greenish (Ni(OH)₂)',f:'Ni(OH)2',sol:{NH3:'excess',acid:true},dt:'#2a5bd7',dar:'مكوناً محلولاً أزرق ([Ni(NH₃)₆]²⁺)',den:'forming a blue solution ([Ni(NH₃)₆]²⁺)',xs:true,xar:'لا يظهر راسب: زيادة NH₄OH تعطي محلولاً أزرق',xen:'No precipitate: excess NH₄OH gives a blue solution',ar:'يتكون راسب أخضر مزرق يذوب في زيادة NH₄OH مكوناً محلولاً أزرق',en:'A greenish precipitate forms; it dissolves in excess NH₄OH forming a blue solution',eq:'Ni²⁺ + 2NH₃ + 2H₂O → Ni(OH)₂↓; Ni(OH)₂ + 6NH₃ → [Ni(NH₃)₆]²⁺ + 2OH⁻'},
+{k:'nife3',c:'Ni',r:['K3FeCN6'],a:'Fe3CN6',hex:'#d9b43a',pa:'أصفر',pe:'yellow',f:'Ni3[Fe(CN)6]2',sol:{},ar:'يتكون راسب أصفر',en:'A yellow precipitate forms',eq:'3Ni²⁺ + 2[Fe(CN)₆]³⁻ → Ni₃[Fe(CN)₆]₂↓'},
+{k:'nidmg',fp:1,c:'Ni',r:['DMG'],need:['NH3'],a:'DMG',hex:'#d42a3a',pa:'أحمر (Ni(DMG)₂)',pe:'red (Ni(DMG)₂)',f:'Ni(C4H7N2O2)2',sol:{},ar:'يتكون راسب أحمر قرنفلي من Ni(DMG)₂ في وسط النشادر',en:'A red Ni(DMG)₂ precipitate forms in ammoniacal solution',eq:'Ni²⁺ + 2DMG + 2NH₃ → Ni(DMG)₂↓ + 2NH₄⁺'},
+];
+const _bk3=BK3.length;BK2.push(...BK3);
+const BK5=[
+{k:'caco3',c:'Ca',r:['NH42CO3'],a:'CO3',hex:'#f5f5f5',pa:'أبيض (CaCO₃)',pe:'white (CaCO₃)',f:'CaCO3',sol:{acid:true},ar:'يتكون راسب أبيض من CaCO₃ يذوب في الأحماض المخففة',en:'A white CaCO₃ precipitate forms; it dissolves in dil. acids',eq:'Ca²⁺ + CO₃²⁻ → CaCO₃↓'},
+{k:'caox',c:'Ca',r:['NH4OX'],a:'OX',hex:'#f5f5f5',pa:'أبيض (CaC₂O₄)',pe:'white (CaC₂O₄)',f:'CaC2O4',sol:{acid:true},ar:'يتكون راسب أبيض من CaC₂O₄ (يذوب في HCl المخفف)',en:'A white CaC₂O₄ precipitate forms (dissolves in dil. HCl)',eq:'Ca²⁺ + C₂O₄²⁻ → CaC₂O₄↓'},
+{k:'cahpo4',c:'Ca',r:['Na2HPO4'],a:'PO4',hex:'#f5f5f5',pa:'أبيض (Ca₃(PO₄)₂)',pe:'white (Ca₃(PO₄)₂)',f:'Ca3(PO4)2',sol:{acid:true},ar:'يتكون راسب أبيض يذوب في HCl المخفف',en:'A white precipitate forms; it dissolves in dil. HCl',eq:'Ca²⁺ + HPO₄²⁻ → phosphate↓'},
+{k:'srco3',c:'Sr',r:['NH42CO3'],a:'CO3',hex:'#f5f5f5',pa:'أبيض (SrCO₃)',pe:'white (SrCO₃)',f:'SrCO3',sol:{acid:true},ar:'يتكون راسب أبيض من SrCO₃ يذوب في الأحماض المخففة',en:'A white SrCO₃ precipitate forms; it dissolves in dil. acids',eq:'Sr²⁺ + CO₃²⁻ → SrCO₃↓'},
+{k:'srox',c:'Sr',r:['NH4OX'],a:'OX',hex:'#f5f5f5',pa:'أبيض (SrC₂O₄)',pe:'white (SrC₂O₄)',f:'SrC2O4',sol:{acid:true},ar:'يتكون راسب أبيض من SrC₂O₄ (يذوب في HCl المخفف)',en:'A white SrC₂O₄ precipitate forms (dissolves in dil. HCl)',eq:'Sr²⁺ + C₂O₄²⁻ → SrC₂O₄↓'},
+{k:'srhpo4',c:'Sr',r:['Na2HPO4'],a:'PO4',hex:'#f5f5f5',pa:'أبيض (Sr₃(PO₄)₂)',pe:'white (Sr₃(PO₄)₂)',f:'Sr3(PO4)2',sol:{acid:true},ar:'يتكون راسب أبيض يذوب في HCl المخفف',en:'A white precipitate forms; it dissolves in dil. HCl',eq:'Sr²⁺ + HPO₄²⁻ → phosphate↓'},
+{k:'baco3',c:'Ba',r:['NH42CO3'],a:'CO3',hex:'#f5f5f5',pa:'أبيض (BaCO₃)',pe:'white (BaCO₃)',f:'BaCO3',sol:{acid:true},ar:'يتكون راسب أبيض من BaCO₃ يذوب في الأحماض المخففة',en:'A white BaCO₃ precipitate forms; it dissolves in dil. acids',eq:'Ba²⁺ + CO₃²⁻ → BaCO₃↓'},
+{k:'baox',c:'Ba',r:['NH4OX'],a:'OX',hex:'#f5f5f5',pa:'أبيض (BaC₂O₄)',pe:'white (BaC₂O₄)',f:'BaC2O4',sol:{acid:true},ar:'يتكون راسب أبيض من BaC₂O₄ (يذوب في HCl المخفف)',en:'A white BaC₂O₄ precipitate forms (dissolves in dil. HCl)',eq:'Ba²⁺ + C₂O₄²⁻ → BaC₂O₄↓'},
+{k:'bahpo4',c:'Ba',r:['Na2HPO4'],a:'PO4',hex:'#f5f5f5',pa:'أبيض (Ba₃(PO₄)₂)',pe:'white (Ba₃(PO₄)₂)',f:'Ba3(PO4)2',sol:{acid:true},ar:'يتكون راسب أبيض يذوب في HCl المخفف',en:'A white precipitate forms; it dissolves in dil. HCl',eq:'Ba²⁺ + HPO₄²⁻ → phosphate↓'},
+{k:'srso4',c:'Sr',r:['CaSO4'],a:'SO4',hex:'#f5f5f5',pa:'أبيض (SrSO₄)',pe:'white (SrSO₄)',f:'SrSO4',sol:{},ar:'يتكون راسب أبيض من SrSO₄ (ببطء) لا يذوب في الأحماض المخففة',en:'A white SrSO₄ precipitate forms (slowly); it does not dissolve in dil. acids',eq:'Sr²⁺ + SO₄²⁻ → SrSO₄↓'},
+{k:'baso4',c:'Ba',r:['CaSO4'],a:'SO4',hex:'#f5f5f5',pa:'أبيض ثقيل (BaSO₄)',pe:'heavy white (BaSO₄)',f:'BaSO4',sol:{},ar:'يتكون راسب أبيض ثقيل من BaSO₄ لا يذوب في الأحماض المخففة',en:'A heavy white BaSO₄ precipitate forms; it does not dissolve in dil. acids',eq:'Ba²⁺ + SO₄²⁻ → BaSO₄↓'},
+{k:'srcro4',c:'Sr',r:['K2CrO4'],a:'CrO4',hex:'#f0c000',pa:'أصفر (SrCrO₄)',pe:'yellow (SrCrO₄)',f:'SrCrO4',sol:{AcOH:true,HCl:true,HNO3:true},ar:'يتكون راسب أصفر من SrCrO₄ يذوب في حمض الخليك',en:'A yellow SrCrO₄ precipitate forms; it dissolves in acetic acid',eq:'Sr²⁺ + CrO₄²⁻ → SrCrO₄↓'},
+{k:'bacro4',c:'Ba',r:['K2CrO4','K2Cr2O7'],a:'CrO4',hex:'#f0c000',pa:'أصفر (BaCrO₄)',pe:'yellow (BaCrO₄)',f:'BaCrO4',sol:{HCl:true,HNO3:true},ar:'يتكون راسب أصفر من BaCrO₄ لا يذوب في حمض الخليك (يذوب في الأحماض المعدنية القوية)',en:'A yellow BaCrO₄ precipitate forms; it does not dissolve in acetic acid (it dissolves in strong mineral acids)',eq:'Ba²⁺ + CrO₄²⁻ → BaCrO₄↓'},
+{k:'cafe',c:'Ca',r:['K4FeCN6'],a:'FeCN6',hex:'#f5f5f5',pa:'أبيض',pe:'white',f:'CaNH4[Fe(CN)6]',sol:{acid:true},ar:'يتكون راسب أبيض يذوب في الأحماض المخففة (بوجود NH₄Cl الصلب)',en:'A white precipitate forms; it dissolves in dil. acids (with solid NH₄Cl present)',eq:'Ca²⁺ + NH₄⁺ + [Fe(CN)₆]⁴⁻ → CaNH₄[Fe(CN)₆]↓',need:['NH4Cl']},
+];BK2.push(...BK5);
+const BK6=[
+{k:'mgoh',c:'Mg',r:['NaOH','KOH'],a:'OH',hex:'#f5f5f5',pa:'أبيض جيلاتيني (Mg(OH)₂)',pe:'white gelatinous (Mg(OH)₂)',f:'Mg(OH)2',sol:{acid:true},ar:'يتكون راسب أبيض جيلاتيني على البارد يذوب في HCl المخفف',en:'A white gelatinous precipitate forms in the cold; it dissolves in dil. HCl',eq:'Mg²⁺ + 2OH⁻ → Mg(OH)₂↓',xs:false},
+{k:'mgco3',c:'Mg',r:['Na2CO3'],a:'CO3',hex:'#f5f5f5',pa:'أبيض (MgCO₃ قاعدي)',pe:'white (basic magnesium carbonate)',f:'MgCO3',sol:{acid:true},ar:'يتكون راسب أبيض (كربونات المغنيسيوم) يذوب في HCl المخفف مع فوران',en:'A white magnesium carbonate precipitate forms; it dissolves in dil. HCl with effervescence',eq:'Mg²⁺ + CO₃²⁻ → MgCO₃↓',xs:false},
+{k:'mgnh',c:'Mg',r:['NH3'],a:'OH',hex:'#f5f5f5',pa:'أبيض جيلاتيني (Mg(OH)₂)',pe:'white gelatinous (Mg(OH)₂)',f:'Mg(OH)2',sol:{acid:true},ar:'يتكون راسب أبيض جيلاتيني على البارد يذوب في HCl المخفف',en:'A white gelatinous precipitate forms in the cold; it dissolves in dil. HCl',eq:'Mg²⁺ + 2NH₃ + 2H₂O → Mg(OH)₂↓ + 2NH₄⁺',xs:false},
+{k:'nh4co',c:'NH4',r:['Na3CoNO26'],a:'CoNO26',hex:'#e8b800',pa:'أصفر',pe:'yellow',f:'(NH4)3[Co(NO2)6]',sol:{},ar:'يتكون راسب أصفر',en:'A yellow precipitate forms',eq:'3NH₄⁺ + [Co(NO₂)₆]³⁻ → (NH₄)₃[Co(NO₂)₆]↓',keep:true},
+{k:'kco',c:'K',r:['Na3CoNO26'],a:'CoNO26',hex:'#e8b800',pa:'أصفر (K₂Na[Co(NO₂)₆])',pe:'yellow (K₂Na[Co(NO₂)₆])',f:'K2Na[Co(NO2)6]',sol:{},ar:'يتكون راسب أصفر',en:'A yellow precipitate forms',eq:'2K⁺ + Na⁺ + [Co(NO₂)₆]³⁻ → K₂Na[Co(NO₂)₆]↓'},
+];BK2.push(...BK6);
+function bookReact(t,R,vol){
+  const dil=(t.level-vol)>=10;
+  /* ---------- acidic group I ---------- */
+  if(pairOf(t,R,'Ag','CO3')){
+    bkPpt(t,'Ag','CO3',dil?'#6b4423':BW,dil?'بني (Ag₂O)':'أبيض (Ag₂CO₃)',dil?'brown (Ag₂O)':'white (Ag₂CO₃)',dil?'Ag2O':'Ag2CO3',dil?{}:{on:{heat:{hex:'#6b4423',ar:'بني (Ag₂O)',en:'brown (Ag₂O)',f:'Ag2O',gas:1,log:['بالتسخين يتحول الراسب الأبيض إلى راسب بني (Ag₂O) مع تصاعد CO₂','On heating the white precipitate turns brown (Ag₂O) with CO₂ evolution','Ag₂CO₃ → Ag₂O + CO₂↑']}}});
+    return{consume:['Ag','CO3'],res:[dil?['محلول الملح مخفف: يظهر الراسب البني (Ag₂O) مباشرة','Dilute salt solution: the brown precipitate (Ag₂O) appears immediately','2Ag⁺ + CO₃²⁻ → Ag₂CO₃↓ → Ag₂O + CO₂↑']:['يتكون راسب أبيض (Ag₂CO₃) يتحول إلى بني بالتسخين','White precipitate (Ag₂CO₃) forms; it turns brown on heating','2Ag⁺ + CO₃²⁻ → Ag₂CO₃↓ (white)']]}}
+  if(pairOf(t,R,'Ag','HCO3')){bkT(t).hot.push({ions:['Ag','HCO3'],c:'Ag',a:'HCO3',hex:BW,ar:'أبيض (Ag₂CO₃)',en:'white (Ag₂CO₃)',f:'Ag2CO3',gas:1,log:['بالتسخين يتكون راسب أبيض من Ag₂CO₃ مع تصاعد CO₂','On heating a white Ag₂CO₃ precipitate forms with CO₂ evolution','2Ag⁺ + 2HCO₃⁻ → Ag₂CO₃↓ + H₂O + CO₂↑']});
+    return{res:[['لا يتكون راسب على البارد؛ يظهر راسب أبيض عند التسخين فقط','No precipitate when cold; a white precipitate forms on heating only','Ag⁺ + HCO₃⁻ (cold: no ppt)']]}}
+  if(pairOf(t,R,'Ba','HCO3')){bkT(t).hot.push({ions:['Ba','HCO3'],c:'Ba',a:'CO3',hex:BW,ar:'أبيض (BaCO₃) يذوب في الأحماض المعدنية المخففة',en:'white (BaCO₃), soluble in dil. mineral acids',f:'BaCO3',gas:1,log:['بالتسخين يتكون راسب أبيض من BaCO₃ (يذوب في الأحماض المعدنية المخففة) مع تصاعد CO₂','On heating a white BaCO₃ precipitate forms (soluble in dil. mineral acids) with CO₂ evolution','Ba²⁺ + 2HCO₃⁻ → BaCO₃↓ + H₂O + CO₂↑']});
+    return{res:[['لا يتكون راسب على البارد؛ يظهر راسب أبيض عند التسخين فقط','No precipitate when cold; a white precipitate forms on heating only','Ba²⁺ + HCO₃⁻ (cold: no ppt)']]}}
+  if(pairOf(t,R,'Ag','S2O3')){const n=Date.now();
+    bkPpt(t,'Ag','S2O3','#f5f5f5','أبيض','white','Ag2S2O3',{ev:{t0:n,s:[[0,'#f5f5f5','أبيض','white'],[2200,'#f2e27a','أصفر','yellow'],[4400,'#f0a030','برتقالي','orange'],[6600,'#7a4a26','بني','brown'],[8800,'#1a1a1a','أسود (Ag₂S)','black (Ag₂S)']]}});t.evUntil=n+9200;
+    return{consume:['Ag','S2O3'],res:[['يتكون راسب أبيض يتحول تدريجياً إلى أصفر ثم برتقالي ثم بني وأخيراً أسود (Ag₂S). ملحوظة: ضع نقطة واحدة من محلول الملح مع زيادة كبيرة من نترات الفضة','A white precipitate forms and gradually turns yellow, orange, brown and finally black (Ag₂S). Note: add one drop of the salt solution to a large excess of silver nitrate','2Ag⁺ + S₂O₃²⁻ → Ag₂S₂O₃↓ (white); Ag₂S₂O₃ + H₂O → Ag₂S↓ (black) + H₂SO₄']]}}
+  if(pairOf(t,R,'Pb','S2O3'))
+    {bkPpt(t,'Pb','S2O3',BW,'أبيض (بعد الرج)','white (after shaking)','PbS2O3',{on:{heat:{hex:'#161616',ar:'أسود (PbS)',en:'black (PbS)',f:'PbS',log:['بالتسخين يتحول الراسب الأبيض إلى أسود (PbS)','On heating the white precipitate turns black (PbS)','PbS₂O₃ + H₂O → PbS↓ + H₂SO₄']}}});
+    return{consume:['Pb','S2O3'],res:[['يتكون راسب أبيض بعد الرج، ويتحول إلى أسود بالتسخين','A white precipitate forms after shaking; it turns black on heating','Pb²⁺ + S₂O₃²⁻ → PbS₂O₃↓ (white)']]}}
+  if(t.ions.has('S2O3')&&R.a==='I3'){t.tint=null;
+    return{consume:['I3'],add:['I'],res:[['يزول لون اليود (يختفي اللون البني)','The iodine colour disappears','2S₂O₃²⁻ + I₂ → S₄O₆²⁻ + 2I⁻']]}}
+  if(pairOf(t,R,'Fe3','S2O3')){const ex=vol>=5;
+    bkT(t).tev={t0:Date.now(),s:ex?[[0,'#4b2a6e'],[1800,null]]:[[0,'#4b2a6e'],[7000,null]],del:ex?[]:['Fe3'],add:ex?[]:['Fe2']};t.evUntil=Date.now()+(ex?2000:7200);t.tint='#4b2a6e';
+    return{consume:ex?[]:['Fe3','S2O3'],res:[['يظهر لون بنفسجي داكن يزول بالتركه أو بزيادة FeCl₃','A dark violet colour appears; it disappears on standing or by adding excess FeCl₃','2Fe³⁺ + 2S₂O₃²⁻ → 2Fe²⁺ + S₄O₆²⁻ (via violet [Fe(S₂O₃)]⁺)']]}}
+  if(t.ions.has('S2O3')&&t.ions.has('H')&&R.a==='MnO4'){t.tint=null;
+    return{consume:['MnO4'],res:[['يزول لون برمنجنات البوتاسيوم','The KMnO₄ colour disappears','8MnO₄⁻ + 5S₂O₃²⁻ + 14H⁺ → 8Mn²⁺ + 10SO₄²⁻ + 7H₂O']]}}
+  if(R.id==='H2SO4'&&t.ions.has('S2O3')&&vol<5)
+    return{res:[['لا تغير فوري في المحلول البارد؛ الحمض يستخدم للتحميض فقط قبل إضافة KMnO₄','No immediate change in the cold solution; the acid only acidifies the solution before KMnO₄ is added']]}
+
+
+  /* ---------- acidic group III ---------- */
+  if(pairOf(t,R,'Ba','B4O7')){bkPpt(t,'Ba','B4O7',BW,'أبيض (BaB₄O₇) يذوب في HCl المخفف','white (BaB₄O₇), soluble in dil. HCl','BaB4O7',{sol:{HCl:1}});
+    return{consume:['Ba','B4O7'],res:[['يتكون راسب أبيض يذوب في HCl المخفف (لا يوجد كاشف للمجموعة الثالثة، لذلك يُستخدم BaCl₂ مع محلول مركز من الملح)','A white precipitate forms, soluble in dil. HCl (there is no group reagent, so BaCl₂ is used with a concentrated salt solution)','Ba²⁺ + B₄O₇²⁻ → BaB₄O₇↓']]}}
+  if(pairOf(t,R,'Ag','SO4')){bkPpt(t,'Ag','SO4','#ececE6','أبيض شاحب (عكارة)','pale white (turbidity)','Ag2SO4',{on:{heat:{hex:'#d9d9d1',ar:'أبيض شاحب (العكارة تزداد)',en:'pale white (turbidity increases)',f:'Ag2SO4',log:['بالتسخين تزداد العكارة','On heating, the turbidity increases','2Ag⁺ + SO₄²⁻ → Ag₂SO₄↓']}}});
+    return{consume:['Ag','SO4'],res:[['يتكون راسب أبيض شاحب أو عكارة تزداد بالتسخين','A pale white precipitate or turbidity forms; it increases on heating','2Ag⁺ + SO₄²⁻ → Ag₂SO₄↓']]}}
+  if(pairOf(t,R,'Ag','B4O7')){
+    bkPpt(t,'Ag','B4O7',dil?'#6b4423':BW,dil?'بني':'أبيض',dil?'brown':'white','AgBO2',dil?{}:{on:{heat:{hex:'#6b4423',ar:'بني',en:'brown',f:'Ag2O',log:['بالتسخين يتحول الراسب الأبيض إلى بني','On heating the white precipitate turns brown','2AgBO₂ + H₂O → Ag₂O + 2HBO₂']}}});
+    return{consume:['Ag','B4O7'],res:[[dil?'محلول الملح مخفف: يظهر اللون البني مباشرة':'يتكون راسب أبيض يتحول إلى بني بالتسخين',dil?'Dilute salt solution: the brown colour appears immediately':'A white precipitate forms; it changes into brown on heating','Ag⁺ + B₄O₇²⁻ → AgBO₂↓ (white) → Ag₂O (brown)']]}}
+  if(pairOf(t,R,'Pb','SO4')){bkPpt(t,'Pb','SO4',BW,'أبيض (PbSO₄)','white (PbSO₄)','PbSO4',{sol:{H2SO4C:'hot',NaOH:'hot',KOH:'hot'}});
+    return{consume:['Pb','SO4'],res:[['يتكون راسب أبيض من PbSO₄ يذوب في NaOH الساخن (ويذوب أيضاً في H₂SO₄ المركز الساخن)','A white PbSO₄ precipitate forms; it dissolves in hot NaOH (and also in hot conc. H₂SO₄)','Pb²⁺ + SO₄²⁻ → PbSO₄↓']]}}
+
+  /* ---------- basic group I (Pb2+) ---------- */
+  if(pairOf(t,R,'Pb','CrO4')){bkPpt(t,'Pb','CrO4','#f0c000','أصفر (PbCrO₄)','yellow (PbCrO₄)','PbCrO4',{sol:{NaOH:'hot',KOH:'hot',HNO3:'hot'}});
+    return{consume:['Pb','CrO4'],res:[['يتكون راسب أصفر يذوب في NaOH الساخن وكذلك في HNO₃ المخفف الساخن','A yellow precipitate forms; it dissolves in hot NaOH and also in hot dil. HNO₃','Pb²⁺ + CrO₄²⁻ → PbCrO₄↓']]}}
+  if(R.id==='H2S'&&t.ions.has('Pb')){bkPpt(t,'Pb','S','#161616','أسود (PbS)','black (PbS)','PbS',{sol:{HNO3:'hot'}});
+    return{consume:['Pb'],res:[['يتكون راسب أسود يذوب في HNO₃ المخفف الساخن','A black precipitate forms; it dissolves in hot dil. HNO₃','Pb²⁺ + H₂S → PbS↓ + 2H⁺']]}}
+
+  /* ---------- basic groups II & III ---------- */
+  {const E=BK2.find(e=>e.r.includes(R.id)&&(t.ions.has(e.c)||(e.xm&&t.ppts.some(p=>p.bk2===e.k))||((e.k.endsWith('h2s')||e.fp)&&t.ppts.some(p=>p.c===e.c)))&&(!e.need||e.need.some(x=>t.subs.includes(x))));
+   if(E){const have=t.ppts.find(p=>p.bk2===E.k);
+    if(have){ if(vol>=5&&!E.xs)return{res:E.xm||[['لا يذوب الراسب في الزيادة','The precipitate does not dissolve in excess']]};return null}
+    if(E.xs&&vol>=5)return{res:[[E.xar,E.xen]]};
+    const x={bk2:E.k,sol:E.sol};if(E.heat)x.on={heat:E.heat};if(E.ev){const n=Date.now();x.ev={t0:n,s:E.ev};t.evUntil=n+E.ev[E.ev.length-1][0]+400}
+    if(E.tint)t.tint=E.tint;
+    if(E.k.endsWith('h2s')||E.fp)t.ppts=t.ppts.filter(p=>p.c!==E.c);if(E.dt)x.dt=E.dt;if(E.dar){x.dar=E.dar;x.den=E.den}
+    if(E.fromPpt){const pp=t.ppts.find(p=>p.c===E.c);if(pp)t.ppts=t.ppts.filter(p=>p!==pp)}
+    bkPpt(t,E.c,E.a,E.hex,E.pa,E.pe,E.f,x);
+    return{consume:E.fromPpt?[]:(E.keep?[]:[E.c]),res:[[E.ar,E.en,E.eq]]}}}
+
+
+  if(pairOf(t,R,'Co','SCN')&&(R.id==='NH4SCN'||R.id==='KSCN')){bkT(t).coscn=true;t.tint='#2a46d6';
+    return{res:[['يتكون محلول أزرق (يتحول إلى وردي بإضافة الماء)','A blue solution forms (it turns pink on adding water)','Co²⁺ + 4SCN⁻ → [Co(SCN)₄]²⁻']]}}
+
+  if(R.id==='Na3CoNO26'&&t.ions.has('Na')&&!t.ions.has('K')&&!t.ions.has('NH4')){t.tint='#e8b800';
+    return{res:[['لا يتكون راسب: يظهر محلول أصفر فقط (نتيجة سالبة)','No precipitate: only a yellow solution (negative result)']]}}
+  if(R.id==='TARTARIC'&&t.ions.has('K')){bkT(t);t.bk.pend=t.bk.pend||[];
+    t.bk.pend.push({ions:['K'],c:'K',a:'TAR',hex:'#f5f5f5',ar:'أبيض بلوري (KHC₄H₄O₆)',en:'white crystalline (KHC₄H₄O₆)',f:'KHC4H4O6',log:['بالرج (أو حك جدار الأنبوبة) يظهر راسب أبيض بلوري','On shaking (or scratching the tube wall) a white crystalline precipitate appears','K⁺ + HC₄H₄O₆⁻ → KHC₄H₄O₆↓']});
+    return{res:[['لا يظهر راسب فوراً؛ رج الأنبوبة أو احك جدارها ليظهر راسب أبيض بلوري','No precipitate at first; shake the tube or scratch its wall and a white crystalline precipitate appears']]}}
+  if(R.id==='TARTARIC'&&(t.ions.has('Na')||t.ions.has('NH4'))&&!t.ions.has('K')){return{res:[['لا تفاعل (نتيجة سالبة)','No reaction (negative result)']]}}
+  if(R.id==='Na2HPO4'&&(t.ions.has('Mg')||t.ppts.some(p=>p.c==='Mg'))&&t.subs.includes('NH3')){t.ppts=t.ppts.filter(p=>p.c!=='Mg');t.ions.add('Mg');bkT(t);t.bk.pend=t.bk.pend||[];
+    t.bk.pend.push({ions:['Mg'],c:'Mg',a:'PO4',hex:'#f5f5f5',ar:'أبيض بلوري (MgNH₄PO₄)',en:'white crystalline (MgNH₄PO₄)',f:'MgNH4PO4',log:['بحك جدار الأنبوبة أو بالرج يظهر راسب أبيض بلوري من MgNH₄PO₄','On scratching the tube wall or shaking, a white crystalline MgNH₄PO₄ precipitate appears','Mg²⁺ + NH₄⁺ + HPO₄²⁻ → MgNH₄PO₄↓ + H⁺']});
+    return{res:[['لا يظهر راسب فوراً؛ احك جدار الأنبوبة أو رج الأنبوبة ليظهر راسب أبيض بلوري','No precipitate at first; scratch the tube wall or shake the tube and a white crystalline precipitate appears']]}}
+  if(t.ions.has('NH4')&&(R.id==='NaOH'||R.id==='KOH'||R.id==='Na2CO3')&&!t.ppts.length){bkT(t).hotlog.push({ions:['NH4'],gas:1,log:[R.id==='Na2CO3'?'بالتسخين تتصاعد رائحة النشادر NH₃':'بالتسخين تتصاعد رائحة النشادر NH₃، وتعطي سحباً بيضاء مع ورقة مبللة بحمض HCl','On heating the odour of NH₃ is evolved'+(R.id==='Na2CO3'?'':'; it gives white clouds with HCl-moistened paper'),R.id==='Na2CO3'?'2NH₄⁺ + CO₃²⁻ → 2NH₃↑ + CO₂↑ + H₂O':'NH₄⁺ + OH⁻ → NH₃↑ + H₂O; NH₃ + HCl → NH₄Cl (white clouds)']});
+    return{res:[['لا تغير على البارد؛ سخّن لتتصاعد رائحة النشادر','No change in the cold; heat to release the odour of ammonia']]}}
+
+  if(R.id==='CaSO4'&&t.ions.has('Ca')&&!t.ions.has('Sr')&&!t.ions.has('Ba')&&!t.ions.has('Pb')){return{res:[['لا تفاعل (نتيجة سالبة)','No reaction (negative result)']]}}
+  if(R.id==='K2CrO4'&&t.ions.has('Ca')&&!t.ions.has('Sr')&&!t.ions.has('Ba')&&!t.ions.has('Pb')&&!t.ppts.length){t.tint='#f0cf11';return{res:[['لا يتكون راسب: يظهر لون أصفر فقط','No precipitate: only a yellow colour appears']]}}
+  if(R.id==='Na2HPO4'){const PH={Zn:['#f5f5f5','أبيض (Zn₃(PO₄)₂)','white (Zn₃(PO₄)₂)','Zn3(PO4)2',{acid:true},null],Mn:['#f5f5f5','أبيض (Mn₃(PO₄)₂)','white (Mn₃(PO₄)₂)','Mn3(PO4)2',{acid:true},[[0,'#f5f5f5','أبيض','white'],[5000,'#c9a37a','بني فاتح (buff)','buff']]],Co:['#8a4fb0','بنفسجي (Co₃(PO₄)₂)','violet (Co₃(PO₄)₂)','Co3(PO4)2',{acid:true},null],Ni:['#9bd18a','أخضر مزرق (Ni₃(PO₄)₂)','greenish (Ni₃(PO₄)₂)','Ni3(PO4)2',{NH3:'excess',acid:true},null]};
+    const k=Object.keys(PH).find(c=>t.ions.has(c)||t.ppts.some(p=>p.c===c));
+    if(k){const P=PH[k];t.ppts=t.ppts.filter(p=>p.c!==k);const x={sol:P[4]};if(P[5]){const n=Date.now();x.ev={t0:n,s:P[5]};t.evUntil=n+5400}
+      if(k==='Ni')x.dt='#2a5bd7';bkPpt(t,k,'PO4',P[0],P[1],P[2],P[3],x);
+      const tx={Zn:['يتكون راسب أبيض يذوب في HCl المخفف','A white precipitate forms; it dissolves in dil. HCl'],Mn:['يتكون راسب أبيض يتحول بسرعة إلى بني فاتح (buff)','A white precipitate forms that quickly turns buff'],Co:['يتكون راسب بنفسجي يذوب في الأحماض المخففة','A violet precipitate forms; it dissolves in dil. acids'],Ni:['يتكون راسب أخضر مزرق يذوب في زيادة NH₄OH أو في الأحماض المخففة','A greenish precipitate forms; it dissolves in excess NH₄OH or in dil. acids']}[k];
+      return{consume:[k],res:[[tx[0],tx[1],k+'²⁺ + HPO₄²⁻ → phosphate↓']]}}}
+  if(R.id==='Na2HPO4'&&(t.ions.has('Al')||t.ppts.some(p=>p.c==='Al'))){t.ppts=t.ppts.filter(p=>p.c!=='Al');
+    bkPpt(t,'Al','PO4','#f2f2f2','أبيض جيلاتيني (AlPO₄) يذوب في HCl المخفف','white gelatinous (AlPO₄), soluble in dil. HCl','AlPO4',{sol:{acid:true}});
+    return{consume:['Al'],res:[['يتكون راسب أبيض جيلاتيني من AlPO₄ يذوب في HCl المخفف','A white gelatinous AlPO₄ precipitate forms; it dissolves in dil. HCl','Al³⁺ + HPO₄²⁻ → AlPO₄↓ + H⁺']]}}
+  if(R.id==='H2S'&&t.ppts.some(p=>p.c==='Al'&&p.f==='Al(OH)3')&&!t.ions.has('Fe3')){t.gasUntil=Date.now()+4500;
+    return{res:[['يبقى الراسب الأبيض الجيلاتيني Al(OH)₃ كما هو (لا يتكون كبريتيد الألومنيوم في الوسط القاعدي المائي)','The white gelatinous Al(OH)₃ stays (no aluminium sulfide forms in aqueous solution)','Al(OH)₃ stays']]}}
+  if(R.id==='H2S'&&t.ppts.some(p=>p.c==='Fe3'&&/OH/.test(p.f||''))){t.gasUntil=Date.now()+4500;t.ppts=t.ppts.filter(p=>p.c!=='Fe3');
+    bkPpt(t,'Fe2','S','#151515','أسود (FeS) يذوب في HCl المخفف','black (FeS), soluble in dil. HCl','FeS',{sol:{acid:true}});
+    return{res:[['يتكون راسب أسود من FeS (يختزل H₂S أيون Fe³⁺ إلى Fe²⁺ ويترسب كبريت) ويذوب في HCl المخفف','A black FeS precipitate forms (H₂S reduces Fe³⁺ to Fe²⁺ and sulfur is deposited); it dissolves in dil. HCl','2Fe(OH)₃ + 3H₂S → 2FeS↓ + S↓ + 6H₂O']]}}
+  /* ---------- acidic group II ---------- */
+  if(R.id==='H2SO4C'&&!t.ions.has('Fe2')){
+    if(t.ions.has('Cl')){t.gasUntil=Date.now()+5000;return{res:[['فوران قوي وتصاعد غاز عديم اللون (HCl) يكوّن سحباً بيضاء مع ورقة أو ساق مبللة بمحلول النشادر','Strong effervescence with evolution of a colorless gas (HCl) that gives white clouds with a paper/rod moistened with ammonia','NaCl + H₂SO₄(conc) → NaHSO₄ + HCl↑']]}}
+    if(t.ions.has('Br')){t.gasUntil=Date.now()+5000;t.tint='#8a3d1c';return{res:[['تصاعد أبخرة بنية محمرة ذات رائحة مهيجة ويتحول المحلول إلى بني محمر','Reddish-brown fumes of irritating odor evolve and the solution becomes reddish-brown','2HBr + H₂SO₄ → Br₂↑ + SO₂↑ + 2H₂O']]}}
+    if(t.ions.has('I')){t.tint='#1c1840';bkT(t).hotlog.push({ions:['I'],gas:1,log:['بالتسخين تتصاعد أبخرة بنفسجية من اليود I₂','On warming, violet fumes of iodine I₂ are evolved','2HI + H₂SO₄ → I₂↑ + SO₂↑ + 2H₂O']});
+      return{res:[['يتحول المحلول إلى أزرق داكن أو أسود (يظهر اليود البنفسجي بعد التسخين فقط)','The solution turns dark blue or black (the violet iodine vapour shows only after warming)','8HI + H₂SO₄ → 4I₂ + H₂S↑ + 4H₂O']]}}
+    if(t.ions.has('NO3')){bkT(t).hotlog.push({ions:['NO3'],gas:1,flag:'no3Hot',log:['بعد التسخين تتصاعد أبخرة بنية خفيفة ذات رائحة نفاذة (NO₂)','After heating, faint brown fumes with a pungent odor (NO₂) are evolved','4HNO₃ → 4NO₂↑ + O₂↑ + 2H₂O']});
+      return{res:[['لا تغير على البارد؛ يلزم التسخين (تظهر NO₂ البنية الخفيفة ذات الرائحة النفاذة بعده، وتزداد بإضافة قطع النحاس)','No change when cold; heating is needed (faint brown NO₂ of pungent odor then shows, intensified by adding copper pieces)']]}}}
+  if(R.id==='CUMETAL'&&t.ions.has('NO3')&&t.subs.includes('H2SO4C')){const b=bkT(t);
+    if(b.no3Hot){t.gasUntil=Date.now()+5000;return{res:[['تزداد كثافة الأبخرة البنية (NO₂) بإضافة قطع النحاس','The brown fumes (NO₂) are intensified by the copper pieces','Cu + 4HNO₃ → Cu(NO₃)₂ + 2NO₂↑ + 2H₂O']]}}
+    return{res:[['لا تغير ظاهر بعد: سخّن الأنبوبة أولاً','No visible change yet: heat the tube first']]}}
+  if(R.c==='Pb'&&['Cl','Br','I'].some(i=>t.ions.has(i))||(['Cl','Br','I'].includes(R.a)&&t.ions.has('Pb'))){
+    const an=['Cl','Br','I'].find(i=>(R.c==='Pb'&&t.ions.has(i))||(R.a===i&&t.ions.has('Pb')));
+    const M={Cl:['#f5f5f5','أبيض (PbCl₂)','white (PbCl₂)','PbCl2'],Br:['#f5f5f5','أبيض (PbBr₂)','white (PbBr₂)','PbBr2'],I:['#f2c500','أصفر (PbI₂)','yellow (PbI₂)','PbI2']}[an];
+    const ac=R.id==='PbAc2'||t.subs.includes('PbAc2');
+    bkPpt(t,'Pb',an,M[0],M[1],M[2],M[3],{sol:an==='I'?{KI:'excess'}:undefined,on:{heat:{redis:true,hex:M[0],ar:M[1],en:M[2],f:M[3]}}});
+    return{consume:['Pb',an],res:[[ac?'يتكون راسب '+M[1].split(' ')[0]+' بعد الرج؛ يذوب في الماء المغلي ويترسب ثانية بالتبريد':'يتكون راسب '+M[1].split(' ')[0]+' يذوب في الماء الساخن ويترسب ثانية بالتبريد'+(an==='I'?'، ويذوب في فائض KI (يلزم محلول KI مركز)':''),'A '+M[2].split(' ')[0]+(ac?' precipitate forms after shaking; it dissolves in boiling water and re-precipitates on cooling':' precipitate forms; it dissolves in hot water and re-precipitates on cooling'+(an==='I'?'; it also dissolves in excess KI (needs a concentrated KI solution)':'')),'Pb²⁺ + 2'+({Cl:'Cl',Br:'Br',I:'I'}[an])+'⁻ → '+M[3].replace(/(\d)/g,d=>'₀₁₂₃₄₅₆₇₈₉'[d])+'↓']]}}
+  return null}
+function bookWater(t){if(t.bk&&t.bk.coscn){t.bk.coscn=false;t.tint='#e58aa8';pushLog(t,'بإضافة الماء يتحول اللون الأزرق إلى وردي','On adding water the blue colour turns pink','[Co(SCN)₄]²⁻ (blue) + 6H₂O → [Co(H₂O)₆]²⁺ (pink) + 4SCN⁻')}
+  if(t.ions.has('Bi')&&!t.ppts.some(p=>p.c==='Bi')&&t.level>=5){t.ions.delete('Bi');addPpt(t,'Bi','O','#f5f5f5','أبيض (BiONO₃)','white (BiONO₃)','BiONO3',{sol:{acid:true}});pushLog(t,'بإضافة الماء يتكون راسب أبيض (تحلل مائي) يذوب في الأحماض','On adding water a white precipitate forms (hydrolysis); it dissolves in acids','Bi³⁺ + NO₃⁻ + H₂O → BiONO₃↓ + 2H⁺')}}
+function bookFlame(t){const F={Ca:['#d9441f','أحمر طوبي','brick red'],Sr:['#c8102e','قرمزي (أحمر قرمزي)','crimson red'],Ba:['#8fce00','أخضر تفاحي','apple green'],Na:['#ffb300','أصفر ذهبي','golden yellow'],K:['#9b59d0','بنفسجي','violet']};
+  const hit=Object.keys(F).filter(k=>t.ions.has(k)||t.ppts.some(p=>p.c===k));
+  if(!t.level&&!t.solid){pushLog(t,'لا توجد عينة لاختبار اللهب','No sample for the flame test');return}
+  if(!hit.length){pushLog(t,'اختبار اللهب: لا يظهر لون مميز','Flame test: no characteristic colour');return}
+  hit.forEach(k=>pushLog(t,`اختبار اللهب: لهب <b style="color:${F[k][0]}">${F[k][1]}</b> (${k}${k==='K'?' - يُرى بزجاج الكوبالت الأزرق':''})`,`Flame test: <b style="color:${F[k][0]}">${F[k][2]}</b> flame (${k}${k==='K'?' - seen through blue cobalt glass':''})`))}
+function bookShake(t){let d=false;const b=t.bk;
+  if(b&&b.ring){b.ring=false;t.tint=null;pushLog(t,'بالرج تختفي الحلقة البنية','On shaking, the brown ring disappears','[Fe(H₂O)₅NO]²⁺ ⇌ Fe²⁺ + NO');d=true}
+  if(b&&b.pend&&b.pend.length&&t.level>0){const keep=[];for(const h of b.pend){if(h.ions.every(i=>t.ions.has(i))){h.ions.forEach(i=>t.ions.delete(i));bkPpt(t,h.c,h.a,h.hex,h.ar,h.en,h.f);pushLog(t,h.log[0],h.log[1],h.log[2]);d=true}else keep.push(h)}b.pend=keep}
+  if(!d)pushLog(t,t.level>0?'تم رج الأنبوبة: لا تغير ملحوظ':'الأنبوبة فارغة',t.level>0?'Tube shaken: no noticeable change':'The tube is empty');
+  return d}
+function bookPptEvents(t,R,vol){let d=false;
+  for(const p of [...t.ppts]){const m=p.sol;if(!m)continue;
+    const k=m[R.id]!==undefined?m[R.id]:((R.c==='H'&&['HCl','HNO3','H2SO4','HNO3C'].includes(R.id))?m.acid:undefined);
+    if(!k)continue;
+    if(k==='hot'){p.pend=R.id;pushLog(t,`إضافة ${name(R.id)}: لا يذوب الراسب على البارد؛ يذوب بالتسخين`,`Adding ${name(R.id)}: the precipitate does not dissolve when cold; it dissolves on heating`);d=true;continue}
+    if(k==='excess'&&vol<5)continue;
+    t.ppts=t.ppts.filter(x=>x!==p);t.ions.add(p.c);
+    if(p.dt)t.tint=p.dt;
+    pushLog(t,`إضافة ${name(R.id)}: يذوب الراسب${p.dar?' '+p.dar:''}`,`Adding ${name(R.id)}: the precipitate dissolves${p.den?' '+p.den:''}`,`${F(p.f)} → ${iS(p.c)}`);d=true}
+  return d}
+function bookHeat(t){const b=t.bk;let d=false;
+  if(b&&b.hot&&b.hot.length&&t.level>0){const keep=[];for(const h of b.hot){if(h.ions.every(i=>t.ions.has(i))){h.ions.forEach(i=>t.ions.delete(i));bkPpt(t,h.c,h.a,h.hex,h.ar,h.en,h.f);if(h.gas)t.gasUntil=Date.now()+4000;pushLog(t,h.log[0],h.log[1],h.log[2]);d=true}else keep.push(h)}b.hot=keep}
+  if(b&&b.hotlog&&b.hotlog.length&&t.level>0){const keep=[];for(const h of b.hotlog){if(h.ions.every(i=>t.ions.has(i))){if(h.gas)t.gasUntil=Date.now()+4500;if(h.flag)b[h.flag]=true;pushLog(t,h.log[0],h.log[1],h.log[2]);d=true}else keep.push(h)}b.hotlog=keep}
+  for(const p of [...t.ppts]){if(p.pend){t.ppts=t.ppts.filter(x=>x!==p);t.ions.add(p.c);pushLog(t,'بالتسخين يذوب الراسب','On heating, the precipitate dissolves',`${F(p.f)} → ${iS(p.c)}`);d=true;continue}}
+  for(const p of t.ppts){const h=p.on&&p.on.heat;if(!h)continue;
+    if(h.redis){const n=Date.now();p.ev={t0:n,s:[[0,'#f5f5f500','ذائب في الماء المغلي','dissolved in the boiling water'],[3500,h.hex,h.ar+' (عاد للترسب بالتبريد)',h.en+' (re-precipitated on cooling)']]};t.evUntil=n+3800;pushLog(t,'يذوب الراسب في الماء المغلي ويترسب ثانية عند التبريد','The precipitate dissolves in boiling water and re-precipitates on cooling');d=true;continue}
+    p.hex=h.hex;p.ar=h.ar;p.en=h.en;p.f=h.f;if(h.gas)t.gasUntil=Date.now()+4000;pushLog(t,h.log[0],h.log[1],h.log[2]);delete p.on.heat;d=true}
+  return d}
+
+function react(t,id,vol){
+  const R=SB[id],res=[];let rc=false,ra=false,handledHNO3C=false;
+  if(t.solid)dissolve(t);
+  const bkdone=bookPptEvents(t,R,vol);
+  if(bkdone){[R.c,R.a].forEach(i=>t.ions.add(i));t.subs.push(id);return}
+  const hadSubs=t.subs.length>0,prevSubs=[...new Set(t.subs)],old=[...t.ppts];
+  t.level+=vol;
+  {const bkr=bookReact(t,R,vol);if(bkr){const cons=bkr.consume||[];cons.forEach(i=>t.ions.delete(i));[R.c,R.a].forEach(i=>{if(!cons.includes(i))t.ions.add(i)});(bkr.add||[]).forEach(i=>t.ions.add(i));t.subs.push(id);bkr.res.forEach(r=>pushLog(t,`إضافة ${name(id)}: ${r[0]}`,`Adding ${name(id)}: ${r[1]}`,r[2]));return}}
+  if(id==='H2S')t.gasUntil=Date.now()+4500;
+  if(id==='NESSLER'&&t.ions.has('NH4')){
+    t.tint='#9e3b12';addPpt(t,'Hg','NH2I','#9e3b12','بني محمر','reddish-brown','Hg2NI');
+    pushLog(t,`إضافة ${name(id)}: يتكون لون/راسب بني محمر مميز مع أيونات الأمونيوم (كشف نسيلر)`,`Adding ${name(id)}: characteristic reddish-brown color/precipitate with NH₄⁺ (Nessler test)`,'NH₄⁺ + 2[HgI₄]²⁻ + 4OH⁻ → HgO·Hg(NH₂)I↓ + 7I⁻ + 3H₂O');
+    t.subs.push(id);return}
+  if(id==='HNO3C'){
+    if(t.ions.has('S')||t.subs.includes('H2S')){
+      t.ions.delete('S');t.gasUntil=Date.now()+5000;handledHNO3C=true;
+      addPpt(t,'S','S','#efe46d','أصفر (كبريت متأكسد)','yellow (oxidised sulfur)','S');
+      res.push(['يؤكسد حمض النيتريك المركز كبريتيد الهيدروجين مكوناً راسب كبريت أصفر مع تصاعد أبخرة بنية حمراء من NO₂','Conc. HNO₃ oxidises H₂S giving yellow sulfur precipitate and reddish-brown NO₂ fumes','2HNO₃(conc) + 3H₂S → 3S↓ + 2NO↑ + 4H₂O · 2NO + O₂ → 2NO₂↑']);
+    }
+    const gS=t.ppts.filter(p=>['Ni','Co','Fe2','Cu','Cd','Bi'].includes(p.c)&&p.a==='S');
+    if(gS.length){
+      t.ppts=t.ppts.filter(p=>!gS.includes(p));
+      gS.forEach(p=>t.ions.add(p.c));
+      t.gasUntil=Date.now()+5000;handledHNO3C=true;
+      const lead=gS[0].c;
+      res.push(['يذوب راسب الكبريتيد في حمض النيتريك المركز الساخن مع تصاعد أبخرة NO₂ وتكوّن كبريت','Sulfide precipitate dissolves in conc. HNO₃ with NO₂ fumes and sulfur formation',`3${lead}S + 8HNO₃ → 3${lead}(NO₃)₂ + 3S↓ + 2NO↑ + 4H₂O`]);
+    }
+  }
+  if(R.a==='HPO4'&&(t.ions.has('Fe3')||old.some(p=>p.c==='Fe3'))){
+    t.ppts=t.ppts.filter(p=>!(p.c==='Fe3'&&p.a==='OH'));
+    if(!t.ppts.some(p=>p.c==='Fe3'&&p.a==='HPO4')){
+      const m=PPT['Fe3|HPO4'];
+      addPpt(t,'Fe3','HPO4',m[0],m[1]+' '+m[3],m[2]+' '+m[4],'FePO4');
+    }
+    t.ions.delete('Fe3');ra=true;
+    res.push([`يتكون راسب ${PPT['Fe3|HPO4'][1]} (${PPT['Fe3|HPO4'][3]}) مع أيون الحديد الثلاثي Fe³⁺ ويذوب في HCl المخفف`,`${PPT['Fe3|HPO4'][2]} (${PPT['Fe3|HPO4'][4]}) forms with Fe³⁺ and dissolves in dil. HCl`,'Fe³⁺ + HPO₄²⁻ → FePO₄↓ + H⁺']);
+  }
+  if(R.a==='HPO4'&&t.ions.has('Mg')&&(t.ions.has('NH4')||t.subs.includes('NH3'))){
+    t.ions.delete('Mg');ra=true;
+    addPpt(t,'Mg','PO4','#f6f6f6','أبيض بلوري (فوسفات المغنيسيوم الأمونيومية)','white crystalline (MgNH₄PO₄)','MgNH4PO4');
+    res.push(['تجربة المجموعة السادسة (Mg²⁺): يتكون راسب أبيض بلوري من فوسفات المغنيسيوم الأمونيومية يذوب في الأحماض','Basic Gr.VI (Mg²⁺): white crystalline MgNH₄PO₄ precipitate forms (soluble in acids)','Mg²⁺ + NH₄⁺ + HPO₄²⁻ → MgNH₄PO₄↓ + H⁺']);
+  }
+  if(id==='H2SO4C'){
+    if(t.ions.has('Cl')){t.gasUntil=Date.now()+5000;res.push(['فوران قوي وتصاعد غاز عديم اللون (HCl) يكوّن سحباً بيضاء مع ورقة أو ساق مبللة بمحلول النشادر','Strong effervescence with evolution of a colorless gas (HCl) that gives white clouds with a paper/rod moistened with ammonia','NaCl + H₂SO₄(conc) → NaHSO₄ + HCl↑'])}
+    if(t.ions.has('Br')){t.gasUntil=Date.now()+5000;t.tint='#c95314';res.push(['المجموعة الثانية الحامضية (Br⁻): تتصاعد أبخرة برتقالية حمراء من البروم Br₂ تصفّر ورقة مبللة بمحلول النشا','Acid Gr.II (Br⁻): orange-red Br₂ fumes evolve (turn starch paper yellow)','2HBr + H₂SO₄ → Br₂↑ + SO₂↑ + 2H₂O'])}
+    if(t.ions.has('I')){t.gasUntil=Date.now()+5000;t.tint='#6e237a';res.push(['المجموعة الثانية الحامضية (I⁻): تتصاعد أبخرة بنفسجية من اليود I₂ تزرّق ورقة مبللة بمحلول النشا','Acid Gr.II (I⁻): violet I₂ vapors evolve (turn starch paper blue)','2HI + H₂SO₄ → I₂↑ + SO₂↑ + 2H₂O'])}
+    if(t.ions.has('NO3')&&!t.ions.has('Fe2')){t.gasUntil=Date.now()+5000;res.push(['المجموعة الثانية الحامضية (NO₃⁻): تتصاعد أبخرة بنية حمراء كثيفة من NO₂ تزداد بإضافة خراطة نحاس','Acid Gr.II (NO₃⁻): dense reddish-brown NO₂ fumes evolve (intensify with Cu turnings)','4HNO₃ → 4NO₂↑ + O₂↑ + 2H₂O'])}
+  }
+  if(R.c==='NH4'&&R.id!=='NH3')for(const p of old.filter(q=>q.a==='OH'&&['Mg','Mn'].includes(q.c))){
+    t.ppts=t.ppts.filter(x=>x!==p);t.ions.add(p.c);
+    res.push(['يذوب الراسب في ملح الأمونيوم (يقلّ تركيز OH⁻)','Precipitate dissolves in the ammonium salt (NH₄⁺ lowers [OH⁻])',`${F(p.f)} + 2NH₄⁺ → ${iS(p.c)} + 2NH₃ + 2H₂O`])}
+  if(R.c==='H'&&id!=='H2S'&&!handledHNO3C)for(const p of old){
+    if(p.sol)continue;
+    const ok=p.a==='OH'||p.a==='CO3'||p.a==='PO4'||p.a==='HPO4'||(p.a==='S'&&(p.c==='Zn'||p.c==='Fe2'||p.c==='Mn'))||(p.a==='OX'&&id!=='AcOH')||p.a==='SO3';if(!ok)continue;
+    t.ppts=t.ppts.filter(x=>x!==p);t.ions.add(p.c);rc=true;
+    const g=p.a==='CO3'||p.a==='S'||p.a==='SO3',[x,y]=cnt(p.c,p.a==='HPO4'?'PO4':p.a),ci=(x>1?x:'')+iS(p.c),yy=y>1?y:'';if(g)t.gasUntil=Date.now()+5000;
+    const e={OH:`${x*ION[p.c][1]}H⁺ → ${ci} + ${x*ION[p.c][1]}H₂O`,CO3:`${2*y}H⁺ → ${ci} + ${yy}H₂O + ${yy}CO₂↑`,PO4:`${3*y}H⁺ → ${ci} + ${yy}H₃PO₄`,HPO4:`${2*y}H⁺ → ${ci} + ${yy}H₃PO₄`,S:`${2*y}H⁺ → ${ci} + ${yy}H₂S↑`,SO3:`${2*y}H⁺ → ${ci} + ${yy}H₂O + ${yy}SO₂↑`,OX:`${2*y}H⁺ → ${ci} + ${yy}H₂C₂O₄`}[p.a];
+    const gx={CO3:' مع تصاعد غاز CO₂',S:' مع تصاعد غاز H₂S',SO3:' مع تصاعد غاز SO₂'}[p.a]||'',ge={CO3:' with CO₂ evolution',S:' with H₂S evolution',SO3:' with SO₂ evolution'}[p.a]||'';
+    res.push([`يذوب الراسب في الحمض${gx}`,`Precipitate dissolves in acid${ge}`,p.dis||`${F(p.f)} + ${e}`])}
+  const isAcidic=t.ions.has('H')||t.subs.some(s=>['HCl','H2SO4','HNO3'].includes(s));
+  const isAlkaline=t.ions.has('OH')||t.subs.includes('NH3')||id==='NH3';
+  if((id==='H2S'||R.a==='S')&&!isAcidic&&!isAlkaline){
+    const g2=['Cu','Cd','Bi','Hg'].find(c=>t.ions.has(c));
+    if(g2)res.push(['تنبيه عملي: لترسيب كاتيونات المجموعة الثانية بالكامل يُفضل تحميض المحلول بقطرات HCl المخفف قبل إمرار H₂S','Lab note: acidify with dil. HCl before passing H₂S to precipitate Basic Group II cleanly']);
+  }
+  if((id==='H2S'||R.a==='S')&&isAlkaline){
+    for(const p of [...t.ppts]){
+      if(p.a!=='OH'||['Al','Fe3'].includes(p.c))continue;
+      const m=PPT[p.c+'|S'];
+      if(!m)continue;
+      const pf=cmp(p.c,'S'),oldF=p.f;
+      t.ppts=t.ppts.filter(x=>x!==p);
+      addPpt(t,p.c,'S',m[0],m[1]+' '+m[3],m[2]+' '+m[4],pf);
+      res.push([
+        `في الوسط القلوي يتحول راسب ${oldF} إلى كبريتيد ${pf} بلون ${m[1]}`,
+        `In alkaline medium ${oldF} converts to ${m[2]} ${pf} sulfide precipitate`,
+        `${F(oldF)} + H₂S → ${F(pf)}↓ + 2H₂O`
+      ]);
+    }
+  }
+  for(const sid of prevSubs.filter(s=>s!==id&&t.ions.has(SB[s].c)&&t.ions.has(SB[s].a))){
+    const S=SB[sid];
+    const k1=S.c+'|'+R.a,k2=R.c+'|'+S.a;
+    if(SPK.has(k1)||SPK.has(k2))continue;
+    if(k1==='Fe3|HPO4'&&t.ppts.some(p=>p.c==='Fe3'&&p.a==='HPO4'))continue;
+    if(k1==='Mg|HPO4'&&t.ppts.some(p=>p.c==='Mg'&&p.a==='PO4'))continue;
+    let m1=PPT[k1],m2=PPT[k2];const bits=[],pr=[];
+    const NHB=R.id==='NH3'&&t.subs.some(q=>q!=='NH3'&&SB[q].c==='NH4');
+    if(NHB&&R.a==='OH'&&m1&&['Mg','Mn'].includes(S.c)){m1=null;if(!res.some(x=>x[1].startsWith('No Mg(OH)')))res.push(['لا يترسب هيدروكسيد '+(S.c==='Mg'?'المغنيسيوم':'المنجنيز')+' لوجود NH₄Cl (يقلّ تركيز OH⁻ فلا يتجاوز حاصل الإذابة)','No M(OH)₂ precipitate: NH₄Cl suppresses [OH⁻] so Ksp is not reached'.replace('M(OH)₂',S.c==='Mg'?'Mg(OH)₂':'Mn(OH)₂')])}
+    const G4=['Zn','Mn','Ni','Co','Fe2'];let skG4=false;
+    if(R.id==='H2S'&&G4.includes(S.c)&&!isAlkaline&&m1){m1=null;skG4=true}
+    if(S.id==='H2S'&&G4.includes(R.c)&&!isAlkaline&&m2){m2=null;skG4=true}
+    if(skG4&&!res.some(x=>x[1].startsWith('Group IV')))res.push(['لا يترسب كبريتيد المجموعة الرابعة (Zn, Mn, Ni, Co, Fe²⁺) في وسط حمضي أو متعادل؛ يلزم وسط قلوي (NH₄Cl + NH₄OH) قبل H₂S','Group IV sulfides (Zn, Mn, Ni, Co, Fe²⁺) do not precipitate in acidic/neutral medium; make it alkaline (NH₄Cl + NH₄OH) before H₂S'])
+    const use=(k,sub)=>{if(sub===R){if(k===R.c)rc=true;else ra=true}else t.ions.delete(k)};
+    const acid=(S.c==='H'&&S.id!=='H2S')?S:(R.c==='H'&&R.id!=='H2S')?R:null,other=acid===S?R:S;
+    const gz=acid&&GS[other.a];
+    if(gz&&other.c!=='H'&&!(other.a==='NO2'&&t.ions.has('MnO4'))&&acid.a!==other.a&&!handledHNO3C){t.gasUntil=Date.now()+5000;
+      if(other.a==='S2O3')addPpt(t,'S','S','#f1ecbd','أبيض مصفر (كبريت)','yellowish-white (sulfur)','S');
+      res.push([gz[0],gz[1],eqStr([aq(S.f),aq(R.f)],[aq(cmp(other.c,acid.a)),...gz[2]])]);
+      use(other.a,other);use('H',acid);continue}
+    if(acid&&other.a==='AC'&&acid.a!=='AC'){
+      res.push(['تنطلق رائحة الخل النفاذة (حمض الخليك) خاصة عند التسخين الخفيف','Pungent vinegar smell of acetic acid (stronger on gentle warming)',eqStr([aq(S.f),aq(R.f)],[aq(cmp(other.c,acid.a)),aq('CH3COOH')])]);
+      use('AC',other);use('H',acid);continue}
+    if(acid&&other.a==='OH'){
+      const m=PPT[other.c+'|'+acid.a],sf=cmp(other.c,acid.a);
+      if(m){addPpt(t,other.c,acid.a,m[0],m[1]+' '+m[3],m[2]+' '+m[4],sf);use(other.c,other)}
+      res.push([m?`تعادل مع تكوّن راسب ${m[1]}`:'تفاعل تعادل: لا تغير لوني مرئي، يسخن المحلول قليلاً (طارد للحرارة)',m?`Neutralisation with ${m[2]} precipitate`:'Neutralisation: no visible color change; solution warms slightly (exothermic)',
+        eqStr([aq(S.f),aq(R.f)],[m?sd(sf):aq(sf),lq('H2O')])]);
+      use('H',acid);use('OH',other);if(m)use(acid.a,acid);continue}
+    if(S.id!=='NH3'&&R.id!=='NH3'&&((S.c==='NH4'&&R.a==='OH')||(R.c==='NH4'&&S.a==='OH'))){t.nh3=true;
+      res.push(['لا تغير مرئي على البارد؛ عند التسخين تنطلق غاز النشادر ذو الرائحة النفاذة (يزرق عباد الشمس الحمراء)','No visible change cold; on heating pungent NH₃ gas is released (turns red litmus blue)','NH₄⁺ + OH⁻ ⇌ NH₃↑ + H₂O (on heating)']);continue}
+    if(m1){const pf=R.a==='Cr2O7'?cmp(S.c,'CrO4'):cmp(S.c,R.a);addPpt(t,S.c,R.a,m1[0],m1[1]+' '+m1[3],m1[2]+' '+m1[4],pf);t.ions.delete(S.c);ra=true;
+      bits.push(m1);pr.push(sd(pf))}
+    if(m2){const pf=S.a==='Cr2O7'?cmp(R.c,'CrO4'):cmp(R.c,S.a);addPpt(t,R.c,S.a,m2[0],m2[1]+' '+m2[3],m2[2]+' '+m2[4],pf);t.ions.delete(S.a);rc=true;
+      bits.push(m2);pr.push(sd(pf))}
+    if(bits.length){
+      if(!m1)pr.unshift(aq(cmp(S.c,R.a)));if(!m2)pr.push(aq(cmp(R.c,S.a)));
+      const p1=m1?sd(cmp(S.c,R.a==='Cr2O7'?'CrO4':R.a)):aq(cmp(S.c,R.a)),p2=m2?sd(cmp(R.c,S.a==='Cr2O7'?'CrO4':S.a)):aq(cmp(R.c,S.a));
+      res.push([bits.map(b=>`راسب ${b[1]} ${b[3]}`).join(' + '),bits.map(b=>`${b[2]} ${b[4]} precipitate`).join(' + '),eqStr([aq(S.f),aq(R.f)],[p1,p2])+`<br><small>${L('النواتج: ','Products: ')}${F(p1.f)} + ${F(p2.f)}</small>`])}}
+  const strong=R.a==='OH'&&['Na','K','Ba','Ca'].includes(R.c);
+  if(vol>=5||strong||id==='NH3'){
+    for(const[c,mode,eq,tint,ar,en]of EXC){
+      const p=t.ppts.find(q=>q.c===c&&q.a==='OH');
+      if(!p)continue;
+      if(mode==='base'?!strong:id!=='NH3')continue;
+      if(!(vol>=5||old.includes(p)))continue;
+      t.ppts=t.ppts.filter(x=>x!==p);t.ions.add(c);if(tint)t.tint=tint;ra=true;if(mode==='NH3')rc=true;res.push([ar,en,eq]);
+    }
+  }
+  if(id==='NH3')for(const p of t.ppts)if(p.c==='Hg'&&p.a==='OH'){Object.assign(p,{hex:'#f5f5f2',ar:'أبيض (كلوريد أميدو الزئبق II)',en:'white (mercury(II) amido-chloride)',f:'HgNH2Cl'});for(let i=res.length-1;i>=0;i--)if(/mercury\(II\) oxide HgO/.test(res[i][1]))res.splice(i,1);res.push(['يتكون راسب أبيض من HgNH₂Cl مع الأمونيا (وليس HgO)','White HgNH₂Cl precipitate forms with ammonia (not HgO)','HgCl₂ + 2NH₃ → Hg(NH₂)Cl↓ + NH₄Cl'])}
+  if(R.a==='I'&&vol>=5){const hp=t.ppts.find(q=>q.c==='Hg'&&q.a==='I');if(hp){t.ppts=t.ppts.filter(x=>x!==hp);t.ions.add('Hg');ra=true;res.push(['يذوب راسب HgI₂ الأحمر في فائض يوديد البوتاسيوم ويعطي محلولاً عديم اللون (معقد [HgI₄]²⁻)','Red HgI₂ dissolves in excess KI giving a colorless [HgI₄]²⁻ solution','HgI₂ + 2I⁻ → [HgI₄]²⁻'])}}
+  const CONV={'Pb|Cl':['I','CrO4','S'],'Pb|Br':['I','S','CrO4'],'Pb|SO4':['S','CrO4'],'Ag|Cl':['Br','I','S','CrO4'],'Ag|Br':['I','S','CrO4'],'Ag|I':['S'],'Pb|I':['S','CrO4'],'Ba|CO3':['SO4'],'Sr|CO3':['SO4']};
+  {const ra2=R.a==='Cr2O7'?'CrO4':R.a;
+   for(const p of [...t.ppts]){const to=CONV[p.c+'|'+p.a];if(!to||!to.includes(ra2))continue;const m=PPT[p.c+'|'+ra2];if(!m)continue;
+    t.ppts=t.ppts.filter(x=>x!==p);const nf=cmp(p.c,ra2);addPpt(t,p.c,ra2,m[0],m[1]+' '+m[3],m[2]+' '+m[4],nf);ra=true;
+    res.push([`يتحول راسب ${p.f} إلى الراسب الأقل ذوباناً ${nf} (${m[1]})`,`${p.f} converts to the less soluble ${nf} precipitate (${m[2]})`,eqStr([sd(p.f),aq(R.f)],[sd(nf),aq(cmp(R.c,p.a))])])}}
+  if(!rc)t.ions.add(R.c);if(!ra)t.ions.add(R.a);t.subs.push(id);
+  for(const r of RULES){if(r.ions.every(i=>t.ions.has(i))&&r.ions.some(i=>i===R.c||i===R.a)){const o=r.fn(t);if(o)res.push(o)}}
+  if(id==='NH3'&&vol>=5){
+    const AGE={Cl:'AgCl + 2NH₃ → [Ag(NH₃)₂]⁺ + Cl⁻',Br:'AgBr + 2NH₃ → [Ag(NH₃)₂]⁺ + Br⁻',PO4:'Ag₃PO₄ + 6NH₃ → 3[Ag(NH₃)₂]⁺ + PO₄³⁻',OH:'Ag₂O + 4NH₃ + H₂O → 2[Ag(NH₃)₂]⁺ + 2OH⁻'};
+    if(t.ppts.some(p=>p.c==='Ag'&&p.a==='Br'))res.push(['راسب AgBr الأصفر الشاحب شحيح الذوبان في NH₄OH (يبقى معظمه دون أن يذوب)','Pale-yellow AgBr is only sparingly soluble in NH₄OH (most of it remains)','AgBr(s) + NH₃ ⇌ slight dissolution']);
+    for(const ag of [...t.ppts].filter(p=>p.c==='Ag'&&['Cl','PO4','OH'].includes(p.a))){
+      t.ppts=t.ppts.filter(x=>x!==ag);t.ions.add('Ag');
+      const spd=ag.a==='Br'?'ببطء في فائض الأمونيا':'بسهولة في محلول الأمونيا';
+      res.push([`يذوب راسب ${ag.f} ${spd} ويعطي محلولاً عديم اللون`,`${ag.f} dissolves in ammonia giving a colorless solution`,AGE[ag.a]]);
+    }
+    const agi=t.ppts.find(p=>p.c==='Ag'&&p.a==='I');
+    if(agi)res.push(['راسب يوديد الفضة AgI الأصفر لا يذوب في NH₄OH (مميز لليوديد)','Yellow AgI precipitate is insoluble in NH₄OH (confirms I⁻)','AgI(s) + NH₃(aq) → No dissolution']);
+  }
+  if(!res.length&&!bkdone){
+    if(!hadSubs)pushLog(t,`أُضيف المحلول: ${name(id)}`,`Added solution: ${name(id)}`);
+    else pushLog(t,`إضافة ${name(id)}: لا يحدث تفاعل مرئي (لا راسب ولا غاز ولا تغير لون). الأيونات تبقى في المحلول.`,`Adding ${name(id)}: no visible reaction (no precipitate, gas or color change). Ions stay in solution.`);
+  }else res.forEach(r=>pushLog(t,`إضافة ${name(id)}: ${r[0]}`,`Adding ${name(id)}: ${r[1]}`,r[2]));
+}
+
+const HS={NaHCO3:['يتحلل ويتصاعد CO₂ وبخار ماء (يعكّر ماء الجير)','Decomposes releasing CO₂ and steam (limewater turns milky)','2NaHCO₃ → Na₂CO₃ + H₂O + CO₂↑',1],
+KHCO3:['يتحلل بالحرارة ويتصاعد CO₂ وبخار ماء','Decomposes on heating releasing CO₂ and steam','2KHCO₃ → K₂CO₃ + H₂O + CO₂↑',1],
+PbNO3:['يتصاعد غاز NO₂ بني محمر ويتبقى مسحوق أصفر PbO','Brown NO₂ fumes evolve; yellow PbO residue remains','2Pb(NO₃)₂ → 2PbO + 4NO₂↑ + O₂↑',1,'#e0b020'],
+CuNO3:['ينطلق NO₂ بني ويتحول الصلب الأزرق إلى CuO أسود','Brown NO₂ evolves; blue solid turns to black CuO','2Cu(NO₃)₂ → 2CuO + 4NO₂↑ + O₂↑',1,'#1b1b1b'],
+AgNO3:['ينصهر ثم يتحلل إلى فضة رمادية مع NO₂ بني (حرارة شديدة)','Melts then decomposes to grey silver with brown NO₂ (strong heating)','2AgNO₃ → 2Ag + 2NO₂↑ + O₂↑',1,'#8d8d8d'],
+KNO3:['ينصهر ويتصاعد الأكسجين (يوقد عود ثقاب متوهج)','Melts and releases O₂ (relights a glowing splint)','2KNO₃ → 2KNO₂ + O₂↑',1],
+NaNO3:['ينصهر ويتصاعد الأكسجين (يوقد عود ثقاب متوهج)','Melts and releases O₂ (relights a glowing splint)','2NaNO₃ → 2NaNO₂ + O₂↑',1],
+FeSO4:['يفقد ماء التبلر (أبيض) ثم يتحلل إلى بني محمر مع SO₂ خانق','Loses water (white) then decomposes to reddish-brown Fe₂O₃ with choking SO₂','2FeSO₄ → Fe₂O₃ + SO₂↑ + SO₃↑',1,'#7a2f12'],
+CoCl2:['يتحول من الوردي إلى الأزرق عند فقد الماء (يرجع وردياً بالرطوبة)','Pink → blue as water is lost (reverts to pink in moist air)','CoCl₂·6H₂O → CoCl₂ + 6H₂O↑',0,'#2f4fd0'],
+NiSO4:['يتحول من الأخضر الزمردي إلى الأصفر عند فقد الماء','Emerald green → yellow as water is lost','NiSO₄·6H₂O → NiSO₄ + 6H₂O↑',0,'#d0c24c'],
+NH42CO3:['تنطلق النشادر وCO₂ برائحة نفاذة ويتحلل الملح','Pungent NH₃ and CO₂ evolve as the salt decomposes','(NH₄)₂CO₃ → 2NH₃↑ + CO₂↑ + H₂O',1]};
+const HP={'Cu|OH':['CuO','#1b1b1b','أسود','black','Cu(OH)₂ → CuO + H₂O'],'Fe3|OH':['Fe2O3','#7a2f12','بني محمر داكن','dark reddish-brown','2Fe(OH)₃ → Fe₂O₃ + 3H₂O'],
+'Al|OH':['Al2O3','#f4f4f4','أبيض','white','2Al(OH)₃ → Al₂O₃ + 3H₂O'],'Mg|OH':['MgO','#f6f6f6','أبيض','white','Mg(OH)₂ → MgO + H₂O'],
+'Zn|OH':['ZnO','#f2e9a0','أصفر وهو ساخن وأبيض بعد التبريد','yellow when hot, white when cold','Zn(OH)₂ → ZnO + H₂O'],'Ni|OH':['NiO','#4a6b4a','أخضر داكن','dark green','Ni(OH)₂ → NiO + H₂O'],
+'Cu|CO3':['CuO','#1b1b1b','أسود','black','CuCO₃ → CuO + CO₂↑',1],'Zn|CO3':['ZnO','#f2e9a0','أصفر وهو ساخن وأبيض بعد التبريد','yellow when hot, white when cold','ZnCO₃ → ZnO + CO₂↑',1],
+'Mg|CO3':['MgO','#f6f6f6','أبيض','white','MgCO₃ → MgO + CO₂↑',1],'Ag|SO3':['Ag','#2a2a2a','أسود (فضة فلزية)','black (metallic silver)','Ag₂SO₃ → 2Ag↓ + SO₂↑']};
+function heat(t){
+  t.heatUntil=Date.now()+2600;let done=false;const before=[...t.ppts];
+  if(bookHeat(t))done=true;
+  if(t.solid==='CuSO4'){t.solidCol='#f4f4ee';pushLog(t,'يتحول الملح الأزرق إلى مسحوق أبيض (فقد ماء التبلر) مع بخار ماء على جدار الأنبوبة','Blue crystals turn to white powder (water of crystallisation lost); condensation on the tube wall','CuSO₄·5H₂O → CuSO₄ + 5H₂O↑');done=true}
+  else if(t.solid==='KMnO4'){t.gasUntil=Date.now()+4000;pushLog(t,'يتحلل ويتصاعد الأكسجين (يوقد عود ثقاب متوهج)','Decomposes releasing O₂ (relights a glowing splint)','2KMnO₄ → K₂MnO₄ + MnO₂ + O₂↑');done=true}
+  else if(t.solid==='NH4Cl'){pushLog(t,'يتصاعد بخار أبيض يتكثف على الجزء البارد (تسامي ظاهري)','White fumes condense on the cooler part (apparent sublimation)','NH₄Cl ⇌ NH₃ + HCl');done=true}
+  else if(HS[t.solid]){const h=HS[t.solid];if(h[3])t.gasUntil=Date.now()+4000;if(h[4])t.solidCol=h[4];pushLog(t,h[0],h[1],h[2]);done=true}
+  else if(t.solid==='Na2CO3'||t.solid==='NaCl'||t.solid==='Na2SO4'||t.solid==='NaNO3'){pushLog(t,'لا تغير مرئي عند التسخين الهادئ','No visible change on gentle heating');done=true}
+  if(t.hco3Mg&&t.level>0){t.hco3Mg=false;t.ions.delete('Mg');t.ions.delete('HCO3');t.gasUntil=Date.now()+4000;addPpt(t,'Mg','CO3','#f5f5f5','أبيض (كربونات المغنيسيوم)','white (MgCO₃)','MgCO3');pushLog(t,'بالتسخين تتفكك بيكربونات المغنيسيوم ويتكون راسب أبيض من MgCO₃ مع تصاعد CO₂ (تأكيد HCO₃⁻)','On heating, soluble Mg(HCO₃)₂ decomposes giving white MgCO₃ precipitate and CO₂ (confirms HCO₃⁻)','Mg(HCO₃)₂ → MgCO₃↓ + H₂O + CO₂↑');done=true}
+  if(t.fe3Ac&&t.level>0){t.fe3Ac=false;t.tint=null;addPpt(t,'Fe3','OH','#8b3a14','بني محمر (أسيتات الحديديك القاعدية)','reddish-brown (basic iron(III) acetate)','Fe(OH)2CH3COO');pushLog(t,'بالتسخين يزول اللون الأحمر الدموي ويتكون راسب بني محمر من أسيتات الحديديك القاعدية','On heating, blood-red color disappears forming reddish-brown basic iron(III) acetate precipitate','Fe(CH₃COO)₃ + 2H₂O → Fe(OH)₂(CH₃COO)↓ + 2CH₃COOH');done=true}
+  if(t.nh3&&t.level>0){t.gasUntil=Date.now()+5000;t.nh3=false;pushLog(t,'تصاعد غاز النشادر ذو الرائحة النفاذة، ويزرق عباد الشمس الحمراء','Pungent NH₃ gas evolves; moist red litmus turns blue','NH₄⁺ + OH⁻ → NH₃↑ + H₂O');done=true}
+  for(const p of before){const h=HP[p.c+'|'+p.a];if(!h)continue;if(p.c==='Mg'&&p.bk2)continue;
+    p.hex=h[1];p.ar=h[2];p.en=h[3];p.f=h[0];p.a='O';p.dis=null;if(h[5])t.gasUntil=Date.now()+4000;
+    pushLog(t,`يتحول الراسب إلى ${h[0]} (${h[2]})${h[5]?' مع تصاعد CO₂':''}`,`Precipitate turns into ${h[0]} (${h[3]})${h[5]?' with CO₂ evolution':''}`,h[4]);done=true}
+  if(t.ppts.some(p=>p.c==='Pb'&&p.a==='Cl'&&!p.on)){pushLog(t,'يذوب PbCl₂ الأبيض بالتسخين ويعود للترسب بلورات إبرية عند التبريد','White PbCl₂ dissolves on heating and recrystallises as needles on cooling');done=true}
+  if(!done&&t.solid){pushLog(t,'لا تغير مرئي عند التسخين الهادئ (قد يفقد الملح رطوبته أو ينصهر دون تحلل)','No visible change on gentle heating (the salt may dry out or melt without decomposing)');done=true}
+  if(!done&&t.level>0)pushLog(t,'يسخن المحلول فقط دون تغير كيميائي ملحوظ','Solution just warms; no noticeable chemical change');
+  else if(!done)pushLog(t,'الأنبوبة فارغة','The tube is empty');
+}
+
+function svg(t,i){
+  bkTick(t);
+  const base=268,top=base-Math.min(t.level,22)*10,[lc,lo]=liq(t),now=Date.now();
+  let s=`<svg viewBox="0 0 100 300"><defs>
+    <clipPath id="c${i}"><path d="M22 14V240a28 28 0 0 0 56 0V14z"/></clipPath>
+    <linearGradient id="gl${i}" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".42"/>
+      <stop offset="22%" stop-color="#ffffff" stop-opacity=".08"/>
+      <stop offset="76%" stop-color="#000000" stop-opacity=".04"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity=".28"/>
+    </linearGradient>
+    <linearGradient id="lq${i}" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="${lc}" stop-opacity="${Math.min(lo+.12,.94)}"/>
+      <stop offset="100%" stop-color="${lc}" stop-opacity="${lo}"/>
+    </linearGradient>
+  </defs><g clip-path="url(#c${i})">`;
+  if(t.level>0){
+    s+=`<rect x="0" y="${top}" width="100" height="${base-top+4}" fill="url(#lq${i})"/>`;
+    s+=`<ellipse cx="50" cy="${top}" rx="28" ry="3.2" fill="#ffffff" opacity=".34"/>`;
+  }
+  if(t.bk&&t.bk.ring&&t.level>0)s+=`<rect x="0" y="${top+14}" width="100" height="9" fill="#5a2d12" opacity=".92"/>`;
+  t.ppts.slice(0,6).forEach((p,k)=>{const h=16,y=base-h*(k+1);s+=`<rect x="0" y="${y}" width="100" height="${h+2}" fill="${p.hex}" opacity=".97"/>`;
+    for(let j=0;j<10;j++)s+=`<circle cx="${25+j*5.6}" cy="${y+3.5+((j*7+k*4)%10)}" r="1.75" fill="#ffffff" opacity=".28"/>`});
+  if(t.solid){const c=t.solidCol||SB[t.solid].col;s+=`<path d="M27 ${base}Q50 ${base-36} 73 ${base}z" fill="${c}" stroke="#00000038" stroke-width="1.2"/>`}
+  if(t.gasUntil>now)for(let j=0;j<10;j++)s+=`<circle class="b" cx="${29+j*5.2}" cy="${base-20}" r="${1.9+j%3}" style="animation-delay:${(j*.24).toFixed(2)}s"/>`;
+  s+=`<rect x="20" y="12" width="60" height="260" fill="url(#gl${i})" pointer-events="none"/></g>`;
+  s+=`<path d="M22 14V240a28 28 0 0 0 56 0V14" fill="var(--glass)" stroke="var(--stroke)" stroke-width="3"/><path d="M28 22V232" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" opacity=".45"/><path d="M15 14H85" stroke="var(--stroke)" stroke-width="4.2" stroke-linecap="round"/>`;
+  if(t.heatUntil>now)s+=`<g class="fl"><path d="M50 296C35 284 39 273 50 260C61 273 65 284 50 296Z" fill="#ff7b00"/><path d="M50 294C42 286 45 279 50 270C55 279 58 286 50 294Z" fill="#ffd84d"/></g>`;
+  return s+'</svg>';
+}
+function drawTubes(){
+  $('#tubes').innerHTML=tubes.map((t,i)=>`<div class="tube ${i===cur?'sel':''}" data-i="${i}">${svg(t,i)}<b>${L('أنبوبة','Tube')} ${i+1}</b><small>${t.solid?name(t.solid):''} ${t.level?t.level.toFixed(0)+' mL':''}</small></div>`).join('');
+  $$('.tube').forEach(e=>e.onclick=()=>{cur=+e.dataset.i;drawTubes();drawLog()});
+  const t=tubes[cur];
+  $('#bUndo').disabled=!t.hist.length;
+  $('#log').innerHTML=t.log.length?t.log.map(l=>`<div class="log">${L(l.ar,l.en)}${l.eq?`<div class="eq">${l.eq}</div>`:''}</div>`).join(''):`<p class="hint">${L('لا توجد ملاحظات بعد.','No observations yet.')}</p>`;
+  drawObs();
+  const nx=Math.max(t.gasUntil,t.heatUntil,t.evUntil||0)-Date.now();if(nx>0)setTimeout(drawTubes,Math.min(nx+60,1000));
+}
+const drawLog=()=>{};
+const nz=s=>s.toLowerCase().replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/[\u064B-\u0652\s()·.\-_[\]]/g,'');
+const LIQ=new Set(['CUMETAL','I2','DMG','H2S','HCl','H2SO4','H2SO4C','HNO3','HNO3C','NH3','NESSLER','AcOH','H3PO4','H2C2O4']);
+function fillPresets(){
+  const v=$('#preset').value;
+  $('#preset').innerHTML=PRESETS.map(p=>`<option value="${p[0]}">${L(p[1],p[2])}</option>`).join('');
+  if(v)$('#preset').value=v;
+}
+function fillSubs(){
+  const q=nz($('#subQ').value||''),v=$('#sub').value;
+  const hit=r=>!q||[r[0],SB[r[0]].f,r[3],r[4],r[8]||''].some(x=>nz(x).includes(q));
+  const lab=r=>(r[0]==='CuSO4'?'CuSO₄·5H₂O':SUBU(SB[r[0]].f)+SUBU(r[8]||''))+' — '+L(r[3],r[4]);
+  const isRg=r=>LIQ.has(r[0])||/كاشف/.test(r[3]);
+  const gm=$('#grpMode').value,keys=[];
+  const grp=(g,f)=>{const l=SBL.filter(r=>f(r)&&hit(r));return l.length?`<optgroup label="${g}">${l.map(r=>`<option value="${r[0]}">${lab(r)}</option>`).join('')}</optgroup>`:''};
+  let h=grp(L('🧴 كواشف وأحماض','🧴 Reagents & acids'),isRg);
+  SBL.filter(r=>!isRg(r)).forEach(r=>{const k=r[gm==='a'?2:1];if(!keys.includes(k))keys.push(k)});
+  keys.forEach(k=>{h+=grp((gm==='a'?L('أنيون ','Anion '):L('كاتيون ','Cation '))+iS(k),r=>!isRg(r)&&r[gm==='a'?2:1]===k)});
+  $('#sub').innerHTML=h;
+  if(v&&[...$('#sub').options].some(o=>o.value===v))$('#sub').value=v;showLook();
+}
+function showLook(){const s=SB[$('#sub').value];if(!s){$('#look').textContent=L('لا نتائج مطابقة','No matches');$('#bSolid').disabled=true;$('#bSol').disabled=true;return}$('#bSol').disabled=false;$('#look').textContent=L('المظهر: ','Appearance: ')+L(s.lk[0],s.lk[1])+(s.hy?` (${SUBU(s.f)}${SUBU(s.hy)})`:'');$('#bSolid').disabled=!s.col}
+function act(fn,record=true){const t=tubes[cur];try{const prev=record?snap(t):null;t._st=t._sq||0;fn(t);if(record){t.hist.push(prev);if(t.hist.length>25)t.hist.shift()}}catch(e){alert(e.message)}save();drawTubes()}
+$('#sub').onchange=showLook;$('#grpMode').onchange=fillSubs;$('#subQ').oninput=fillSubs;
+$('#bRunPreset').onclick=()=>act(t=>{
+  const p=PRESETS.find(x=>x[0]===$('#preset').value);if(!p)return;
+  const keepHist=t.hist;Object.assign(t,newTube(),{hist:keepHist});
+  pushLog(t,`▶ بدء تجربة: ${L(p[1],p[2])}`,`▶ Running test: ${p[2]}`);
+  for(const st of p[3]){
+    if(st[0]==='solid'){t.solid=st[1];t.solidCol=null;pushLog(t,`أُضيف صلب ${name(st[1])}`,`Added solid ${SB[st[1]].en}`)}
+    else if(st[0]==='water'){if(t.solid){const n=t.solid;dissolve(t);t.level+=5;pushLog(t,`يذوب ${name(n)} في الماء`,`${SB[n].en} dissolves in water`)}else t.level+=5}
+    else if(st[0]==='sol'){react(t,st[1],st[2]||1)}
+    else if(st[0]==='heat'){heat(t)}
+    else if(st[0]==='shake'){bookShake(t)}
+  }
+});
+$('#bSolid').onclick=()=>act(t=>{const id=$('#sub').value;if(!SB[id])return;
+  if(t.level>0){react(t,id,0.3);return}
+  if(t.solid&&t.solid!==id){alert(L('الأنبوبة تحتوي مادة صلبة أخرى؛ أعد الضبط أو أضف ماءً أولاً.','The tube already holds another solid; reset it or add water first.'));return}
+  t.solid=id;t.solidCol=null;pushLog(t,`أُضيف ${name(id)} (${L(SB[id].lk[0],SB[id].lk[1])})`,`Added ${name(id)} (${SB[id].lk[1]})`)});
+$('#bWater').onclick=()=>act(t=>{if(t.level+5>22){alert(L('الأنبوبة ممتلئة','Tube is full'));return}
+  if(t.solid){const n=t.solid;dissolve(t);t.level+=5;pushLog(t,`يذوب ${name(n)} في الماء: ${t.ions.has('MnO4')?'محلول بنفسجي':'يتكون المحلول'}`,`${name(n)} dissolves in water, forming a solution`)}
+  else{t.level+=5;pushLog(t,'أُضيف ماء مقطر','Distilled water added');bookWater(t)}});
+$('#bSol').onclick=()=>act(t=>{const v=+$('#vol').value;if(!SB[$('#sub').value])return;if(t.level+v>22){alert(L('الأنبوبة ممتلئة','Tube is full'));return}react(t,$('#sub').value,v)});
+$('#bHeat').onclick=()=>act(heat);
+$('#bShake').onclick=()=>act(bookShake);
+$('#bFlame').onclick=()=>act(bookFlame);
+$('#bUndo').onclick=()=>act(t=>{if(!t.hist.length)return;const prev=t.hist.pop();const keepHist=t.hist;restoreSnap(t,prev);t.hist=keepHist},false);
+$('#bReset').onclick=()=>act(t=>{const keepHist=t.hist;Object.assign(t,newTube(),{hist:keepHist})});
+
+function mmCalc(){
+  const o=$('#mmOut');
+  try{const a=parse($('#mmIn').value),M=mass(a);
+    o.innerHTML=`<p><b>${L('الكتلة المولية','Molar mass')}: ${fx(M)} g/mol</b></p><table><tr><th>${L('العنصر','Element')}</th><th>n</th><th>Ar</th><th>${L('الكتلة','Mass')}</th><th>%</th></tr>`+
+    Object.entries(a).map(([e,n])=>`<tr><td>${e}</td><td>${n}</td><td>${fx(AW[e])}</td><td>${fx(AW[e]*n)}</td><td>${fx(AW[e]*n/M*100,Math.min(dec,3))}</td></tr>`).join('')+'</table>'}
+  catch(e){o.innerHTML=`<p style="color:#c0392b">${e.message}</p>`}
+}
+function prepCalc(){
+  const o=$('#pOut');try{const M=mass(parse($('#pF').value)),C=+$('#pC').value,V=+$('#pV').value,n=+$('#pN').value||1,p=+$('#pP').value||100,N=$('#pT').value==='N';
+    const g=C*V/1000*(N?M/n:M)/(p/100);
+    o.innerHTML=`<p>${L('الكتلة المولية','Molar mass')}: ${fx(M)} g/mol${N?` · ${L('الوزن المكافئ','Equivalent weight')}: ${fx(M/n)} g/eq`:''}</p><p><b>${L('المطلوب وزنه','Mass to weigh')}: ${fx(g)} g</b> (${fx(g*1000,Math.max(dec-2,1))} mg)</p><p class="hint">${L('أذب في كمية قليلة من الماء ثم أكمل إلى العلامة','Dissolve in a little water, then make up to the mark')} ${V} mL.</p>`}
+  catch(e){o.innerHTML=`<p style="color:#c0392b">${e.message}</p>`}
+}
+function dilCalc(){
+  const ids=['d1','d2','d3','d4'],v=ids.map(i=>$('#'+i).value===''?null:+$('#'+i).value),e=v.filter(x=>x===null).length,o=$('#dOut');
+  if(e!==1){o.innerHTML=`<p class="hint">${L('اترك خانة واحدة فقط فارغة','Leave exactly one field empty')}</p>`;return}
+  if(v.some(x=>x!==null&&x<=0)){o.innerHTML=`<p style="color:#c0392b">${L('أدخل قيماً موجبة أكبر من الصفر','Enter positive values greater than zero')}</p>`;return}
+  let[a,b,c,d]=v,r,lbl;
+  if(a===null){r=c*d/b;lbl='M₁'}else if(b===null){r=c*d/a;lbl='V₁ (mL)'}else if(c===null){r=a*b/d;lbl='M₂'}else{r=a*b/c;lbl='V₂ (mL)'}
+  o.innerHTML=`<p><b>${lbl} = ${fx(r)}</b></p>`+(b===null?`<p class="hint">${L('أضف ماءً بحجم','Add water volume')}: ${fx(d-r)} mL</p>`:'');
+}
+function titCalc(){
+  const C=+$('#t1').value,Vt=+$('#t2').value,Va=+$('#t3').value,a=+$('#t4').value,b=+$('#t5').value,Mw=+$('#t6').value,o=$('#tOut');
+  if(!Va||!b){o.innerHTML=`<p class="hint">${L('أدخل قيماً صحيحة','Enter valid values')}</p>`;return}
+  const mmol=C*Vt*a/b,Ca=mmol/Va;
+  o.innerHTML=`<p>${L('مللي مول المعاير','Titrant mmol')}: ${fx(C*Vt)} → ${L('مللي مول المجهول','Analyte mmol')}: ${fx(mmol)}</p><p><b>${L('تركيز المجهول','Analyte concentration')} = ${fx(Ca)} M</b></p>`+
+   (Mw>0?`<p>${L('التركيز بالجرام/لتر','Concentration (g/L)')}: <b>${fx(Ca*Mw)} g/L</b></p>`:'');
+}
+['mmIn'].forEach(i=>$('#'+i).oninput=mmCalc);
+['pF','pT','pC','pV','pN','pP'].forEach(i=>$('#'+i).oninput=prepCalc);
+['d1','d2','d3','d4'].forEach(i=>$('#'+i).oninput=dilCalc);
+['t1','t2','t3','t4','t5','t6'].forEach(i=>$('#'+i).oninput=titCalc);
+
+
+/* ---------- Observations summary + copy ---------- */
+const CNAMES=[['#9cd4f2','عديم اللون / شفاف','colourless / clear'],['#1e88e5','أزرق','blue'],['#d4921e','أصفر مائل للبني','yellow-brown'],['#9fd082','أخضر فاتح','pale green'],['#3bb263','أخضر','green'],['#df568b','وردي','pink'],['#48a96c','أخضر','green'],['#f3b6d0','وردي فاتح','pale pink'],['#7d1599','بنفسجي','purple'],['#eb7d09','برتقالي','orange'],['#f0cf11','أصفر','yellow'],['#9b0c18','أحمر دموي','blood-red'],['#9e3b12','بني محمر','reddish-brown'],['#4e2816','بني داكن','dark brown'],['#8a5a2b','بني','brown'],['#ffffff','أبيض','white'],['#000000','أسود','black'],['#ff0000','أحمر','red']];
+function cname(hex){const rgb=h=>{h=h.replace('#','');if(h.length===3)h=h.split('').map(x=>x+x).join('');return[0,2,4].map(i=>parseInt(h.substr(i,2),16))};
+  let best=CNAMES[0],bd=1e9;try{const c=rgb(hex);for(const n of CNAMES){const d=rgb(n[0]).reduce((s,v,i)=>s+(v-c[i])**2,0);if(d<bd){bd=d;best=n}}}catch{}return L(best[1],best[2])}
+const GASRE=/غاز|تصاعد|أبخرة|بخار|gas|evolv|fumes|steam/i,NOGAS=/لا يحدث تفاعل مرئي|no visible reaction|لا تغير مرئي على البارد|No visible change cold/i;
+function obsData(t){
+  bkTick(t);
+  const clr=t.level>0?liq(t):null;
+  const nn=Math.max((t._sq||0)-(t._st||0),0),gas=t.log.slice(0,nn).filter(l=>!NOGAS.test(l.ar)&&!NOGAS.test(l.en)&&(GASRE.test(l.ar)||GASRE.test(l.en))).map(l=>L(l.ar,l.en));
+  return{clr,gas,ppt:[...(t.bk&&t.bk.ring?[{hex:'#5a2d12',ar:'حلقة بنية عند السطح الفاصل بين الحمض والمحلول',en:'brown ring at the acid/solution interface'}]:[]),...t.ppts].slice(0,6)};
+}
+function obsText(){
+  const t=tubes[cur],o=obsData(t),out=[];
+  out.push(`${L('الأنبوبة','Tube')} ${cur+1}`);
+  out.push(`${L('لون المحلول','Solution colour')}: ${o.clr?cname(o.clr[0]):L('لا يوجد محلول','no solution')}`);
+  out.push(`${L('الراسب','Precipitate')}: ${o.ppt.length?o.ppt.map(p=>L(p.ar,p.en)).join(' ، '):L('لا يوجد','none')}`);
+  out.push(`${L('الغاز','Gas')}: ${o.gas.length?o.gas[0]:L('لا يوجد','none')}`);
+  if(t.log.length){out.push('');out.push(L('سجل الخطوات (من الأقدم):','Step log (oldest first):'));[...t.log].reverse().forEach((l,i)=>out.push(`${i+1}. ${L(l.ar,l.en)}${l.eq?'  ['+l.eq.replace(/<[^>]+>/g,'')+']':''}`))}
+  return out.join('\n');
+}
+function drawObs(){
+  const t=tubes[cur],o=obsData(t),box=$('#obsBox');if(!box)return;
+  box.innerHTML=`<div class="obsrow"><b>${L('لون المحلول','Solution colour')}:</b> ${o.clr?`<span class="sw" style="background:${o.clr[0]}"></span>${cname(o.clr[0])}`:L('لا يوجد محلول','no solution')}</div>
+  <div class="obsrow"><b>${L('الراسب','Precipitate')}:</b> ${o.ppt.length?o.ppt.map(p=>`<span class="sw" style="background:${p.hex}"></span>${L(p.ar,p.en)}`).join(' &nbsp; '):L('لا يوجد','none')}</div>
+  <div class="obsrow"><b>${L('الغاز','Gas')}:</b> ${o.gas.length?o.gas[0]:L('لا يوجد','none')}</div>`;
+}
+async function copyText(txt){try{await navigator.clipboard.writeText(txt);return true}catch{const ta=$('#obsTxt');ta.style.display='block';ta.value=txt;ta.focus();ta.select();try{return document.execCommand('copy')}catch{return false}}}
+$('#bCopyObs').onclick=async()=>{const txt=obsText(),ta=$('#obsTxt');ta.value=txt;const ok=await copyText(txt);$('#obsMsg').textContent=ok?L('✅ تم النسخ','✅ Copied'):L('حدد النص وانسخه يدويًا','Select the text and copy it manually');if(!ok)ta.style.display='block';setTimeout(()=>$('#obsMsg').textContent='',2500)};
+
+/* ---------- Start hint ---------- */
+if(LS.get('hintOff',false))$('#startHint').style.display='none';
+$('#bHintX').onclick=()=>{$('#startHint').style.display='none';LS.set('hintOff',true)};
+$('#bExample').onclick=()=>{$('#preset').value=PRESETS[0][0];$('#bRunPreset').click();$('#tubes').scrollIntoView({behavior:'smooth',block:'nearest'})};
+
+/* ---------- Unknown salt quiz (works on its own test tube, same bench tools) ---------- */
+const QX=new Set(['AgCl','AgBr','AgI','BaSO4','PbSO4','CuS','FeS','CaSO4','PbI2','PbCl2','HgCl2','CdSO4','BiNO33','AlOH3','ZnOH2','CaOH2','NH4OX']);
+/* Syllabus mode: only cations of basic Gr.I-VI and anions of the acid-group presets */
+const SYLC=['Pb','Bi','Cu','Cd','Al','Fe3','Zn','Mn','Co','Ni','Ba','Sr','Ca','NH4','Mg','Na','K'];
+const SYLA=['CO3','HCO3','S2O3','Cl','Br','I','NO3','SO4','PO4','B4O7'];
+let QM='all';
+const QPOOL=()=>QM==='syl'?SBL.filter(r=>!LIQ.has(r[0])&&(!QX.has(r[0])||['BiNO33','CdSO4'].includes(r[0]))&&SYLC.includes(r[1])&&SYLA.includes(r[2])):SBL.filter(r=>!LIQ.has(r[0])&&!/كاشف/.test(r[3])&&r[2]!=='OH'&&!QX.has(r[0])&&r[1]!=='H');
+const qKey=()=>QM==='syl'?'quiz_syl':'quiz';
+let Q,qt=newTube();
+const qSave=()=>{Q.t={...qt,ions:[...qt.ions],hist:qt.hist.slice(-25)};LS.set(qKey(),Q)};
+const qFresh=()=>{qt=newTube();qt.solid=Q.id};
+function qLoad(){Q=LS.get(qKey(),{id:null,notes:[],done:false,ok:0,tot:0});qt=newTube();
+  if(Q.id&&!QPOOL().some(r=>r[0]===Q.id)){Q.id=null;Q.notes=[];Q.done=false;Q.res=null;delete Q.t}
+  if(Q.id&&Q.t)qt={...newTube(),...Q.t,ions:new Set(Q.t.ions||[]),hist:Array.isArray(Q.t.hist)?Q.t.hist:[],gasUntil:0,heatUntil:0};else if(Q.id)qFresh()}
+qLoad();
+const qMode=m=>{if(m===QM)return;QM=m;qLoad();$('#qSubQ').value='';qFillSubs();qDraw()};
+const qcl=x=>{x=x.replace(/\s*\[[^\]]*\]/g,'').replace(/\s*\([^()]*[₀-₉⁺⁻→][^()]*\)/g,'');const i=x.search(/[:：]\s/);if(i>-1&&/^(إضافة|Adding)/.test(x))x=x.slice(i+1);return x.replace(/[,،]\s*[²³¹⁰-⁹⁺⁻]+/g,'').trim().replace(/[,،]\s*$/,'')};
+const qShort=n=>n.split('[')[0].replace(/\(.*?\)/g,'').trim();
+function qNew(){const p=QPOOL();Q.id=p[Math.floor(Math.random()*p.length)][0];Q.notes=[];Q.done=false;Q.res=null;qFresh();qSave();qDraw()}
+/* run one action on the unknown tube, record it in the notebook, keep undo history */
+function qAct(fn,label){
+  if(Q.done)return;
+  const t=qt,prev=snap(t);prev.nl=Q.notes.length;t._st=t._sq||0;const before=new Set(t.log);
+  try{fn(t)}catch(e){alert(e.message);return}
+  const nw=t.log.filter(l=>!before.has(l));
+  const txt=nw.length?[...new Map(nw.reverse().map(l=>[qcl(l.ar)+'|'+qcl(l.en),[qcl(l.ar),qcl(l.en)]])).values()]:[['لا تغير ملحوظ','No visible change']];
+  Q.notes.unshift({k:'a',ar:label[0]+': '+txt.map(x=>x[0]).join(' · '),en:label[1]+': '+txt.map(x=>x[1]).join(' · ')});
+  t.hist.push(prev);if(t.hist.length>25)t.hist.shift();
+  qSave();qDraw();
+}
+const qSel=()=>SB[$('#qSub').value];
+const qRg=()=>{const s=qSel();return s?[qShort('+ '+s.ar).replace(/^\+\s*/,''),qShort('+ '+s.en).replace(/^\+\s*/,'')]:['','']};
+$('#qbSolid').onclick=()=>{const s=qSel();if(!s)return;qAct(t=>{if(t.level>0){react(t,s.id,0.3);return}
+  throw Error(L('الأنبوبة فيها الملح المجهول صلباً؛ أضف ماءً أولاً ثم أضف الصلب.','The tube holds the unknown salt as a solid; add water first, then add the solid.'))},['+ '+qRg()[0]+' (صلب)','+ '+qRg()[1]+' (solid)'])};
+$('#qbWater').onclick=()=>qAct(t=>{if(t.level+5>22)throw Error(L('الأنبوبة ممتلئة','Tube is full'));
+  if(t.solid){dissolve(t);t.level+=5;const c=liq(t);pushLog(t,'يذوب الملح في الماء، لون المحلول: '+cname(c[0]),'The salt dissolves in water, solution colour: '+cname(c[0]))}
+  else{t.level+=5;pushLog(t,'أُضيف ماء مقطر','Distilled water added');bookWater(t)}},['💧 إضافة ماء 5 mL','💧 Add water 5 mL']);
+$('#qbSol').onclick=()=>{const s=qSel();if(!s)return;const v=+$('#qVol').value;qAct(t=>{if(t.level+v>22)throw Error(L('الأنبوبة ممتلئة','Tube is full'));react(t,s.id,v)},['+ '+qRg()[0],'+ '+qRg()[1]])};
+$('#qbHeat').onclick=()=>qAct(t=>{heat(t)},['🔥 تسخين','🔥 Heating']);
+$('#qbShake').onclick=()=>qAct(t=>{bookShake(t)},['🫨 رج','🫨 Shaking']);
+$('#qbFlame').onclick=()=>qAct(t=>{bookFlame(t)},['🔥 اختبار اللهب','🔥 Flame test']);
+$('#qbLook').onclick=()=>qAct(t=>{const s=SB[Q.id];pushLog(t,'المظهر: '+s.lk[0],'Appearance: '+s.lk[1])},['👁️ المظهر','👁️ Appearance']);
+$('#qbUndo').onclick=()=>{if(Q.done||!qt.hist.length)return;const prev=qt.hist.pop(),keep=qt.hist;restoreSnap(qt,prev);qt.hist=keep;qt._st=qt._sq||0;Q.notes=Q.notes.slice(Q.notes.length-prev.nl);qSave();qDraw()};
+$('#qbReset').onclick=()=>{if(Q.done)return;qFresh();Q.notes.unshift({k:'a',ar:'↺ أُعيدت الأنبوبة: عينة جديدة من نفس الملح المجهول',en:'↺ Tube reset: fresh sample of the same unknown salt'});qSave();qDraw()};
+function qFillSubs(){
+  const q=nz($('#qSubQ').value||''),v=$('#qSub').value;
+  const hit=r=>!q||[r[0],SB[r[0]].f,r[3],r[4],r[8]||''].some(x=>nz(x).includes(q));
+  const lab=r=>(r[0]==='CuSO4'?'CuSO₄·5H₂O':SUBU(SB[r[0]].f)+SUBU(r[8]||''))+' — '+L(r[3],r[4]);
+  const isRg=r=>LIQ.has(r[0])||/كاشف/.test(r[3]);
+  const gm=$('#qGrp').value,keys=[];
+  const grp=(g,f)=>{const l=SBL.filter(r=>f(r)&&hit(r));return l.length?`<optgroup label="${g}">${l.map(r=>`<option value="${r[0]}">${lab(r)}</option>`).join('')}</optgroup>`:''};
+  let h=grp(L('🧴 كواشف وأحماض','🧴 Reagents & acids'),isRg);
+  SBL.filter(r=>!isRg(r)).forEach(r=>{const k=r[gm==='a'?2:1];if(!keys.includes(k))keys.push(k)});
+  keys.forEach(k=>{h+=grp((gm==='a'?L('أنيون ','Anion '):L('كاتيون ','Cation '))+iS(k),r=>!isRg(r)&&r[gm==='a'?2:1]===k)});
+  $('#qSub').innerHTML=h;
+  if(v&&[...$('#qSub').options].some(o=>o.value===v))$('#qSub').value=v;qLook();
+}
+function qLook(){const s=qSel(),e=!s;$('#qbSol').disabled=e||Q.done;$('#qbSolid').disabled=e||!s.col||Q.done;
+  $('#qLook').textContent=e?L('لا نتائج مطابقة','No matches'):L('المظهر: ','Appearance: ')+L(s.lk[0],s.lk[1])+(s.hy?` (${SUBU(s.f)}${SUBU(s.hy)})`:'')}
+$('#qSub').onchange=qLook;$('#qGrp').onchange=qFillSubs;$('#qSubQ').oninput=qFillSubs;
+function qGuess(){
+  const c=$('#qC').value,a=$('#qA').value,s=SB[Q.id];Q.tot++;Q.done=true;
+  const ok=c===s.c&&a===s.a;if(ok)Q.ok++;Q.res=ok;qSave();qDraw();
+}
+function qDraw(){
+  if(!Q.id){qNew();return}
+  const s=SB[Q.id],t=qt,pool=QPOOL(),cs=QM==='syl'?SYLC:[...new Set(pool.map(r=>r[1]))],as=QM==='syl'?SYLA:[...new Set(pool.map(r=>r[2]))];
+  const keepC=$('#qC')&&$('#qC').value,keepA=$('#qA')&&$('#qA').value;
+  const opt=(k,v)=>`<option value="${k}" ${v===k?'selected':''}>${iS(k)}</option>`;
+  $('#qScore').innerHTML=(QM==='syl'?`<span class="qok">📘 ${L('وضع المنهج: الكاتيونات من المجموعات القاعدية 1-6 والأنيونات من المجموعات الحامضية فقط','Syllabus mode: cations from basic Gr.I-VI and anions from the acid groups only')}</span><br>`:'')+`<b>${L('النتيجة','Score')}: ${Q.ok} / ${Q.tot}</b> · ${L('عدد الخطوات','Steps run')}: ${Q.notes.length}`;
+  $('#qTube').innerHTML=`<div class="qtube">${svg(t,'q')}<b>${L('أنبوبة الملح المجهول','Unknown-salt tube')}</b><small>${t.solid?L('ملح مجهول','Unknown salt'):''} ${t.level?t.level.toFixed(0)+' mL':''}</small></div>`;
+  $('#qbUndo').disabled=!t.hist.length||Q.done;
+  ['qbWater','qbHeat','qbShake','qbFlame','qbLook','qbReset'].forEach(i=>$('#'+i).disabled=Q.done);qLook();
+  const o=obsData(t);
+  $('#qObs').innerHTML=`<div class="obsrow"><b>${L('لون المحلول','Solution colour')}:</b> ${o.clr?`<span class="sw" style="background:${o.clr[0]}"></span>${cname(o.clr[0])}`:L('لا يوجد محلول','no solution')}</div>
+  <div class="obsrow"><b>${L('الراسب','Precipitate')}:</b> ${o.ppt.length?o.ppt.map(p=>`<span class="sw" style="background:${p.hex}"></span>${L(qcl(p.ar),qcl(p.en))}`).join(' &nbsp; '):L('لا يوجد','none')}</div>
+  <div class="obsrow"><b>${L('الغاز','Gas')}:</b> ${o.gas.length?qcl(o.gas[0]):L('لا يوجد','none')}</div>`;
+  $('#qNotes').innerHTML=Q.notes.length?Q.notes.map(n=>`<div class="qres">${L(n.ar,n.en)}</div>`).join(''):`<p class="hint">${L('لا اختبارات بعد.','No tests yet.')}</p>`;
+  $('#qAns').innerHTML=`<div class="row2" style="margin-top:10px"><label><span>${L('الكاتيون (الشق القاعدي)','Cation (basic radical)')}</span><select id="qC">${cs.map(k=>opt(k,keepC)).join('')}</select></label>
+  <label><span>${L('الأنيون (الشق الحامضي)','Anion (acid radical)')}</span><select id="qA">${as.map(k=>opt(k,keepA)).join('')}</select></label></div>
+  <div class="btns"><button id="qCheck" ${Q.done?'disabled':''}>✅ ${L('تحقق من إجابتي','Check my answer')}</button><button id="qGive" class="ghost" ${Q.done?'disabled':''}>🏳️ ${L('أظهر الإجابة','Reveal')}</button><button id="qNew" class="warn">🎲 ${L('ملح جديد','New salt')}</button>
+  <button id="qCopy" class="ghost">📄 ${L('نسخ الملاحظات','Copy notes')}</button></div>
+  ${Q.done?`<p class="${Q.res?'qok':'qbad'}">${Q.res?L('✔️ إجابة صحيحة!','✔️ Correct!'):L('✖️ إجابة غير صحيحة.','✖️ Not correct.')} ${L('الملح هو','The salt was')}: ${SUBU(s.f)} — ${L(s.ar,s.en)}</p>`:''}`;
+  $('#qCheck').onclick=qGuess;$('#qGive').onclick=()=>{Q.done=true;Q.res=null;Q.tot++;qSave();qDraw()};
+  $('#qNew').onclick=qNew;
+  $('#qCopy').onclick=async()=>{const ok=await copyText([...Q.notes].reverse().map((n,i)=>`${i+1}. ${L(n.ar,n.en)}`).join('\n'));alert(ok?L('تم النسخ','Copied'):L('حدد النص وانسخه يدويًا','Select the text and copy it manually'))};
+  const nx=Math.max(t.gasUntil,t.heatUntil,t.evUntil||0)-Date.now();if(nx>0)setTimeout(qDraw,Math.min(nx+60,1000));
+}
+
+function applyLang(){
+  document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';$('#lang').textContent=lang==='ar'?'EN':'عربي';
+  $$('[data-ar]').forEach(e=>e.textContent=e.dataset[lang]);
+  $('#qSubQ').placeholder=L('🔍 ابحث: FeCN6 · SCN · NH4SCN · H2S · CO3 · Fe3','🔍 Search: FeCN6 · SCN · NH4SCN · H2S · CO3 · Fe3');$('#subQ').placeholder=L('🔍 ابحث: FeCN6 · SCN · NH4SCN · H2S · CO3 · Fe3','🔍 Search: FeCN6 · SCN · NH4SCN · H2S · CO3 · Fe3');fillPresets();fillSubs();qFillSubs();drawTubes();qDraw();mmCalc();prepCalc();dilCalc();titCalc();
+}
+$('#lang').onclick=()=>{lang=lang==='ar'?'en':'ar';LS.set('lang',lang);applyLang()};
+$('#dec').value=dec;$('#dec').onchange=e=>{dec=+e.target.value;LS.set('dec',dec);mmCalc();prepCalc();dilCalc();titCalc()};
+const setTheme=d=>{document.documentElement.dataset.theme=d?'dark':'light';$('#theme').textContent=d?'☀️':'🌙';LS.set('dark',d)};
+$('#theme').onclick=()=>setTheme(document.documentElement.dataset.theme!=='dark');
+setTheme(LS.get('dark',matchMedia('(prefers-color-scheme: dark)').matches));
+$$('#tabs button').forEach(b=>b.onclick=()=>{if(b.dataset.p==='quiz')qMode(b.dataset.m||'all');$$('#tabs button,main>section').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#'+b.dataset.p).classList.add('on')});
+applyLang();
+</script>
+</body>
+</html>
